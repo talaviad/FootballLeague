@@ -24,9 +24,6 @@ Client/*.pbxuser
 # Android
 /Client/android/
 
-# Ios
-/Client/ios/
-
 # Android/IntelliJ
 #
 /Client/build/
@@ -34,6 +31,9 @@ Client/*.pbxuser
 /Client/.gradle
 /Client/local.properties
 /Client/*.iml
+
+# Ios
+/Client/ios/
 
 # node.js
 #
