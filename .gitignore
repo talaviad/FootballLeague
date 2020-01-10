@@ -24,6 +24,9 @@ Client/*.pbxuser
 # Android
 /Client/android/
 
+# Ios
+/Client/ios/
+
 # Android/IntelliJ
 #
 /Client/build/
