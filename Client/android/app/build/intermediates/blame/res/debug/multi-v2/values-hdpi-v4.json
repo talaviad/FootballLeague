@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\talgever\\Desktop\\Tal\\git_projects\\HHH\\Client\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-hdpi-v4\\values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\talgever\\.gradle\\caches\\transforms-2\\files-2.1\\f6c49419cc678c426d455efeae8d4724\\res\\values-hdpi-v4\\values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

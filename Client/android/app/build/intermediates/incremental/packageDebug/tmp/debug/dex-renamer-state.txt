@@ -1,0 +1,4 @@
+#Fri Jan 03 08:12:31 IST 2020
+base.0=C\:\\Users\\talgever\\Desktop\\Tal\\git_projects\\HHH\\Client\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+path.0=classes.dex
+renamed.0=classes.dex
