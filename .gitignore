@@ -22,7 +22,7 @@ Client/*.pbxuser
 /Client/*.xcuserstate
 
 # Android
-/Client/android/build.gradle
+/Client/android/
 
 # Android/IntelliJ
 #
