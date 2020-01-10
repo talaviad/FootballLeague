@@ -21,6 +21,9 @@ Client/*.pbxuser
 /Client/*.ipa
 /Client/*.xcuserstate
 
+# Android
+/Client/android
+
 # Android/IntelliJ
 #
 /Client/build/
