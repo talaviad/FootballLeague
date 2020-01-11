@@ -30,9 +30,10 @@ import {
 
 import LeagueTable from './Components/LeagueTable'
 import GameResults from './Components/GameResults'
+import Register from './Components/Register'
 
 import { Table, Row, Rows } from 'react-native-table-component';
-var IP = '132.72.232.77'
+var IP = '10.0.0.12'
 
 class HomeScreen extends React.Component {
   handleSendRequestToServer = (param) => {
@@ -52,6 +53,9 @@ class HomeScreen extends React.Component {
               'tableData': resJson.tableData
             })
             break;
+          case 'register':
+            this.props.navigation.navigate('Register')
+            break;
           default:
             break;
 
@@ -61,10 +65,13 @@ class HomeScreen extends React.Component {
         console.error(error);
       });
   }
-  //() => this.props.navigation.navigate('LeagueTable')
+
   render() {
     return (
       <View style={styles.body}>
+        <View style={styles.sectionContainer}>
+          <Button title='Register\Login' onPress={() => this.props.navigation.navigate('Register', { 'IP': IP })}> </Button>
+        </View>
         <View style={styles.sectionContainer}>
           <Button title='Viewing the league table' onPress={() => this.handleSendRequestToServer('leagueTable')}> </Button>
         </View>
@@ -82,6 +89,7 @@ const AppNavigator = createStackNavigator(
     Home: HomeScreen,
     LeagueTable: LeagueTable,
     GameResults: GameResults,
+    Register: Register,
   },
   {
     initialRouteName: 'Home',

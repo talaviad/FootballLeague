@@ -41,6 +41,11 @@ app.get('/', function (req, res) {
     }
 })
 
+app.post('/', function (req, res) {
+    console.log("Got a Post message");
+    res.send(JSON.stringify({ 'role': 'regular'}))
+  })
+
 async function getLeagueTable(client) {
     results = []
     result = await client.db("FootballLeague").collection("LeagueTable").find()
