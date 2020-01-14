@@ -1,4 +1,9 @@
+//import DataBase from './DataBase.js'
+var DataBase = require('./DataBase.js')
 var express = require('express');
+var bodyParser = require('body-parser');
+
+
 var app = express();
 var port = 3000
 
@@ -26,13 +31,20 @@ var results = {
     ]
 }
 
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
 app.get('/', function (req, res) {
     console.log("Got a GET request for the homepage");
     //console.log(req.query.data)
+    let results = []
     let data = req.query.data
     if (data === 'leagueTable') {
-        res.send(teams)
+        database.getLeagueTable().then(DBResponse => { console.log('DBResponse: ' + DBResponse); res.send(DBResponse) })
     }
+
     else if (data === 'gameResults') {
         res.send(results)
     }
@@ -41,62 +53,19 @@ app.get('/', function (req, res) {
     }
 })
 
+var database = new DataBase();
+
 app.post('/', function (req, res) {
     console.log("Got a Post message");
-    res.send(JSON.stringify({ 'role': 'regular'}))
-  })
-
-async function getLeagueTable(client) {
-    results = []
-    result = await client.db("FootballLeague").collection("LeagueTable").find()
-    if (result) {
-        documents = result.toArray();
-        documents.forEach(function (myDoc) {
-            results.push([myDoc.Club.toString(), myDoc.MP.toString(),
-            myDoc.W.toString(), myDoc.D.toString(),
-            myDoc.L.toString(), myDoc.GF.toString(),
-            myDoc.GA.toString(), myDoc.GD.toString()])
-        })
-    } else {
-        //c will be implemented
-    }
-}
+    console.log('body: ' + req.body.user);
+    res.send(JSON.stringify({ 'role': 'regular' }))
+})
 
 var server = app.listen(port, function () {
     var host = server.address().address
     var port = server.address().port
-
     console.log("Example app listening at http://%s:%s", host, port)
-
-    const DATABASE_ADDRESS = "mongodb+srv://alonlaza:1234@cluster0-5uxtz.mongodb.net/test?retryWrites=true&w=majority";
-    const DATABASE_NAME = "FootballLeague";
-    var MongoClient = require('mongodb').MongoClient;
-
-    async function database() {
-        /**
-         * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
-         * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
-         */
-
-
-        var client = new MongoClient(DATABASE_ADDRESS);
-
-        try {
-            // Connect to the MongoDB cluster
-            await client.connect();
-
-        } catch (e) {
-            console.error(e);
-        } 
-        finally {
-            await client.close();
-        }
-
-        // Make the appropriate DB calls
-    
-    }
-
-    database().catch(console.err); 
+    //database().catch(console.err); 
 })
 
 

@@ -22,32 +22,36 @@ export default class Register extends React.Component {
         };
     }
 
-    _retrieveData = async () => {
-        const role = await AsyncStorage.getItem('role');
+    async componentDidMount() {
+        console.log('in didMount')
+        if (this.props.navigation.getParam('isLoggedIn')) {
+            console.log('in first if')
+            await AsyncStorage.setItem('role', null);
+            this.props.navigation.navigate('Home')
+        }
+        const role =  ('role');
         if (role !== null) {
-            this.props.navigation.navigate('Home', {
-                'role': role
-            })
+            this.props.navigation.navigate('Home')
         }
     }
+
     async onButtonPress() {
         let response = fetch('http://' + this.props.navigation.getParam('IP') + ':3000/', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 'user': this.state.user, 'password': this.state.password})
+            body: JSON.stringify({ 'user': this.state.user, 'password': this.state.password })
         })
-        .then((response) => response.json())
-        .then(async (resJson) => {
-            await AsyncStorage.setItem('role', resJson.role);
-            this.props.navigation.navigate("Home");
-        })
-        .catch(err => alert(err))
+            .then((response) => response.json())
+            .then(async (resJson) => {
+                await AsyncStorage.setItem('role', resJson.role);
+                this.props.navigation.navigate("Home");
+            })
+            .catch(err => alert(err))
     }
 
     render() {
-        this._retrieveData()
         return (
             <View style={styles.container}>
                 <TextInput style={styles.inputBox}

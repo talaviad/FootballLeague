@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
 
-export default class ExampleOne extends Component {
+export default class GameResults extends React.Component {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
