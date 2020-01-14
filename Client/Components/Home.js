@@ -35,9 +35,12 @@ export default class Home extends React.Component {
         let response = fetch('http://' + IP + ':3000/?data=' + param, {
             method: "GET"
         })
-            .then((response) => { alert('response: ' + response); return response.json() })
+            .then((response) => { return response.json() })
             .then((resJson) => {
-                alert('resJson: ' + resJson)
+                if (!resJson.success) {
+                    alert('An error with the server');
+                    return;
+                }
                 switch (param) {
                     case 'leagueTable':
                         this.props.navigation.navigate('LeagueTable', {

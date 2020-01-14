@@ -42,14 +42,15 @@ app.get('/', function (req, res) {
     let results = []
     let data = req.query.data
     if (data === 'leagueTable') {
-        database.getLeagueTable().then(DBResponse => { console.log('DBResponse: ' + DBResponse); res.send(DBResponse) })
+        database.getLeagueTable().
+        then(DBResponse => { 
+            res.send(DBResponse) 
+        })
     }
-
     else if (data === 'gameResults') {
         res.send(results)
     }
     else {
-
     }
 })
 

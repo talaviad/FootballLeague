@@ -30,47 +30,23 @@ module.exports = class DataBase {
     }
 
     async getLeagueTable() {
-        let result = []
         try {
-            console.log('ccccccccccccc')
-
-
-            result = await this.client.db("FootballLeague").collection("LeagueTable").find()
-            result = result.toArray(function (err, response) {
-                if (err) {
-                    return null;
-                    //return JSON.stringify({ 'success': false });
-                    // res.send(JSON.stringify({ 'success': false }))
-                }
-
-                //     let results = []
-                let results = response.map(team => {
-                    console.log('team: ' + team)
-                    let newTeam = [team.Club.toString(), team.MP.toString(),
-                    team.W.toString(), team.D.toString(),
-                    team.L.toString(), team.GF.toString(),
-                    team.GA.toString(), team.GD.toString()];
-                    console.log('newTeam: ' + newTeam)
-                    return newTeam;
-                }
-
-                console.log('resultttttt: ' + results)
-                return JSON.stringify(results);
+            let result = await this.client.db("FootballLeague").collection("LeagueTable").find()
+            result = await result.toArray()
+            let results = result.map(team => {
+                return [team.Club.toString(), team.MP.toString(),
+                team.W.toString(), team.D.toString(),
+                team.L.toString(), team.GF.toString(),
+                team.GA.toString(), team.GD.toString()];
             })
-                //     // res.map(team => 
-                //     //     results.push([team.Club.toString(), team.MP.toString(),
-                //     //         team.W.toString(), team.D.toString(),
-                //     //         team.L.toString(), team.GF.toString(),
-                //     //         team.GA.toString(), team.GD.toString()]))
-                //     console.log('results: ' + results);
-                //    // res.send(JSON.stringify(results));
-                //    return JSON.stringify(results);
-                //     //db.close();
-
-            //.then(res => { res = res.toArry();  console.log('res: ' + res)})
-            //return this.client.db("FootballLeague").collection("LeagueTable").find({});
+            let resultsToTheServer = {
+                'success': true,
+                'tableData': results,
+            }
+            return JSON.stringify(resultsToTheServer);
         }
         catch {
+            console.log('in catch')
             return JSON.stringify({ 'success': false });
         }
     }
