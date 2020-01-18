@@ -73,9 +73,6 @@ export default class Register extends React.Component {
             .then((response) => response.json())
             .then(async (resJson) => {
                 if (resJson.success) {
-                    //console.log('resJson.jwt: ' + resJson.jwt)
-                    //await AsyncStorage.setItem('role', resJson.role);
-                    //await AsyncStorage.setItem('token', resJson.jwt);
                     console.log('you registered successfully');
                     alert('you registered successfully');
                     this.props.navigation.navigate("Home");
@@ -91,31 +88,25 @@ export default class Register extends React.Component {
         return (
             <View style={styles.container}>
                 <TextInput style={styles.inputBox}
-                    placeholder="username"
+                    placeholder="Enter a username"
                     placeholderTextColor='#F8F9F9'
                     selectionColor="#F8F9F9"
-                    //onSubmitEditing={() => this.password.focus()}
+                    underlineColorAndroid='#2C3E50'
                     onChangeText={user => this.setState({ user })}
                 />
                 <TextInput style={styles.inputBox}
-                    placeholder="password"
+                    placeholder="Enter a password"
                     secureTextEntry={true}
                     placeholderTextColor="#F8F9F9"
-                    //ref={(input) => this.password = input}
+                    underlineColorAndroid='#2C3E50'
                     onChangeText={password => this.setState({ password })}
                 />
                 <TextInput style={styles.inputBox}
-                    placeholder="email"
+                    placeholder="Enter an email"
                     placeholderTextColor="#F8F9F9"
-                    //ref={(input) => this.password = input}
+                    underlineColorAndroid='#2C3E50'
                     onChangeText={email => this.setState({ email })}
                 />
-                {/* <TextInput style={styles.inputBox}
-                    placeholder="role (referee\captain\regular)"
-                    placeholderTextColor="#F8F9F9"
-                    //ref={(input) => this.password = input}
-                    onChangeText={role => this.setState({ role })}
-                /> */}
                 <Picker
                     selectedValue={(this.state.role !== '') ? this.state.role : 'regular'}
                     style={styles.picker}
@@ -129,9 +120,6 @@ export default class Register extends React.Component {
                 <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
                     <Text style={styles.buttonText}>register</Text>
                 </TouchableOpacity>
-
-
-
             </View>
         )
     }
@@ -140,23 +128,20 @@ export default class Register extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        //justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#D5DBDB',
+        backgroundColor: '#5499C7',
         paddingVertical: 0,
     },
     inputBox: {
         width: '80%',
-        //borderRadius: 25,
         paddingHorizontal: 16,
         fontSize: 16,
         marginVertical: 10,
-        backgroundColor: '#5D6D7E',
         marginTop: 20,
     },
     button: {
         width: 300,
-        backgroundColor: '#5D6D7E',
+        backgroundColor: '#2C3E50',
         borderRadius: 25,
         marginVertical: 10,
         paddingVertical: 13,
@@ -173,7 +158,8 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         paddingHorizontal: 80,
         fontSize: 20,
-        backgroundColor: '#5D6D7E',
+        borderColor: '#2C3E50',
+        borderWidth: 10,
         marginTop: 20,
         color: '#F8F9F9'
     }

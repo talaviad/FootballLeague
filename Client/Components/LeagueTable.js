@@ -39,7 +39,7 @@ export default class LeagueTable extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#D5DBDB'
+        backgroundColor: '#5499C7'
     },
     head: {
         height: 28,
@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
     textLines: {
         textAlign: 'center',
         fontFamily: 'Times',
-        color: '#5D6D7E'
+        color: '#2C3E50'
     }
 });

@@ -2,7 +2,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import React from 'react';
 import LeagueTable from './Components/LeagueTable';
-import GameResults from './Components/GameResults';
+import GamesResults from './Components/GamesResults';
 import Register from './Components/Register';
 import InsertGame from './Components/InsertGame';
 import Login from './Components/Login';
@@ -12,7 +12,7 @@ const AppNavigator = createStackNavigator(
   {
     Home: Home,
     LeagueTable: LeagueTable,
-    GameResults: GameResults,
+    GamesResults: GamesResults,
     Register: Register,
     InsertGame: InsertGame,
     Login: Login,

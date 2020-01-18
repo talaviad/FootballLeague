@@ -5,12 +5,10 @@ var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var config = require('./config.js');
 var bcrypt = require('bcrypt');
-
 var app = express();
 var port = 3000
 
 app.use(bodyParser.urlencoded({ extended: false }))
-
 app.use(bodyParser.json())
 app.use('/', require('./Middlewares/auth.js'))
 

@@ -13,7 +13,7 @@ import {
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import LeagueTable from './LeagueTable'
-import GameResults from './GameResults'
+import GamesResults from './GamesResults'
 import Register from './Register'
 import { Table, Row, Rows } from 'react-native-table-component';
 
@@ -33,7 +33,6 @@ export default class Home extends React.Component {
     }
 
     handleSendRequestToServer = async (param) => {
-        // what if its undefined????
         let token = await AsyncStorage.getItem('token')
 
         let response = fetch('http://' + IP + ':3000/?data=' + param, {
@@ -57,7 +56,6 @@ export default class Home extends React.Component {
                         })
                         break;
                     case 'GamesWeek1':
-                        //alert(resJson.tableData)
                         return resJson.tableData;
                         break;
                     case 'register':
@@ -114,16 +112,15 @@ export default class Home extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('leagueTable')}>
-                    <Text style={styles.buttonText}>Viewing the league table</Text>
+                    <Text style={styles.buttonText}>League table</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('gameResults')}>
-                    <Text style={styles.buttonText}>Viewing the game results</Text>
+                <TouchableOpacity style={styles.touchAble} onPress={() => this.props.navigation.navigate('GamesResults', { 'IP': IP })}>
+                    <Text style={styles.buttonText}>Games results</Text>
                 </TouchableOpacity>
-
                 {this.state.isLoggedIn && (this.state.role === 'referee' || this.state.role === 'manager') ?
-                    (<TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('insertGameResult')}>
-                        <Text style={styles.buttonText}>Insert the game results</Text>
+                    (<TouchableOpacity style={styles.touchAble} onPress={() => this.props.navigation.navigate('InsertGame', { 'IP': IP })}>
+                        <Text style={styles.buttonText}>Insert a game result</Text>
                     </TouchableOpacity>)
                     : null
                 }
@@ -135,7 +132,7 @@ export default class Home extends React.Component {
 const styles = StyleSheet.create({
     body: {
         height: '100%',
-        backgroundColor: '#D5DBDB',
+        backgroundColor: '#5499C7',
     },
     sectionTwoBtnContainer: {
         display: 'flex',
@@ -143,7 +140,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         marginTop: 32,
         paddingHorizontal: 24,
-        //backgroundColor: '#5DADE2',
     },
     sectionContainer: {
         marginTop: 32,
@@ -152,7 +148,7 @@ const styles = StyleSheet.create({
     },
     divided: {
         flex: 1,
-        backgroundColor: '#5D6D7E',
+        backgroundColor: '#2C3E50',
         borderRadius: 25,
         marginHorizontal: 10,
         paddingVertical: 5,
@@ -161,7 +157,7 @@ const styles = StyleSheet.create({
         marginTop: 32,
         marginHorizontal: 40,
         paddingHorizontal: 24,
-        backgroundColor: '#5D6D7E',
+        backgroundColor: '#2C3E50',
         borderRadius: 25,
         paddingVertical: 5
     },
