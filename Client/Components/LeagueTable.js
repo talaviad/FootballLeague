@@ -18,7 +18,7 @@ export default class LeagueTable extends React.Component {
             <SafeAreaView>
                 <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
                     <View style={styles.container}>
-                        <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
+                        <Table  borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
                             <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text} />
                             <Rows data={this.state.tableData} textStyle={styles.text} />
                         </Table>
@@ -32,7 +32,7 @@ export default class LeagueTable extends React.Component {
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
     head: { height: 40, backgroundColor: '#f1f8ff' },
-    text: { margin: 6 },
+    text: { margin: 6 } ,
     scrollView: {
         backgroundColor: Colors.lighter,
     }

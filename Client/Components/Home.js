@@ -17,9 +17,8 @@ import {
 import LeagueTable from './LeagueTable'
 import GameResults from './GameResults'
 import Register from './Register'
-
 import { Table, Row, Rows } from 'react-native-table-component';
-var IP = '192.168.1.215'
+var IP = '192.168.1.124'
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -30,8 +29,7 @@ export default class Home extends React.Component {
             role: null
         };
     }
-
-    handleSendRequestToServer = (param) => {
+     static  handleSendRequestToServer  (param)  {
         let response = fetch('http://' + IP + ':3000/?data=' + param, {
             method: "GET"
         })
@@ -47,10 +45,9 @@ export default class Home extends React.Component {
                             'tableData': resJson.tableData
                         })
                         break;
-                    case 'gameResults':
-                        this.props.navigation.navigate('GameResults', {
-                            'tableData': resJson.tableData
-                        })
+                    case 'GamesWeek1':
+                        //alert(resJson.tableData)
+                        return resJson.tableData;
                         break;
                     case 'register':
                         this.props.navigation.navigate('Register')
@@ -90,13 +87,16 @@ export default class Home extends React.Component {
                     {this.getWelcomeMessage()}
                 </Text>
                 <View style={styles.sectionContainer}>
-                    <Button title={this.state.isLoggedIn ? 'Logout' : 'Register\Login'} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP, 'isLoggedIn': this.state.isLoggedIn })}> </Button>
+                    <Button title={this.state.isLoggedIn ? 'Logout' : 'Register\\Login'} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP, 'isLoggedIn': this.state.isLoggedIn })}> </Button>
                 </View>
                 <View style={styles.sectionContainer}>
                     <Button title='Viewing the league table' onPress={() => this.handleSendRequestToServer('leagueTable')}> </Button>
                 </View>
                 <View style={styles.sectionContainer}>
-                    <Button title='Viewing the game results' onPress={() => this.handleSendRequestToServer('gameResults')}> </Button>
+                    <Button title='Viewing the game results' onPress={() => this.props.navigation.navigate('GameResults')}> </Button>
+                </View>
+                <View style={styles.sectionContainer}>
+                    <Button title='Insert Game Result' onPress={() => this.props.navigation.navigate('InsertGame')}> </Button>
                 </View>
             </View>
 

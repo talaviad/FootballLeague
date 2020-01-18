@@ -47,10 +47,26 @@ app.get('/', function (req, res) {
             res.send(DBResponse) 
         })
     }
-    else if (data === 'gameResults') {
-        res.send(results)
+    else if (data.substring(0,9) === 'GamesWeek') {
+        database.getGameResults(data).
+        then(DBResponse => { 
+            res.send(DBResponse) 
+        })
+    }
+    else if (data === 'TeamsNames') {
+        database.getTeamsNames().
+        then(DBResponse => { 
+            res.send(DBResponse) 
+        })
+    }
+    else if (data.substring(0,6) === 'Result') {
+        database.insertResult(data).
+        then(DBResponse => { 
+            res.send(DBResponse) 
+        })
     }
     else {
+        console.log('not supposed to be here')
     }
 })
 
