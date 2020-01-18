@@ -1,25 +1,23 @@
 import React from 'react';
 import {
     StyleSheet,
-    ScrollView,
     View,
     Button,
     Text,
-    AsyncStorage
+    TouchableOpacity,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import {
     Colors,
     DebugInstructions,
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
 import LeagueTable from './LeagueTable'
 import GameResults from './GameResults'
 import Register from './Register'
-
 import { Table, Row, Rows } from 'react-native-table-component';
-var IP = '192.168.1.215'
+
+var IP = '10.0.0.33';
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -27,18 +25,28 @@ export default class Home extends React.Component {
         const { navigation } = this.props;
         this.state = {
             isLoggedIn: false,
-            role: null
+            role: null,
+            token: null
         };
+        this.handleSendRequestToServer = this.handleSendRequestToServer.bind(this);
+        this.load = this.load.bind(this);
     }
 
-    handleSendRequestToServer = (param) => {
+    handleSendRequestToServer = async (param) => {
+        // what if its undefined????
+        let token = await AsyncStorage.getItem('token')
         let response = fetch('http://' + IP + ':3000/?data=' + param, {
-            method: "GET"
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Football-Request': param,
+                'Authorization': this.state.token,
+            }
         })
             .then((response) => { return response.json() })
             .then((resJson) => {
                 if (!resJson.success) {
-                    alert('An error with the server');
+                    alert(resJson.error.msg);
                     return;
                 }
                 switch (param) {
@@ -55,6 +63,9 @@ export default class Home extends React.Component {
                     case 'register':
                         this.props.navigation.navigate('Register')
                         break;
+                    case 'insertGameResult':
+                        this.props.navigation.navigate('Home')
+                        break;
                     default:
                         break;
 
@@ -67,37 +78,87 @@ export default class Home extends React.Component {
 
     componentDidMount() {
         this.load()
-        this.props.navigation.addListener('willFocus', this.load)
+        this.focusListener = this.props.navigation.addListener('didFocus', this.load)
+    }
+
+    componentWillUnmount() {
+        this.focusListener.remove();
     }
 
     async load() {
-        console.log('in load')
-        const role = await AsyncStorage.getItem('role')
-        console.log('role: ' + role)
-        if (role !== null) {
-            this.setState({ isLoggedIn: true, role: role })
+        let token;
+        let currRole;
+
+        try {
+            token = await AsyncStorage.getItem('token');
+            currRole = await AsyncStorage.getItem('role');
+        } catch (err) {
+            throw err
         }
+
+        this.setState({ isLoggedIn: (token !== 'none'), token: token, role: currRole })
     }
 
-    getWelcomeMessage() {
-        return this.state.isLoggedIn ? 'Hello ' + this.state.role + ' user' : 'Hello anonymous'
-    }
+    // getWelcomeMessage() {
+    //     return this.state.isLoggedIn ? 'Hello ' + this.state.role + ' user' : 'Hello anonymous'
+    // }
 
     render() {
         return (
             <View style={styles.body}>
-                <Text style={{ color: 'red' }}>
+                {/* <Text style={{ color: 'red' }}>
                     {this.getWelcomeMessage()}
-                </Text>
-                <View style={styles.sectionContainer}>
-                    <Button title={this.state.isLoggedIn ? 'Logout' : 'Register\Login'} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP, 'isLoggedIn': this.state.isLoggedIn })}> </Button>
+                </Text> */}
+                {/* <View style={styles.sectionTwoBtnContainer}>
+                    {!this.state.isLoggedIn ?
+                        (<Button title={'Register'} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP })}> </Button>)
+                        : null
+                    }
+                    <Button style={styles.btn} title={this.state.isLoggedIn ? 'Logout' : 'Login'} onPress={() => this.props.navigation.navigate('Login', { 'IP': IP })}> </Button>
+                </View> */}
+
+                <View style={styles.sectionTwoBtnContainer}>
+                    {!this.state.isLoggedIn ?
+                        (<TouchableOpacity style={styles.divided} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP })}>
+                            <Text style={styles.buttonText}>Register</Text>
+                        </TouchableOpacity>)
+                        : null
+                    }
+                    <TouchableOpacity style={styles.divided} onPress={() => this.props.navigation.navigate('Login', { 'IP': IP })}>
+                        <Text style={styles.buttonText}>{this.state.isLoggedIn ? 'Logout' : 'Login'}</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.sectionContainer}>
+
+
+
+
+                <TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('leagueTable')}>
+                    <Text style={styles.buttonText}>Viewing the league table</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('gameResults')}>
+                    <Text style={styles.buttonText}>Viewing the game results</Text>
+                </TouchableOpacity>
+
+                {this.state.isLoggedIn && (this.state.role === 'referee' || this.state.role === 'manager') ?
+                    (<TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('insertGameResult')}>
+                        <Text style={styles.buttonText}>Insert the game results</Text>
+                    </TouchableOpacity>)
+                    : null
+                }
+
+                {/* <View style={styles.sectionContainer}>
                     <Button title='Viewing the league table' onPress={() => this.handleSendRequestToServer('leagueTable')}> </Button>
-                </View>
-                <View style={styles.sectionContainer}>
+                </View> */}
+                {/* <View style={styles.sectionContainer}>
                     <Button title='Viewing the game results' onPress={() => this.handleSendRequestToServer('gameResults')}> </Button>
-                </View>
+                </View> */}
+                {/* {this.state.isLoggedIn && (this.state.role === 'referee' || this.state.role === 'manager') ?
+                    (<View style={styles.sectionContainer}>
+                        <Button title='Insert the game results' onPress={() => this.handleSendRequestToServer('insertGameResult')}> </Button>
+                    </View>)
+                    : null
+                } */}
             </View>
 
         );
@@ -105,40 +166,43 @@ export default class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
     body: {
-        backgroundColor: Colors.white,
+        height: '100%',
+        backgroundColor: '#D5DBDB',
+    },
+    sectionTwoBtnContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 32,
+        paddingHorizontal: 24,
+        //backgroundColor: '#5DADE2',
     },
     sectionContainer: {
         marginTop: 32,
         paddingHorizontal: 24,
+        backgroundColor: '#5DADE2',
     },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
+    divided: {
+        flex: 1,
+        backgroundColor: '#5D6D7E',
+        borderRadius: 25,
+        marginHorizontal: 10,
+        paddingVertical: 5,
     },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
+    touchAble: {
+        marginTop: 32,
+        marginHorizontal: 40,
+        paddingHorizontal: 24,
+        backgroundColor: '#5D6D7E',
+        borderRadius: 25,
+        paddingVertical: 5
     },
-    highlight: {
-        fontWeight: '700',
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
+    buttonText: {
+        fontSize: 20,
+        fontWeight: '500',
+        color: '#AED6F1',
+        textAlign: 'center',
+    }
 });
+

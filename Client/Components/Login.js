@@ -1,26 +1,22 @@
 import React from 'react';
-import { Table, Row, Rows } from 'react-native-table-component';
 import {
     StyleSheet,
     View,
     Button,
-    TextInput,
     Text,
-    TouchableOpacity,
-    Picker
+    ScrollView,
+    TextInput,
+    TouchableOpacity
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-export default class Register extends React.Component {
+export default class Login extends React.Component {
     constructor(props) {
         super(props);
         const { navigation } = this.props;
         this.state = {
             user: "",
-            password: "",
-            email: "",
-            role: "regular"
+            password: ""
         };
         this.load = this.load.bind(this)
         this.onButtonPress = this.onButtonPress.bind(this)
@@ -36,17 +32,17 @@ export default class Register extends React.Component {
     }
 
     async load() {
-        let currRole;
+        let token;
 
         try {
-            currRole = await AsyncStorage.getItem('role');
+            token = await AsyncStorage.getItem('token');
         } catch (err) {
             throw err;
         }
-
-        if (currRole !== 'none') {
+        console.log('token: ' + token)
+        if (token !== 'none') {
             try {
-                await AsyncStorage.setItem('role', 'none');
+                await AsyncStorage.setItem('token', 'none');
             } catch (err) {
                 console.error(err);
                 throw err;
@@ -57,27 +53,24 @@ export default class Register extends React.Component {
     }
 
     async onButtonPress() {
-        if (this.state.user === '' || this.state.password === '' || this.state.email === '' || this.state.role === '') {
+        if (this.state.user === '' || this.state.password === '') {
             alert('you did not fill all the fields')
             return;
         }
-
         let response = fetch('http://' + this.props.navigation.getParam('IP') + ':3000/', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                'Football-Request': 'register',
+                'Football-Request': 'login',
             },
-            body: JSON.stringify({ user: this.state.user, pass: this.state.password, email: this.state.email, requestedRole: this.state.role })
+            body: JSON.stringify({ user: this.state.user, pass: this.state.password })
         })
             .then((response) => response.json())
             .then(async (resJson) => {
                 if (resJson.success) {
-                    //console.log('resJson.jwt: ' + resJson.jwt)
-                    //await AsyncStorage.setItem('role', resJson.role);
-                    //await AsyncStorage.setItem('token', resJson.jwt);
-                    console.log('you registered successfully');
-                    alert('you registered successfully');
+                    console.log('resJson.jwt: ' + resJson.jwt)
+                    await AsyncStorage.setItem('role', resJson.role);
+                    await AsyncStorage.setItem('token', resJson.jwt);
                     this.props.navigation.navigate("Home");
                 }
                 else {
@@ -92,46 +85,18 @@ export default class Register extends React.Component {
             <View style={styles.container}>
                 <TextInput style={styles.inputBox}
                     placeholder="username"
-                    placeholderTextColor='#F8F9F9'
-                    selectionColor="#F8F9F9"
-                    //onSubmitEditing={() => this.password.focus()}
+                    placeholderTextColor="#F8F9F9"
                     onChangeText={user => this.setState({ user })}
                 />
                 <TextInput style={styles.inputBox}
                     placeholder="password"
                     secureTextEntry={true}
                     placeholderTextColor="#F8F9F9"
-                    //ref={(input) => this.password = input}
                     onChangeText={password => this.setState({ password })}
                 />
-                <TextInput style={styles.inputBox}
-                    placeholder="email"
-                    placeholderTextColor="#F8F9F9"
-                    //ref={(input) => this.password = input}
-                    onChangeText={email => this.setState({ email })}
-                />
-                {/* <TextInput style={styles.inputBox}
-                    placeholder="role (referee\captain\regular)"
-                    placeholderTextColor="#F8F9F9"
-                    //ref={(input) => this.password = input}
-                    onChangeText={role => this.setState({ role })}
-                /> */}
-                <Picker
-                    selectedValue={(this.state.role !== '') ? this.state.role : 'regular'}
-                    style={styles.picker}
-                    onValueChange={(itemValue, itemIndex) =>
-                        this.setState({ role: itemValue })
-                    }>
-                    <Picker.Item label="regular" value="regular" />
-                    <Picker.Item label="captain" value="captain" />
-                    <Picker.Item label="referee" value="referee" />
-                </Picker>
                 <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
-                    <Text style={styles.buttonText}>register</Text>
+                    <Text style={styles.buttonText}>login</Text>
                 </TouchableOpacity>
-
-
-
             </View>
         )
     }
@@ -143,19 +108,19 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#D5DBDB',
-        paddingVertical: 0,
     },
     inputBox: {
-        width: '80%',
+        width: 300,
         //borderRadius: 25,
         paddingHorizontal: 16,
         fontSize: 16,
         marginVertical: 10,
         backgroundColor: '#5D6D7E',
         marginTop: 20,
+
     },
     button: {
-        width: 300,
+        width: '80%',
         backgroundColor: '#5D6D7E',
         borderRadius: 25,
         marginVertical: 10,
@@ -167,14 +132,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#AED6F1',
         textAlign: 'center',
-    },
-    picker: {
-        width: '80%',
-        borderRadius: 25,
-        paddingHorizontal: 80,
-        fontSize: 20,
-        backgroundColor: '#5D6D7E',
-        marginTop: 20,
-        color: '#F8F9F9'
     }
 });
+
+
