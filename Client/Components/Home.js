@@ -35,6 +35,7 @@ export default class Home extends React.Component {
     handleSendRequestToServer = async (param) => {
         // what if its undefined????
         let token = await AsyncStorage.getItem('token')
+
         let response = fetch('http://' + IP + ':3000/?data=' + param, {
             method: "GET",
             headers: {
@@ -55,10 +56,9 @@ export default class Home extends React.Component {
                             'tableData': resJson.tableData
                         })
                         break;
-                    case 'gameResults':
-                        this.props.navigation.navigate('GameResults', {
-                            'tableData': resJson.tableData
-                        })
+                    case 'GamesWeek1':
+                        //alert(resJson.tableData)
+                        return resJson.tableData;
                         break;
                     case 'register':
                         this.props.navigation.navigate('Register')
@@ -99,24 +99,9 @@ export default class Home extends React.Component {
         this.setState({ isLoggedIn: (token !== 'none'), token: token, role: currRole })
     }
 
-    // getWelcomeMessage() {
-    //     return this.state.isLoggedIn ? 'Hello ' + this.state.role + ' user' : 'Hello anonymous'
-    // }
-
     render() {
         return (
             <View style={styles.body}>
-                {/* <Text style={{ color: 'red' }}>
-                    {this.getWelcomeMessage()}
-                </Text> */}
-                {/* <View style={styles.sectionTwoBtnContainer}>
-                    {!this.state.isLoggedIn ?
-                        (<Button title={'Register'} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP })}> </Button>)
-                        : null
-                    }
-                    <Button style={styles.btn} title={this.state.isLoggedIn ? 'Logout' : 'Login'} onPress={() => this.props.navigation.navigate('Login', { 'IP': IP })}> </Button>
-                </View> */}
-
                 <View style={styles.sectionTwoBtnContainer}>
                     {!this.state.isLoggedIn ?
                         (<TouchableOpacity style={styles.divided} onPress={() => this.props.navigation.navigate('Register', { 'IP': IP })}>
@@ -128,10 +113,6 @@ export default class Home extends React.Component {
                         <Text style={styles.buttonText}>{this.state.isLoggedIn ? 'Logout' : 'Login'}</Text>
                     </TouchableOpacity>
                 </View>
-
-
-
-
                 <TouchableOpacity style={styles.touchAble} onPress={() => this.handleSendRequestToServer('leagueTable')}>
                     <Text style={styles.buttonText}>Viewing the league table</Text>
                 </TouchableOpacity>
@@ -146,21 +127,7 @@ export default class Home extends React.Component {
                     </TouchableOpacity>)
                     : null
                 }
-
-                {/* <View style={styles.sectionContainer}>
-                    <Button title='Viewing the league table' onPress={() => this.handleSendRequestToServer('leagueTable')}> </Button>
-                </View> */}
-                {/* <View style={styles.sectionContainer}>
-                    <Button title='Viewing the game results' onPress={() => this.handleSendRequestToServer('gameResults')}> </Button>
-                </View> */}
-                {/* {this.state.isLoggedIn && (this.state.role === 'referee' || this.state.role === 'manager') ?
-                    (<View style={styles.sectionContainer}>
-                        <Button title='Insert the game results' onPress={() => this.handleSendRequestToServer('insertGameResult')}> </Button>
-                    </View>)
-                    : null
-                } */}
             </View>
-
         );
     }
 }
