@@ -9,7 +9,7 @@ import InsertGame from '../Components/InsertGame';
 import GameResults from '../Components/GamesResults';
 
 
-import "isomorphic-fetch"
+//import "isomorphic-fetch"
 
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
@@ -33,19 +33,19 @@ it('InsertGame renders correctly', () => {
   })
 
 
-  const DATABASE_ADDRESS = "mongodb+srv://alonlaza:1234@cluster0-5uxtz.mongodb.net/test?retryWrites=true&w=majority";
-  const DATABASE_NAME = "FootballLeague";
-  this.client = new MongoClient(DATABASE_ADDRESS);
-  try {
-      // Connect to the MongoDB cluster
-      await this.client.connect();
-      console.log('connected to database.')
-      // Make the appropriate DB calls
-      //await findOneListingByName(this.client, 'teamA');
-  } catch (e) {
-      console.log('An error occured while was trying to connect to database..')
-      console.error(e);
-  } /*finally {
+  // const DATABASE_ADDRESS = "mongodb+srv://alonlaza:1234@cluster0-5uxtz.mongodb.net/test?retryWrites=true&w=majority";
+  // const DATABASE_NAME = "FootballLeague";
+  // this.client = new MongoClient(DATABASE_ADDRESS);
+  // try {
+  //     // Connect to the MongoDB cluster
+  //     await this.client.connect();
+  //     console.log('connected to database.')
+  //     // Make the appropriate DB calls
+  //     //await findOneListingByName(this.client, 'teamA');
+  // } catch (e) {
+  //     console.log('An error occured while was trying to connect to database..')
+  //     console.error(e);
+  // } /*finally {
 
 
 });
