@@ -8,6 +8,7 @@ import {
   Button,
   TouchableOpacity
 } from 'react-native';
+import "isomorphic-fetch"
 
 export default class InsertGame extends React.Component {
   constructor(props) {
@@ -25,17 +26,18 @@ export default class InsertGame extends React.Component {
   }
 
   componentDidMount() {
-    this.getTeamsNames('TeamsNames');
+    this.getTeamsNames();
   }
 
-  async getTeamsNames(name) {
+  async getTeamsNames() {
     let response;
+
     try {
-      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=' + name, {
+      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=TeamsNames', {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
-          'Football-Request': name,
+          'Football-Request': 'TeamsNames',
         }
       })
       const json = await response.json()
@@ -54,8 +56,11 @@ export default class InsertGame extends React.Component {
       return;
     }
     try {
+      alert('scoreTeam1: '+this.state.selectedTeam1)
+
+      alert('scoreTeam2: '+this.state.selectedTeam2)
       const response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=' + 'Result,' + this.state.selectedTeam1 +
-        ',' + this.state.selectedTeam2 + ',' + this.state.scoreTeam1 + ',' + this.state.scoreteam2 + ',' + this.state.week,
+        ',' + this.state.selectedTeam2 + ',' + this.state.scoreTeam1 + ',' + this.state.scoreTeam2 + ',' + this.state.week,
         {
           method: "GET",
           headers: {
@@ -77,13 +82,13 @@ export default class InsertGame extends React.Component {
     }
   }
 
-  // Our country list generator for picker
   teamList = () => {
     console.log(this.state.teamsNames)
     return (this.state.teamsNames.map((x, i) => {
       return (<Picker.Item label={x} key={i} value={x} />)
     }));
   }
+
 
   render() {
     const state = this.state;

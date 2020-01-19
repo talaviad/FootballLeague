@@ -1,11 +1,10 @@
 var jwt = require('jsonwebtoken');
 var config = require('../config.js');
 
-var possibleRequests = ['register', 'login', 'leagueTable', 'gameResults', 'insertGameResult', 'TeamsNames', 'Result', 'GamesWeek1', 'GamesWeek2']
+var possibleRequests = ['register', 'login', 'leagueTable', 'gameResults', 'insertGameResult', 'TeamsNames','NumberOfWeeks', 'Result', 'GamesWeek']
 module.exports = function (req, res, next) {
     //let data = req.query.data;
     let footballRequest = req.get('Football-Request');
-    console.log('footballRequest: ' + footballRequest)
     // check if there is such request
     if (footballRequest === undefined || !possibleRequests.includes(footballRequest)) {
         res.send(JSON.stringify({

@@ -31,11 +31,18 @@ app.get('/', function (req, res) {
     }
     else if (data === 'TeamsNames') {
         database.getTeamsNames().
+        then(DBResponse => {
+            res.send(DBResponse) 
+        })
+    }
+    else if (data === 'NumberOfWeeks') {
+        database.getNumberOfWeeks().
         then(DBResponse => { 
             res.send(DBResponse) 
         })
     }
     else if (data.substring(0,6) === 'Result') {
+        console.log('indexJS: '+data)
         database.insertResult(data).
         then(DBResponse => { 
             res.send(DBResponse) 

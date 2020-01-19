@@ -9,12 +9,34 @@ export default class GamesResults extends React.Component {
     this.state = {
       tableHead: ['Team1', 'Result', 'Team2'],
       tableData: null,
+      numberOfWeeks: [],
+      selectedWeek: '',
       isLoading: true
     }
   }
 
   componentDidMount() {
-    this.fetchData('GamesWeek1');
+    this.getNumberOfWeeks();
+  }
+
+  async getNumberOfWeeks() {
+    let response;
+    try {
+      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=NumberOfWeeks', {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Football-Request': 'NumberOfWeeks',
+        }
+      })
+      const json = await response.json()
+      this.state.numberOfWeeks = json.numberOfWeeks
+       this.setState({ numberOfWeeks:json.numberOfWeeks })
+       var isLoading = false
+       //this.setState({ isLoading })
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async fetchData(name) {
@@ -24,7 +46,7 @@ export default class GamesResults extends React.Component {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
-          'Football-Request': name,
+          'Football-Request': name.substring(0,9),
         }
       })
       const json = await response.json()
@@ -35,30 +57,25 @@ export default class GamesResults extends React.Component {
       console.error(err)
     }
   }
-
+  weeksList = () => {
+    return (this.state.numberOfWeeks.map((x, i) => {
+      return (<Picker.Item label={'Week'+x.toString()} key={i} value={x.toString()} />)
+    }));
+  }
   render() {
     const state = this.state;
     return (
       <View style={styles.container}>
         <Picker
-          selectedValue={this.state.language}
+          selectedValue={this.state.selectedWeek}
           style={styles.picker}
           onValueChange={(itemValue, itemIndex) => {
-            switch (itemIndex) {
-              case 0:
-                this.state.isLoading = true;
-                this.fetchData('GamesWeek1')
-                break;
-              case 1:
-                this.state.isLoading = true;
-                this.fetchData('GamesWeek2')
-                break;
-            }
-            ; this.setState({ language: itemValue })
+            this.setState({ selectedWeek: itemValue })
+            this.state.isLoading = true;
+            this.fetchData('GamesWeek'+itemValue)
           }
           }>
-          <Picker.Item style={styles.pickerItem} label="week1" value="Week 1" />
-          <Picker.Item style={styles.pickerItem} label="week2" value="Week 2" />
+          { this.weeksList()}
         </Picker>
         <Table borderStyle={{ borderWidth: 1 }} style={styles.tableStyle}>
           <Row data={state.tableHead} style={styles.head} textStyle={styles.text} />
