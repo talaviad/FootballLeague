@@ -28,6 +28,30 @@ module.exports = class DataBase {
         await this.client.close();
     }
 
+    async getNumberOfWeeks() {
+        try {
+            let allCollections = []
+            let result = await this.client.db("FootballLeague").listCollections()
+            result = await result.toArray()
+            result.forEach(eachCollectionDetails => {
+                if (eachCollectionDetails.name.substring(0, 9) === 'GamesWeek') {
+                    allCollections.push(parseInt(eachCollectionDetails.name.substring(9)));
+                }
+            });
+            allCollections.sort(this.sortNumber)
+
+            let resultsToTheServer = {
+                'success': true,
+                'numberOfWeeks': allCollections,
+            }
+            return JSON.stringify(resultsToTheServer);
+        }
+        catch {
+            console.log('in catch')
+            return JSON.stringify({ 'success': false });
+        }
+    }
+
     async registerNewUser(user, pass, email, requestedRole) {
         let result = await this.client.db('FootballLeague').collection("Users").find({
             $or: [{ username: user }, { email: email }]
@@ -157,30 +181,30 @@ module.exports = class DataBase {
     }
 
     async insertResult(data) {
-        
+
         let winner = 0
         try {
             let arr_data = data.split(',')
-            if(parseInt(arr_data[3])>parseInt(arr_data[4])){
-                winner=1
+            if (parseInt(arr_data[3]) > parseInt(arr_data[4])) {
+                winner = 1
             }
-            else if(parseInt(arr_data[4])>parseInt(arr_data[3])){
-                winner=2
+            else if (parseInt(arr_data[4]) > parseInt(arr_data[3])) {
+                winner = 2
             }
-            let result = await this.client.db("FootballLeague").collection('LeagueTable').find({ $or: [ { Club: arr_data[1] }, { Club: arr_data[2] } ] })
+            let result = await this.client.db("FootballLeague").collection('LeagueTable').find({ $or: [{ Club: arr_data[1] }, { Club: arr_data[2] }] })
             result = await result.toArray()
             //We dont know the order the db return the 2 rows so we need this condition
-            if(result[0].Club===arr_data[0]){
-            this.updateTeamInTable(result[0], 1, winner,parseInt(arr_data[3]), parseInt(arr_data[4]))
-            this.updateTeamInTable(result[1], 2, winner,parseInt(arr_data[3]), parseInt(arr_data[4]))
-        }
-            else{
-            this.updateTeamInTable(result[1], 1, winner,parseInt(arr_data[3]), parseInt(arr_data[4]))
-            this.updateTeamInTable(result[0], 2, winner,parseInt(arr_data[3]), parseInt(arr_data[4])) 
+            if (result[0].Club === arr_data[0]) {
+                this.updateTeamInTable(result[0], 1, winner, parseInt(arr_data[3]), parseInt(arr_data[4]))
+                this.updateTeamInTable(result[1], 2, winner, parseInt(arr_data[3]), parseInt(arr_data[4]))
+            }
+            else {
+                this.updateTeamInTable(result[1], 1, winner, parseInt(arr_data[3]), parseInt(arr_data[4]))
+                this.updateTeamInTable(result[0], 2, winner, parseInt(arr_data[3]), parseInt(arr_data[4]))
             }
 
-            await this.client.db("FootballLeague").collection('GamesWeek'+arr_data[5]).insert({ team1: arr_data[1], result: arr_data[3]+' - '+arr_data[4], team2:arr_data[2] })
-        
+            await this.client.db("FootballLeague").collection('GamesWeek' + arr_data[5]).insert({ team1: arr_data[1], result: arr_data[3] + ' - ' + arr_data[4], team2: arr_data[2] })
+
             let resultsToTheServer = {
                 'success': true,
             }
@@ -192,48 +216,51 @@ module.exports = class DataBase {
             return JSON.stringify({ 'success': false });
         }
     }
-    updateTeamInTable(teamJson, teamIndex, winner, scoreTeam1, scoreTeam2){
-        if(teamIndex==1){
-            teamJson.MP = parseInt(teamJson.MP)+1
-            if(winner==1){
-                teamJson.W = parseInt(teamJson.W)+1 
-                teamJson.Pts = parseInt(teamJson.Pts)+3
+    updateTeamInTable(teamJson, teamIndex, winner, scoreTeam1, scoreTeam2) {
+        if (teamIndex == 1) {
+            teamJson.MP = parseInt(teamJson.MP) + 1
+            if (winner == 1) {
+                teamJson.W = parseInt(teamJson.W) + 1
+                teamJson.Pts = parseInt(teamJson.Pts) + 3
             }
-            else if(winner==0){
-                teamJson.D = parseInt(teamJson.D)+1 
-                teamJson.Pts = parseInt(teamJson.Pts)+1
+            else if (winner == 0) {
+                teamJson.D = parseInt(teamJson.D) + 1
+                teamJson.Pts = parseInt(teamJson.Pts) + 1
             }
-            else{
-                teamJson.L = parseInt(teamJson.L)+1 
+            else {
+                teamJson.L = parseInt(teamJson.L) + 1
             }
-            teamJson.GF = parseInt(teamJson.GF)+scoreTeam1
-            teamJson.GA = parseInt(teamJson.GA)+scoreTeam2
-            teamJson.GD = parseInt(teamJson.GD)+(scoreTeam1-scoreTeam2)
+            teamJson.GF = parseInt(teamJson.GF) + scoreTeam1
+            teamJson.GA = parseInt(teamJson.GA) + scoreTeam2
+            teamJson.GD = parseInt(teamJson.GD) + (scoreTeam1 - scoreTeam2)
 
-            let result =  this.client.db("FootballLeague").collection('LeagueTable')
-            .replaceOne({ Club: teamJson.Club },teamJson)
+            let result = this.client.db("FootballLeague").collection('LeagueTable')
+                .replaceOne({ Club: teamJson.Club }, teamJson)
         }
-        else{
-            teamJson.MP = parseInt(teamJson.MP)+1
-            if(winner==2){
-                teamJson.W = parseInt(teamJson.W)+1 
-                teamJson.Pts = parseInt(teamJson.Pts)+3
+        else {
+            teamJson.MP = parseInt(teamJson.MP) + 1
+            if (winner == 2) {
+                teamJson.W = parseInt(teamJson.W) + 1
+                teamJson.Pts = parseInt(teamJson.Pts) + 3
             }
-            else if(winner==0){
-                teamJson.D = parseInt(teamJson.D)+1 
-                teamJson.Pts = parseInt(teamJson.Pts)+1
+            else if (winner == 0) {
+                teamJson.D = parseInt(teamJson.D) + 1
+                teamJson.Pts = parseInt(teamJson.Pts) + 1
             }
-            else{
-                teamJson.L = parseInt(teamJson.L)+1 
+            else {
+                teamJson.L = parseInt(teamJson.L) + 1
             }
-            teamJson.GF = parseInt(teamJson.GF)+scoreTeam2
-            teamJson.GA = parseInt(teamJson.GA)+scoreTeam1
-            teamJson.GD = parseInt(teamJson.GD)+(scoreTeam2-scoreTeam1)
+            teamJson.GF = parseInt(teamJson.GF) + scoreTeam2
+            teamJson.GA = parseInt(teamJson.GA) + scoreTeam1
+            teamJson.GD = parseInt(teamJson.GD) + (scoreTeam2 - scoreTeam1)
 
-            let result =  this.client.db("FootballLeague").collection('LeagueTable')
-            .replaceOne({ Club: teamJson.Club },teamJson)
+            let result = this.client.db("FootballLeague").collection('LeagueTable')
+                .replaceOne({ Club: teamJson.Club }, teamJson)
         }
     }
-    
+
+    sortNumber(a, b) {
+        return a - b;
+    }
 
 };

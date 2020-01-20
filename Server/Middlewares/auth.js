@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 var config = require('../config.js');
 
-var possibleRequests = ['register', 'login', 'leagueTable', 'gameResults', 'insertGameResult', 'TeamsNames', 'Result', 'GamesWeek1', 'GamesWeek2']
+var possibleRequests = ['register', 'login', 'leagueTable', 'gameResults', 'insertGameResult', 'TeamsNames', 'Result', 'GamesWeek', 'NumberOfWeeks']
 module.exports = function (req, res, next) {
     //let data = req.query.data;
     let footballRequest = req.get('Football-Request');
@@ -40,7 +40,7 @@ module.exports = function (req, res, next) {
             console.log('id: ' + req.user.id)
             console.log('role: ' + role)
             if (role === 'referee' || role === 'manager') {
-                res.send(JSON.stringify( {
+                res.send(JSON.stringify({
                     success: true
                 }))
             }

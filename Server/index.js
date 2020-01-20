@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var config = require('./config.js');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var app = express();
 var port = 3000
 
@@ -41,6 +41,12 @@ app.get('/', function (req, res) {
             res.send(DBResponse) 
         })
     }
+    else if (data === 'NumberOfWeeks') {
+        database.getNumberOfWeeks().
+        then(DBResponse => { 
+            res.send(DBResponse) 
+        })
+    }
     else {
         console.log('not supposed to be here')
     }
@@ -48,11 +54,98 @@ app.get('/', function (req, res) {
 
 var database = new DataBase();
 
+/* with bcrypt */
+// handleLoginRequest = async (user, pass) => {
+//     let DBresponse = await database.getUser(user)
+//     if (DBresponse.success) {
+//         try {
+//             console.log('A')
+//             let passwordAreMatch = await bcrypt.compare(pass, DBresponse.password)
+//             console.log('B')
+
+//             if (passwordAreMatch) {
+//                 let randNumForSignature = Math.floor(Math.random() * 100);
+//                 let resultsToTheServer = {
+//                     success: true,
+//                     role: DBresponse.role,
+//                     id: randNumForSignature,
+//                     username: user,
+//                     jwt: jwt.sign({
+//                         id: randNumForSignature,
+//                         role: DBresponse.role,
+//                         username: user,
+//                     }, config.JWT_SECRET)
+//                 }
+//                 return JSON.stringify(resultsToTheServer);
+//             }
+//             else {
+//                 let resultsToTheServer = {
+//                     success: false,
+//                     error: {
+//                         msg: 'username or password are incorrect'
+//                     }
+//                 }
+//                 return JSON.stringify(resultsToTheServer);
+//             }
+//         } catch (err) {
+//             console.error(err);
+//             let resultsToTheServer = {
+//                 success: false,
+//                 error: {
+//                     msg: 'some error occured with the hashing'
+//                 }
+//             }
+//             return JSON.stringify(resultsToTheServer);
+//         }
+//     }
+//     else {
+//         return JSON.stringify(DBresponse);
+//     }
+// }
+
+// handleRegisterRequest = async (user, pass, requestedRole, email) => {
+//     if (requestedRole !== 'referee' && requestedRole !== 'captain' && requestedRole !== 'regular') {
+//         let registerError = {
+//             success: false,
+//             error: {
+//                 msg: 'the role you asked does not exists'
+//             }
+//         }
+//         return JSON.stringify(registerError);
+//     }
+//     try {
+//         let hashPassword = await bcrypt.hash(pass, config.BCRYPT_SALT_ROUNDS);
+//         let DBResponse = await database.registerNewUser(user, hashPassword, email, requestedRole);
+//         console.log('DBResponse: ' + DBResponse)
+//         console.log('DBResponse.success: ' + DBResponse.success)
+//         if (DBResponse.success) {
+//             return JSON.stringify({
+//                 success: true,
+//             });
+//         }
+//         else {
+//             return JSON.stringify(DBResponse);
+//         }
+//     } catch (err) {
+//         console.error(err);
+//         return JSON.stringify({
+//             success: false,
+//             error: {
+//                 msg: 'some error occured while trying to register the user'
+//             }
+//         });
+//     }
+// }
+
+/* without bcrypt */
 handleLoginRequest = async (user, pass) => {
     let DBresponse = await database.getUser(user)
     if (DBresponse.success) {
         try {
-            let passwordAreMatch = await bcrypt.compare(pass, DBresponse.password)
+            console.log('A')
+            let passwordAreMatch = (pass === DBresponse.password)
+            console.log('B')
+
             if (passwordAreMatch) {
                 let randNumForSignature = Math.floor(Math.random() * 100);
                 let resultsToTheServer = {
@@ -104,7 +197,7 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
         return JSON.stringify(registerError);
     }
     try {
-        let hashPassword = await bcrypt.hash(pass, config.BCRYPT_SALT_ROUNDS);
+        let hashPassword = pass // await bcrypt.hash(pass, config.BCRYPT_SALT_ROUNDS);
         let DBResponse = await database.registerNewUser(user, hashPassword, email, requestedRole);
         console.log('DBResponse: ' + DBResponse)
         console.log('DBResponse.success: ' + DBResponse.success)

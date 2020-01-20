@@ -66,7 +66,6 @@ export default class Home extends React.Component {
                         break;
                     default:
                         break;
-
                 }
             })
             .catch((error) => {
