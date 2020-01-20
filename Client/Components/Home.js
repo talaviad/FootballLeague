@@ -17,7 +17,7 @@ import GamesResults from './GamesResults'
 import Register from './Register'
 import { Table, Row, Rows } from 'react-native-table-component';
 
-var IP = '10.0.0.9';
+var IP = '192.168.43.4';
 
 export default class Home extends React.Component {
     constructor(props) {
