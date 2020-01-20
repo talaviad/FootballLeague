@@ -22,7 +22,7 @@ export default class InsertGame extends React.Component {
       selectedTeam2: null,
       isLoading: true
     }
-    this.fetch = this.props.fetch? this.props.fetch : fetch;
+    this.fetch = this.props.fetch ? this.props.fetch : fetch;
   }
 
   componentDidMount() {
@@ -30,7 +30,6 @@ export default class InsertGame extends React.Component {
   }
 
   async getTeamsNames(name) {
-    console.log('in getTeamsNames()')
     let response;
     try {
       response = await this.fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=' + name, {
@@ -57,7 +56,7 @@ export default class InsertGame extends React.Component {
     }
     try {
       const response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=' + 'Result,' + this.state.selectedTeam1 +
-        ',' + this.state.selectedTeam2 + ',' + this.state.scoreTeam1 + ',' + this.state.scoreteam2 + ',' + this.state.week,
+        ',' + this.state.selectedTeam2 + ',' + this.state.scoreTeam1 + ',' + this.state.scoreTeam2 + ',' + this.state.week,
         {
           method: "GET",
           headers: {
@@ -79,9 +78,7 @@ export default class InsertGame extends React.Component {
     }
   }
 
-  // Our country list generator for picker
   teamList = () => {
-    console.log(this.state.teamsNames)
     return (this.state.teamsNames.map((x, i) => {
       return (<Picker.Item label={x} key={i} value={x} />)
     }));
@@ -91,8 +88,6 @@ export default class InsertGame extends React.Component {
     const state = this.state;
     return (
       <View style={styles.wrapper}>
-
-
         <View style={styles.firstView}>
           <Text style={{ textAlignVertical: 'center', textAlign: 'right', flex: 2, fontWeight: 'bold' }} borderStyle={{ borderWidth: 1 }}>Week:</Text>
           <View style={{ flex: 2, alignItems: 'flex-start' }}>
@@ -117,7 +112,7 @@ export default class InsertGame extends React.Component {
             </Picker>
             <Text style={{ width: '100%', textAlign: 'center', textAlignVertical: 'bottom', flex: 1, fontWeight: 'bold', fontSize: 15 }}>
               Score:</Text>
-            <View style={{ alignItems: 'center', width: '100%', flex: 1 }}>
+            <View style={{ alignItems: 'center', width: '100%', flex: 1.2 }}>
               <TextInput
                 style={{ height: '50%', width: '50%' }}
                 underlineColorAndroid='#2C3E50'
@@ -137,16 +132,15 @@ export default class InsertGame extends React.Component {
             </Picker>
             <Text style={{ width: '100%', textAlign: 'center', textAlignVertical: 'bottom', flex: 1, fontWeight: 'bold', fontSize: 15 }}>
               Score:</Text>
-            <View style={{ alignItems: 'center', width: '100%', flex: 1 }}>
+            <View style={{ alignItems: 'center', width: '100%', flex: 1.2 }}>
               <TextInput
                 style={{ height: '50%', width: '50%' }}
                 underlineColorAndroid='#2C3E50'
-                onChangeText={(scoreTeam2) => this.setState({ scoreTeam2 })}
+                onChangeText={(scoreTeam2) =>this.setState({ scoreTeam2 })}
                 value={this.state.scoreTeam2}
               />
             </View>
           </View>
-
         </View>
 
         <View style={{ alignItems: 'center', flex: 2 }}>
