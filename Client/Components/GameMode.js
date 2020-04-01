@@ -164,11 +164,26 @@ export default class GameMode extends React.Component {
     }
 
     if (isTeam1) {
-      this.state.team1ScorrersDic.push({
-        Team: this.state.team1,
-        Number: num,
-        Name: name,
-      });
+      var scorerExit = false;
+
+      for (var scorer in this.state.team1ScorrersDic) {
+        if (scorer[Number] === num) {
+          alert('exist');
+          scorer[Goals] = scorer[Goals] + 1;
+          scorerExit = true;
+          break;
+        }
+      }
+      if (!scorerExit) {
+        alert('NOT exist');
+
+        this.state.team1ScorrersDic.push({
+          Team: this.state.team1,
+          Number: num,
+          Name: name,
+          Goals: 1,
+        });
+      }
       this.setState({isDialogVisible1: false});
     } else {
       this.state.team2ScorrersDic.push({
@@ -191,7 +206,6 @@ export default class GameMode extends React.Component {
       submitConfirmationAlert: false,
     });
     this.sendResultToServer();
-
     //alert(JSON.stringify(this.state.team1ScorrersDic));
   };
 
@@ -202,48 +216,31 @@ export default class GameMode extends React.Component {
   };
 
   async sendResultToServer() {
-    if (
-      this.state.selectedTeam1 === this.state.selectedTeam2 ||
-      isNaN(parseInt(this.state.scoreTeam1)) ||
-      isNaN(parseInt(this.state.scoreTeam2)) ||
-      (parseInt(this.state.scoreTeam1) < 0) |
-        (parseInt(this.state.scoreTeam1) > 30) ||
-      parseInt(this.state.scoreTeam2) < 0 ||
-      parseInt(this.state.scoreTeam2) > 30 ||
-      isNaN(parseInt(this.state.week)) ||
-      parseInt(this.state.week) < 0 ||
-      parseInt(this.state.week) > 30
-    ) {
-      alert('Invalid Input');
-      return;
-    }
-    try {
-      const response = await fetch(
-        'http://' +
-          this.props.navigation.getParam('IP') +
-          ':3000/?data=' +
-          'ScorerTable,',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Football-Request': 'ScorerTable',
-            team1ScorrersDic: this.state.team1ScorrersDic,
-            team2ScorrersDic: this.state.team2ScorrersDic,
-          },
+    let response = fetch(
+      'http://' + this.props.navigation.getParam('IP') + ':3000/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Football-Request': 'ScorerTable',
         },
-      );
-      const resJson = await response.json();
-      if (!resJson.success) {
-        alert('error: ' + resJson.error.msg);
-        return;
-      } else {
-        alert('The game updated successfully');
-        return;
-      }
-    } catch (err) {
-      console.error(err);
-    }
+        body: JSON.stringify({
+          dicTeam1: this.state.team1ScorrersDic,
+          dicTeam2: this.state.team2ScorrersDic,
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(async resJson => {
+        if (resJson.success) {
+          console.log('you registered successfully');
+          alert('you registered successfully');
+          this.props.navigation.navigate('Home');
+        } else {
+          alert(resJson.error.msg);
+        }
+      })
+      .catch(err => alert(err));
   }
 
   render() {

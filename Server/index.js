@@ -133,12 +133,35 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
   }
 };
 
+handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
+  try {
+    let DBResponse = await database.addToScorerTable(dicTeam1, dicTeam2);
+    console.log("DBResponse: " + DBResponse);
+    console.log("DBResponse.success: " + DBResponse.success);
+    if (DBResponse.success) {
+      return JSON.stringify({
+        success: true
+      });
+    } else {
+      return JSON.stringify(DBResponse);
+    }
+  } catch (err) {
+    console.error(err);
+    return JSON.stringify({
+      success: false,
+      error: {
+        msg: "some error occured while trying to register the user"
+      }
+    });
+  }
+};
+
 app.post("/", function(req, res) {
-  console.log("Got a Post message");
-  console.log("user: " + req.body.user);
-  console.log("pass: " + req.body.pass);
-  console.log("role: " + req.body.requestedRole);
-  console.log("email: " + req.body.email);
+  // console.log("Got a Post message");
+  // console.log("user: " + req.body.user);
+  // console.log("pass: " + req.body.pass);
+  // console.log("role: " + req.body.requestedRole);
+  // console.log("email: " + req.body.email);
   switch (req.get("Football-Request")) {
     case "login":
       handleLoginRequest(req.body.user, req.body.pass).then(ans =>
@@ -146,7 +169,6 @@ app.post("/", function(req, res) {
       );
       break;
     case "register":
-      console.log("registerrrrrrrr");
       handleRegisterRequest(
         req.body.user,
         req.body.pass,
@@ -155,7 +177,12 @@ app.post("/", function(req, res) {
       ).then(ans => res.send(ans));
       break;
     case "ScorerTable":
-      console.log("scorer Table!!!");
+      console.log("dicTeam1:" + JSON.stringify(req.body.dicTeam1));
+      handleScorerTableRequest(
+        req.body.dicTeam1,
+        req.body.dicTeam2,
+        req.body.requestedRole
+      ).then(ans => res.send(ans));
       break;
     default:
       break;
