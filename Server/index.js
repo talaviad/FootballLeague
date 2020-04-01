@@ -146,6 +146,7 @@ app.post("/", function(req, res) {
       );
       break;
     case "register":
+      console.log("registerrrrrrrr");
       handleRegisterRequest(
         req.body.user,
         req.body.pass,

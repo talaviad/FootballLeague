@@ -180,12 +180,6 @@ export default class GameMode extends React.Component {
     }
   };
 
-  showAlert = () => {
-    this.setState({
-      submitConfirmationAlert: true,
-    });
-  };
-
   cancelAlert = () => {
     this.setState({
       submitConfirmationAlert: false,
@@ -196,11 +190,15 @@ export default class GameMode extends React.Component {
     this.setState({
       submitConfirmationAlert: false,
     });
+    this.sendResultToServer();
+
     //alert(JSON.stringify(this.state.team1ScorrersDic));
   };
 
-  sendResultToServer = () => {
-    this.showAlert();
+  pressSubmitButton = () => {
+    this.setState({
+      submitConfirmationAlert: true,
+    });
   };
 
   async sendResultToServer() {
@@ -363,7 +361,7 @@ export default class GameMode extends React.Component {
               }}>
               <TouchableOpacity
                 style={styles.submitButton}
-                onPress={() => this.sendResultToServer()}>
+                onPress={() => this.pressSubmitButton()}>
                 <Text style={styles.buttonText}>
                   Finish Game And Submit Result
                 </Text>
