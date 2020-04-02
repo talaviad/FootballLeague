@@ -23,7 +23,6 @@ Client/*.pbxuser
 
 # Android
 /Client/android/
-/Client/android.zip/
 # Android/IntelliJ
 #
 /Client/build/

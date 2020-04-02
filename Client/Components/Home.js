@@ -57,6 +57,11 @@ export default class Home extends React.Component {
           case 'GamesWeek1':
             return resJson.tableData;
             break;
+          case 'scorerTable':
+            this.props.navigation.navigate('ScorerTable', {
+              tableData: resJson.tableData,
+            });
+            break;
           case 'register':
             this.props.navigation.navigate('Register');
             break;
@@ -140,7 +145,7 @@ export default class Home extends React.Component {
         <TouchableOpacity
           style={styles.touchAble}
           onPress={() => this.handleSendRequestToServer('leagueTable')}>
-          <Text style={styles.buttonText}>League table</Text>
+          <Text style={styles.buttonText}>League Table</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -148,7 +153,13 @@ export default class Home extends React.Component {
           onPress={() =>
             this.props.navigation.navigate('GamesResults', {IP: IP})
           }>
-          <Text style={styles.buttonText}>Games results</Text>
+          <Text style={styles.buttonText}>Games Results</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.touchAble}
+          onPress={() => this.handleSendRequestToServer('scorerTable')}>
+          <Text style={styles.buttonText}>Scorer Table</Text>
         </TouchableOpacity>
         {this.state.isLoggedIn &&
         (this.state.role === 'referee' || this.state.role === 'manager') ? (

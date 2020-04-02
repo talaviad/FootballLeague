@@ -25,6 +25,11 @@ app.get("/", function(req, res) {
     database.getGameResults(data).then(DBResponse => {
       res.send(DBResponse);
     });
+  } else if (data === "scorerTable") {
+    database.getScorerTable().then(DBResponse => {
+      console.log("results:" + DBResponse);
+      res.send(JSON.stringify(DBResponse));
+    });
   } else if (data === "TeamsNames") {
     database.getTeamsNames().then(DBResponse => {
       res.send(DBResponse);

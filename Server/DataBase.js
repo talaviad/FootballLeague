@@ -85,7 +85,10 @@ module.exports = class DataBase {
       combine_dict.push(dicTeam2[i]);
     }
     for (var i = 0; i < combine_dict.length; i++) {
-      console.log("hey you22: " + combine_dict[i].Name);
+      console.log("hey you111: " + combine_dict[i]);
+      console.log("hey you222: " + JSON.stringify(combine_dict[i]));
+
+      console.log("hey you333: " + combine_dict[i].Name.length);
       let result = await this.client
         .db("FootballLeague")
         .collection("ScorerTable")
@@ -95,22 +98,18 @@ module.exports = class DataBase {
             { Number: combine_dict[i].Number }
           ]
         });
-      //console.log("resBef: " + JSON.stringify(result));
 
       result = await result.toArray();
-      console.log("resSize: " + result.length);
 
       if (result.length === 0) {
-        console.log("resin0: " + JSON.stringify(result));
-
         try {
-          ans = await this.client
+          let ans = await this.client
             .db("FootballLeague")
             .collection("ScorerTable")
             .insertOne({
+              Name: combine_dict[i].Name,
               Team: combine_dict[i].Team,
               Number: combine_dict[i].Number,
-              Name: combine_dict[i].Name,
               Goals: combine_dict[i].Goals
             });
         } catch (err) {
@@ -124,21 +123,24 @@ module.exports = class DataBase {
           return registerError;
         }
       } else {
-        console.log("resin1: " + JSON.stringify(result));
+        console.log("hey you444: " + combine_dict[i].Name.length);
 
         result[0].Goals =
           parseInt(result[0].Goals) + parseInt(combine_dict[i].Goals);
-        if (result[0].Name !== combine_dict[i].Name) {
-          console.log("aaaaaaaaaaaaaaaaaaa");
-          result[0].Name = result[0].Name + ", " + combine_dict[i].Name;
+        for (var j = 0; j < combine_dict[i].Name.length; j++) {
+          if (!result[0].Name.includes(combine_dict[i].Name[j])) {
+            result[0].Name.push(combine_dict[i].Name[j]);
+          }
         }
-        console.log("result[0]: " + result[0]);
         let ans = this.client
           .db("FootballLeague")
           .collection("ScorerTable")
           .replaceOne(
             {
-              $and: [{ Team: dicTeam1[i].Team }, { Number: dicTeam1[i].Number }]
+              $and: [
+                { Team: combine_dict[i].Team },
+                { Number: combine_dict[i].Number }
+              ]
             },
             result[0]
           );
@@ -189,6 +191,37 @@ module.exports = class DataBase {
           team.GA.toString(),
           team.GD.toString(),
           team.Pts.toString()
+        ];
+      });
+      let resultsToTheServer = {
+        success: true,
+        tableData: results
+      };
+      return resultsToTheServer;
+    } catch {
+      console.log("in catch");
+      return {
+        success: false,
+        error: {
+          msg: 'Coudln"t find collection "FootballLeague"'
+        }
+      };
+    }
+  }
+
+  async getScorerTable() {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("ScorerTable")
+        .find();
+      result = await result.toArray();
+      let results = result.map(scorer => {
+        return [
+          scorer.Name,
+          scorer.Team.toString(),
+          scorer.Number.toString(),
+          scorer.Goals.toString()
         ];
       });
       let resultsToTheServer = {

@@ -70,22 +70,22 @@ export default class GameMode extends React.Component {
   }
 
   start = () => {
-    // if (!this.state.teamSelected) {
-    //   alert('First Select The Teams');
-    // } else if (this.state.team1 === this.state.team2) {
-    //   alert('Please Select Two Different Teams');
-    // } else {
-    const now = new Date().getTime();
-    this.setState({
-      start: now,
-      now,
-      laps: [0],
-      firstStart: false,
-    });
-    this.timer = setInterval(() => {
-      this.setState({now: new Date().getTime()});
-    }, 100);
-    // }
+    if (!this.state.teamSelected) {
+      alert('First Select The Teams');
+    } else if (this.state.team1 === this.state.team2) {
+      alert('Please Select Two Different Teams');
+    } else {
+      const now = new Date().getTime();
+      this.setState({
+        start: now,
+        now,
+        laps: [0],
+        firstStart: false,
+      });
+      this.timer = setInterval(() => {
+        this.setState({now: new Date().getTime()});
+      }, 100);
+    }
   };
 
   stop = () => {
@@ -169,15 +169,18 @@ export default class GameMode extends React.Component {
         if (this.state.team1ScorrersDic[i].Number === num) {
           this.state.team1ScorrersDic[i].Goals =
             this.state.team1ScorrersDic[i].Goals + 1;
+          if (!this.state.team1ScorrersDic[i].Name.includes(name)) {
+            this.state.team1ScorrersDic[i].Name.push(name);
+          }
           scorerExit = true;
           break;
         }
       }
       if (!scorerExit) {
         this.state.team1ScorrersDic.push({
+          Name: [name],
           Team: this.state.team1,
           Number: num,
-          Name: name,
           Goals: 1,
         });
       }
@@ -188,15 +191,18 @@ export default class GameMode extends React.Component {
         if (this.state.team2ScorrersDic[i].Number === num) {
           this.state.team2ScorrersDic[i].Goals =
             this.state.team2ScorrersDic[i].Goals + 1;
+          if (!this.state.team2ScorrersDic[i].Name.incldes(name)) {
+            this.state.team2ScorrersDic[i].Name.push(name);
+          }
           scorerExit = true;
           break;
         }
       }
       if (!scorerExit) {
         this.state.team2ScorrersDic.push({
+          Name: [name],
           Team: this.state.team2,
           Number: num,
-          Name: name,
           Goals: 1,
         });
       }
@@ -242,8 +248,7 @@ export default class GameMode extends React.Component {
       .then(response => response.json())
       .then(async resJson => {
         if (resJson.success) {
-          console.log('you registered successfully');
-          alert('you registered successfully');
+          alert('You submitted successfully');
           this.props.navigation.navigate('Home');
         } else {
           alert(resJson.error.msg);

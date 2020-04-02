@@ -6,6 +6,7 @@ var possibleRequests = [
   "login",
   "leagueTable",
   "gameResults",
+  "scorerTable",
   "insertGameResult",
   "TeamsNames",
   "NumberOfWeeks",
