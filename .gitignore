@@ -62,3 +62,7 @@ buck-out/
 
 # CocoaPods
 /Client//ios/Pods/
+
+#
+!/Client/node_modules/react-native-counters
+!/Client/node_modules/react-native-select-two
