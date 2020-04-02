@@ -77,54 +77,75 @@ module.exports = class DataBase {
   }
 
   async addToScorerTable(dicTeam1, dicTeam2) {
-    console.log("hey you");
-
-    console.log("hey you1: " + dicTeam1.Team);
-    console.log("hey you22: " + dicTeam1[0].Team);
-    for (scorer in dicTeam1) {
+    var combine_dict = [];
+    for (var i = 0; i < dicTeam1.length; i++) {
+      combine_dict.push(dicTeam1[i]);
+    }
+    for (var i = 0; i < dicTeam2.length; i++) {
+      combine_dict.push(dicTeam2[i]);
+    }
+    for (var i = 0; i < combine_dict.length; i++) {
+      console.log("hey you22: " + combine_dict[i].Name);
       let result = await this.client
         .db("FootballLeague")
         .collection("ScorerTable")
         .find({
-          $or: [{ Team: scorer.Team }, { Number: scorer.Number }]
+          $and: [
+            { Team: combine_dict[i].Team },
+            { Number: combine_dict[i].Number }
+          ]
         });
+      //console.log("resBef: " + JSON.stringify(result));
+
       result = await result.toArray();
-      console.log("res: " + JSON.stringify(result));
+      console.log("resSize: " + result.length);
 
-      if (result.length !== 0) {
-        let registerError = {
-          success: false,
-          error: {
-            msg: "username or email is already in used"
-          }
-        };
-        return registerError;
-      }
+      if (result.length === 0) {
+        console.log("resin0: " + JSON.stringify(result));
 
-      try {
-        result = await this.client
+        try {
+          ans = await this.client
+            .db("FootballLeague")
+            .collection("ScorerTable")
+            .insertOne({
+              Team: combine_dict[i].Team,
+              Number: combine_dict[i].Number,
+              Name: combine_dict[i].Name,
+              Goals: combine_dict[i].Goals
+            });
+        } catch (err) {
+          console.error(err);
+          let registerError = {
+            success: false,
+            error: {
+              msg: err
+            }
+          };
+          return registerError;
+        }
+      } else {
+        console.log("resin1: " + JSON.stringify(result));
+
+        result[0].Goals =
+          parseInt(result[0].Goals) + parseInt(combine_dict[i].Goals);
+        if (result[0].Name !== combine_dict[i].Name) {
+          console.log("aaaaaaaaaaaaaaaaaaa");
+          result[0].Name = result[0].Name + ", " + combine_dict[i].Name;
+        }
+        console.log("result[0]: " + result[0]);
+        let ans = this.client
           .db("FootballLeague")
           .collection("ScorerTable")
-          .insertOne({
-            Team: user,
-            password: pass,
-            email: email,
-            role: requestedRole
-          });
-      } catch (err) {
-        console.error(err);
-        let registerError = {
-          success: false,
-          error: {
-            msg: err
-          }
-        };
-        return registerError;
+          .replaceOne(
+            {
+              $and: [{ Team: dicTeam1[i].Team }, { Number: dicTeam1[i].Number }]
+            },
+            result[0]
+          );
       }
     }
     return { success: true };
   }
-
   async getUser(user) {
     let result = await this.client
       .db("FootballLeague")

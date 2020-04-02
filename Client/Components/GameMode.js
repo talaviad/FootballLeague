@@ -165,18 +165,15 @@ export default class GameMode extends React.Component {
 
     if (isTeam1) {
       var scorerExit = false;
-
-      for (var scorer in this.state.team1ScorrersDic) {
-        if (scorer[Number] === num) {
-          alert('exist');
-          scorer[Goals] = scorer[Goals] + 1;
+      for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
+        if (this.state.team1ScorrersDic[i].Number === num) {
+          this.state.team1ScorrersDic[i].Goals =
+            this.state.team1ScorrersDic[i].Goals + 1;
           scorerExit = true;
           break;
         }
       }
       if (!scorerExit) {
-        alert('NOT exist');
-
         this.state.team1ScorrersDic.push({
           Team: this.state.team1,
           Number: num,
@@ -186,11 +183,23 @@ export default class GameMode extends React.Component {
       }
       this.setState({isDialogVisible1: false});
     } else {
-      this.state.team2ScorrersDic.push({
-        Team: this.state.team2,
-        Number: num,
-        Name: name,
-      });
+      var scorerExit = false;
+      for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
+        if (this.state.team2ScorrersDic[i].Number === num) {
+          this.state.team2ScorrersDic[i].Goals =
+            this.state.team2ScorrersDic[i].Goals + 1;
+          scorerExit = true;
+          break;
+        }
+      }
+      if (!scorerExit) {
+        this.state.team2ScorrersDic.push({
+          Team: this.state.team2,
+          Number: num,
+          Name: name,
+          Goals: 1,
+        });
+      }
       this.setState({isDialogVisible2: false});
     }
   };
