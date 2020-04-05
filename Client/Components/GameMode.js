@@ -160,12 +160,8 @@ export default class GameMode extends React.Component {
       while (name[0] === ' ') {
         name = name.substring(1);
       }
+      //Change the first letter in firstName and first letter in Last name to upper case
       name = name.replace(/\b\w/g, (l) => l.toUpperCase());
-      // name = name.charAt(0).toUpperCase() + name.slice(1);
-      // if(name.includes(' ')){
-      //   index = name.indexOf(' ')
-      //   name =
-      // }
     } catch {
       num, (name = '');
     }
@@ -350,6 +346,7 @@ export default class GameMode extends React.Component {
                 onPress={this.resume}
               />
             </ButtonsRow>
+
             <View
               style={{
                 flexDirection: 'row',
@@ -371,20 +368,21 @@ export default class GameMode extends React.Component {
                 />
               </View>
             </View>
-            <View
+            {/* <View
               style={{
                 flexDirection: 'row',
+                justifyContent: 'flex-end',
                 marginTop: 110,
                 marginRight: 15,
-              }}>
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={() => this.pressSubmitButton()}>
-                <Text style={styles.buttonText}>
-                  Finish Game And Submit Result
-                </Text>
-              </TouchableOpacity>
-            </View>
+              }}> */}
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={() => this.pressSubmitButton()}>
+              <Text style={styles.buttonText}>
+                Finish Game And Submit Result
+              </Text>
+            </TouchableOpacity>
+            {/* </View> */}
           </View>
         )}
         <View style={styles.dialogBox}>
@@ -465,8 +463,10 @@ const styles = StyleSheet.create({
   submitButton: {
     // width: '70%',
     // height: '20%',
+    marginTop: 10,
     backgroundColor: '#2C3E50',
     borderRadius: 20,
+    justifyContent: 'flex-end',
 
     // //marginHorizontal: '10%',
     paddingVertical: 10,
