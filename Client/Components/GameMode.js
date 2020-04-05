@@ -15,7 +15,7 @@ import DialogInput from 'react-native-dialog-input';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 function Timer({interval, style}) {
-  const pad = n => (n < 10 ? '0' + n : n);
+  const pad = (n) => (n < 10 ? '0' + n : n);
   const duration = moment.duration(interval);
   const centiseconds = Math.floor(duration.milliseconds() / 10);
   return (
@@ -126,13 +126,13 @@ export default class GameMode extends React.Component {
     }, 100);
   };
 
-  handleSelectTeam1 = team1 => {
+  handleSelectTeam1 = (team1) => {
     this.state.team1 = team1;
     if (this.state.team1 !== null && this.state.team2 !== null) {
       this.state.teamSelected = true;
     }
   };
-  handleSelectTeam2 = team2 => {
+  handleSelectTeam2 = (team2) => {
     this.state.team2 = team2;
     if (this.state.team1 !== null && this.state.team2 !== null) {
       this.state.teamSelected = true;
@@ -156,9 +156,16 @@ export default class GameMode extends React.Component {
       num = textInput.match(/\d/g);
       num = num.join('');
       name = textInput.replace(/[^a-zA-Z' ']+/g, '');
-      if (name[0] === ' ') {
+      name = name.toLowerCase();
+      while (name[0] === ' ') {
         name = name.substring(1);
       }
+      name = name.replace(/\b\w/g, (l) => l.toUpperCase());
+      // name = name.charAt(0).toUpperCase() + name.slice(1);
+      // if(name.includes(' ')){
+      //   index = name.indexOf(' ')
+      //   name =
+      // }
     } catch {
       num, (name = '');
     }
@@ -245,8 +252,8 @@ export default class GameMode extends React.Component {
         }),
       },
     )
-      .then(response => response.json())
-      .then(async resJson => {
+      .then((response) => response.json())
+      .then(async (resJson) => {
         if (resJson.success) {
           alert('You submitted successfully');
           this.props.navigation.navigate('Home');
@@ -254,7 +261,7 @@ export default class GameMode extends React.Component {
           alert(resJson.error.msg);
         }
       })
-      .catch(err => alert(err));
+      .catch((err) => alert(err));
   }
 
   render() {
@@ -388,7 +395,7 @@ export default class GameMode extends React.Component {
             title={'Scorrer Details'}
             message={"Enter the shirt's number and the scorrer name"}
             hintInput={'10 Alon'}
-            submitInput={inputText => {
+            submitInput={(inputText) => {
               this.sendDialogInput(inputText, this.state.isDialogVisible1);
             }}
             closeDialog={() => {

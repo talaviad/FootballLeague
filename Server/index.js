@@ -12,35 +12,35 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use("/", require("./Middlewares/auth.js"));
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   console.log("Got a GET request for the homepage");
   let results = [];
   let data = req.query.data;
   if (data === "leagueTable") {
-    database.getLeagueTable().then(DBResponse => {
+    database.getLeagueTable().then((DBResponse) => {
       console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
   } else if (data.substring(0, 9) === "GamesWeek") {
-    database.getGameResults(data).then(DBResponse => {
+    database.getGameResults(data).then((DBResponse) => {
       res.send(DBResponse);
     });
   } else if (data === "scorerTable") {
-    database.getScorerTable().then(DBResponse => {
+    database.getScorerTable().then((DBResponse) => {
       console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
   } else if (data === "TeamsNames") {
-    database.getTeamsNames().then(DBResponse => {
+    database.getTeamsNames().then((DBResponse) => {
       res.send(DBResponse);
     });
   } else if (data === "NumberOfWeeks") {
-    database.getNumberOfWeeks().then(DBResponse => {
+    database.getNumberOfWeeks().then((DBResponse) => {
       res.send(DBResponse);
     });
   } else if (data.substring(0, 6) === "Result") {
     console.log("indexJS: " + data);
-    database.insertResult(data).then(DBResponse => {
+    database.insertResult(data).then((DBResponse) => {
       res.send(DBResponse);
     });
   } else {
@@ -66,18 +66,18 @@ handleLoginRequest = async (user, pass) => {
             {
               id: randNumForSignature,
               role: DBresponse.role,
-              username: user
+              username: user,
             },
             config.JWT_SECRET
-          )
+          ),
         };
         return JSON.stringify(resultsToTheServer);
       } else {
         let resultsToTheServer = {
           success: false,
           error: {
-            msg: "username or password are incorrect"
-          }
+            msg: "username or password are incorrect",
+          },
         };
         return JSON.stringify(resultsToTheServer);
       }
@@ -86,8 +86,8 @@ handleLoginRequest = async (user, pass) => {
       let resultsToTheServer = {
         success: false,
         error: {
-          msg: "some error occured with the hashing"
-        }
+          msg: "some error occured with the hashing",
+        },
       };
       return JSON.stringify(resultsToTheServer);
     }
@@ -105,8 +105,8 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
     let registerError = {
       success: false,
       error: {
-        msg: "the role you asked does not exists"
-      }
+        msg: "the role you asked does not exists",
+      },
     };
     return JSON.stringify(registerError);
   }
@@ -122,7 +122,7 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
     console.log("DBResponse.success: " + DBResponse.success);
     if (DBResponse.success) {
       return JSON.stringify({
-        success: true
+        success: true,
       });
     } else {
       return JSON.stringify(DBResponse);
@@ -132,8 +132,8 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
     return JSON.stringify({
       success: false,
       error: {
-        msg: "some error occured while trying to register the user"
-      }
+        msg: "some error occured while trying to register the user",
+      },
     });
   }
 };
@@ -145,7 +145,7 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
     console.log("DBResponse.success: " + DBResponse.success);
     if (DBResponse.success) {
       return JSON.stringify({
-        success: true
+        success: true,
       });
     } else {
       return JSON.stringify(DBResponse);
@@ -155,13 +155,13 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
     return JSON.stringify({
       success: false,
       error: {
-        msg: "some error occured while trying to register the user"
-      }
+        msg: "some error occured while trying to register the user",
+      },
     });
   }
 };
 
-app.post("/", function(req, res) {
+app.post("/", function (req, res) {
   // console.log("Got a Post message");
   // console.log("user: " + req.body.user);
   // console.log("pass: " + req.body.pass);
@@ -169,7 +169,7 @@ app.post("/", function(req, res) {
   // console.log("email: " + req.body.email);
   switch (req.get("Football-Request")) {
     case "login":
-      handleLoginRequest(req.body.user, req.body.pass).then(ans =>
+      handleLoginRequest(req.body.user, req.body.pass).then((ans) =>
         res.send(ans)
       );
       break;
@@ -179,7 +179,7 @@ app.post("/", function(req, res) {
         req.body.pass,
         req.body.requestedRole,
         req.body.email
-      ).then(ans => res.send(ans));
+      ).then((ans) => res.send(ans));
       break;
     case "ScorerTable":
       console.log("dicTeam1:" + JSON.stringify(req.body.dicTeam1));
@@ -187,14 +187,14 @@ app.post("/", function(req, res) {
         req.body.dicTeam1,
         req.body.dicTeam2,
         req.body.requestedRole
-      ).then(ans => res.send(ans));
+      ).then((ans) => res.send(ans));
       break;
     default:
       break;
   }
 });
 
-var server = app.listen(port, function() {
+var server = app.listen(port, function () {
   var host = server.address().address;
   var port = server.address().port;
   console.log("Example app listening at http://%s:%s", host, port);

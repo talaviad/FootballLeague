@@ -34,7 +34,7 @@ module.exports = class DataBase {
       .db("FootballLeague")
       .collection("Users")
       .find({
-        $or: [{ username: user }, { email: email }]
+        $or: [{ username: user }, { email: email }],
       });
     console.log("res: " + result);
     result = await result.toArray();
@@ -42,8 +42,8 @@ module.exports = class DataBase {
       let registerError = {
         success: false,
         error: {
-          msg: "username or email is already in used"
-        }
+          msg: "username or email is already in used",
+        },
       };
       return registerError;
     }
@@ -56,15 +56,15 @@ module.exports = class DataBase {
           username: user,
           password: pass,
           email: email,
-          role: requestedRole
+          role: requestedRole,
         });
     } catch (err) {
       console.error(err);
       let registerError = {
         success: false,
         error: {
-          msg: err
-        }
+          msg: err,
+        },
       };
       return registerError;
     }
@@ -95,8 +95,8 @@ module.exports = class DataBase {
         .find({
           $and: [
             { Team: combine_dict[i].Team },
-            { Number: combine_dict[i].Number }
-          ]
+            { Number: combine_dict[i].Number },
+          ],
         });
 
       result = await result.toArray();
@@ -110,15 +110,15 @@ module.exports = class DataBase {
               Name: combine_dict[i].Name,
               Team: combine_dict[i].Team,
               Number: combine_dict[i].Number,
-              Goals: combine_dict[i].Goals
+              Goals: combine_dict[i].Goals,
             });
         } catch (err) {
           console.error(err);
           let registerError = {
             success: false,
             error: {
-              msg: err
-            }
+              msg: err,
+            },
           };
           return registerError;
         }
@@ -139,8 +139,8 @@ module.exports = class DataBase {
             {
               $and: [
                 { Team: combine_dict[i].Team },
-                { Number: combine_dict[i].Number }
-              ]
+                { Number: combine_dict[i].Number },
+              ],
             },
             result[0]
           );
@@ -159,15 +159,15 @@ module.exports = class DataBase {
       let registerError = {
         success: false,
         error: {
-          msg: "username or password are incorrect"
-        }
+          msg: "username or password are incorrect",
+        },
       };
       return registerError;
     } else {
       let resultToServer = {
         success: true,
         password: result[0].password,
-        role: result[0].role
+        role: result[0].role,
       };
       return resultToServer;
     }
@@ -180,7 +180,7 @@ module.exports = class DataBase {
         .collection("LeagueTable")
         .find();
       result = await result.toArray();
-      let results = result.map(team => {
+      let results = result.map((team) => {
         return [
           team.Club.toString(),
           team.MP.toString(),
@@ -190,12 +190,12 @@ module.exports = class DataBase {
           team.GF.toString(),
           team.GA.toString(),
           team.GD.toString(),
-          team.Pts.toString()
+          team.Pts.toString(),
         ];
       });
       let resultsToTheServer = {
         success: true,
-        tableData: results
+        tableData: results,
       };
       return resultsToTheServer;
     } catch {
@@ -203,8 +203,8 @@ module.exports = class DataBase {
       return {
         success: false,
         error: {
-          msg: 'Coudln"t find collection "FootballLeague"'
-        }
+          msg: 'Coudln"t find collection "FootballLeague"',
+        },
       };
     }
   }
@@ -216,17 +216,18 @@ module.exports = class DataBase {
         .collection("ScorerTable")
         .find();
       result = await result.toArray();
-      let results = result.map(scorer => {
+      console.log("for alon: " + result[0].Name);
+      let results = result.map((scorer) => {
         return [
           scorer.Name,
           scorer.Team.toString(),
           scorer.Number.toString(),
-          scorer.Goals.toString()
+          scorer.Goals.toString(),
         ];
       });
       let resultsToTheServer = {
         success: true,
-        tableData: results
+        tableData: results,
       };
       return resultsToTheServer;
     } catch {
@@ -234,8 +235,8 @@ module.exports = class DataBase {
       return {
         success: false,
         error: {
-          msg: 'Coudln"t find collection "FootballLeague"'
-        }
+          msg: 'Coudln"t find collection "ScorerTable"',
+        },
       };
     }
   }
@@ -247,16 +248,16 @@ module.exports = class DataBase {
         .collection(collection_name)
         .find();
       result = await result.toArray();
-      let results = result.map(game => {
+      let results = result.map((game) => {
         return [
           game.team1.toString(),
           game.result.toString(),
-          game.team2.toString()
+          game.team2.toString(),
         ];
       });
       let resultsToTheServer = {
         success: true,
-        tableData: results
+        tableData: results,
       };
       return JSON.stringify(resultsToTheServer);
     } catch {
@@ -272,12 +273,12 @@ module.exports = class DataBase {
         .collection("LeagueTable")
         .find();
       result = await result.toArray();
-      let results = result.map(team => {
+      let results = result.map((team) => {
         return team.Club.toString();
       });
       let resultsToTheServer = {
         success: true,
-        teamsNames: results
+        teamsNames: results,
       };
       return JSON.stringify(resultsToTheServer);
     } catch {
@@ -290,7 +291,7 @@ module.exports = class DataBase {
       let allCollections = [];
       let result = await this.client.db("FootballLeague").listCollections();
       result = await result.toArray();
-      result.forEach(eachCollectionDetails => {
+      result.forEach((eachCollectionDetails) => {
         if (eachCollectionDetails.name.substring(0, 9) === "GamesWeek") {
           allCollections.push(
             parseInt(eachCollectionDetails.name.substring(9))
@@ -301,7 +302,7 @@ module.exports = class DataBase {
 
       let resultsToTheServer = {
         success: true,
-        numberOfWeeks: allCollections
+        numberOfWeeks: allCollections,
       };
       return JSON.stringify(resultsToTheServer);
     } catch {
@@ -364,11 +365,11 @@ module.exports = class DataBase {
         .insert({
           team1: arr_data[1],
           result: arr_data[3] + " - " + arr_data[4],
-          team2: arr_data[2]
+          team2: arr_data[2],
         });
 
       let resultsToTheServer = {
-        success: true
+        success: true,
       };
 
       return JSON.stringify(resultsToTheServer);
