@@ -67,7 +67,7 @@ export default class GamesResults extends React.Component {
   render() {
     const state = this.state;
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <View
           style={{
             borderColor: 'black',
@@ -88,127 +88,129 @@ export default class GamesResults extends React.Component {
             {this.getMonthListInItems()}
           </Picker>
         </View>
-        <View style={{paddingTop: 20}}>
-          <Table borderStyle={{borderWidth: 1}}>
-            <Row
-              data={[['1-7 In ' + this.state.selectedMonth]]}
-              style={styles.headDate}
-              textStyle={styles.textHeadDate}
-            />
+        <ScrollView>
+          <View style={{paddingTop: 20}}>
+            <Table borderStyle={{borderWidth: 1}}>
+              <Row
+                data={[['1-7 In ' + this.state.selectedMonth]]}
+                style={styles.headDate}
+                textStyle={styles.textHeadDate}
+              />
 
-            <Row
-              data={state.tableHead}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
-            <TableWrapper style={styles.wrapper}>
-              <Rows
-                data={
-                  this.state.isLoading
-                    ? null
-                    : this.state.firstTableData.length === 0
-                    ? [['No Games']]
-                    : this.state.firstTableData
-                }
+              <Row
+                data={state.tableHead}
                 flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                style={styles.row}
-                textStyle={styles.textLines}
+                style={styles.head}
+                textStyle={styles.textHead}
               />
-            </TableWrapper>
-          </Table>
-        </View>
-        <View style={{paddingTop: 20}}>
-          <Table borderStyle={{borderWidth: 1}}>
-            <Row
-              data={[['8-14 In ' + this.state.selectedMonth]]}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.headDate}
-              textStyle={styles.textHeadDate}
-            />
-            <Row
-              data={state.tableHead}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
-            <TableWrapper style={styles.wrapper}>
-              <Rows
-                data={
-                  this.state.isLoading
-                    ? null
-                    : this.state.secondTableData.length === 0
-                    ? [['No Games']]
-                    : this.state.secondTableData
-                }
+              <TableWrapper style={styles.wrapper}>
+                <Rows
+                  data={
+                    this.state.isLoading
+                      ? null
+                      : this.state.firstTableData.length === 0
+                      ? [['No Games']]
+                      : this.state.firstTableData
+                  }
+                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                  style={styles.row}
+                  textStyle={styles.textLines}
+                />
+              </TableWrapper>
+            </Table>
+          </View>
+          <View style={{paddingTop: 20}}>
+            <Table borderStyle={{borderWidth: 1}}>
+              <Row
+                data={[['8-14 In ' + this.state.selectedMonth]]}
                 flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                style={styles.row}
-                textStyle={styles.textLines}
+                style={styles.headDate}
+                textStyle={styles.textHeadDate}
               />
-            </TableWrapper>
-          </Table>
-        </View>
-        <View style={{paddingTop: 20}}>
-          <Table borderStyle={{borderWidth: 1}}>
-            <Row
-              data={[['15-21 In ' + this.state.selectedMonth]]}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.headDate}
-              textStyle={styles.textHeadDate}
-            />
-            <Row
-              data={state.tableHead}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
-            <TableWrapper style={styles.wrapper}>
-              <Rows
-                data={
-                  this.state.isLoading
-                    ? null
-                    : this.state.thirdTableData.length === 0
-                    ? [['No Games']]
-                    : this.state.thirdTableData
-                }
+              <Row
+                data={state.tableHead}
                 flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                style={styles.row}
-                textStyle={styles.textLines}
+                style={styles.head}
+                textStyle={styles.textHead}
               />
-            </TableWrapper>
-          </Table>
-        </View>
-        <View style={{paddingTop: 20}}>
-          <Table borderStyle={{borderWidth: 1}}>
-            <Row
-              data={[['22-31 In ' + this.state.selectedMonth]]}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.headDate}
-              textStyle={styles.textHeadDate}
-            />
-            <Row
-              data={state.tableHead}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
-            <TableWrapper style={styles.wrapper}>
-              <Rows
-                data={
-                  this.state.isLoading
-                    ? null
-                    : this.state.fourthTableData.length === 0
-                    ? [['No Games']]
-                    : this.state.fourthTableData
-                }
+              <TableWrapper style={styles.wrapper}>
+                <Rows
+                  data={
+                    this.state.isLoading
+                      ? null
+                      : this.state.secondTableData.length === 0
+                      ? [['No Games']]
+                      : this.state.secondTableData
+                  }
+                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                  style={styles.row}
+                  textStyle={styles.textLines}
+                />
+              </TableWrapper>
+            </Table>
+          </View>
+          <View style={{paddingTop: 20}}>
+            <Table borderStyle={{borderWidth: 1}}>
+              <Row
+                data={[['15-21 In ' + this.state.selectedMonth]]}
                 flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                style={styles.row}
-                textStyle={styles.textLines}
+                style={styles.headDate}
+                textStyle={styles.textHeadDate}
               />
-            </TableWrapper>
-          </Table>
-        </View>
-      </ScrollView>
+              <Row
+                data={state.tableHead}
+                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                style={styles.head}
+                textStyle={styles.textHead}
+              />
+              <TableWrapper style={styles.wrapper}>
+                <Rows
+                  data={
+                    this.state.isLoading
+                      ? null
+                      : this.state.thirdTableData.length === 0
+                      ? [['No Games']]
+                      : this.state.thirdTableData
+                  }
+                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                  style={styles.row}
+                  textStyle={styles.textLines}
+                />
+              </TableWrapper>
+            </Table>
+          </View>
+          <View style={{paddingTop: 20}}>
+            <Table borderStyle={{borderWidth: 1}}>
+              <Row
+                data={[['22-31 In ' + this.state.selectedMonth]]}
+                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                style={styles.headDate}
+                textStyle={styles.textHeadDate}
+              />
+              <Row
+                data={state.tableHead}
+                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                style={styles.head}
+                textStyle={styles.textHead}
+              />
+              <TableWrapper style={styles.wrapper}>
+                <Rows
+                  data={
+                    this.state.isLoading
+                      ? null
+                      : this.state.fourthTableData.length === 0
+                      ? [['No Games']]
+                      : this.state.fourthTableData
+                  }
+                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                  style={styles.row}
+                  textStyle={styles.textLines}
+                />
+              </TableWrapper>
+            </Table>
+          </View>
+        </ScrollView>
+      </View>
     );
   }
 

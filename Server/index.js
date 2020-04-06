@@ -184,7 +184,6 @@ app.post("/", function (req, res) {
       ).then((ans) => res.send(ans));
       break;
     case "ScorerTable":
-      console.log("dicTeam1:" + JSON.stringify(req.body.dicTeam1));
       handleScorerTableRequest(
         req.body.dicTeam1,
         req.body.dicTeam2,
@@ -192,7 +191,6 @@ app.post("/", function (req, res) {
       ).then((ans) => res.send(ans));
       break;
     case "Result":
-      console.log("alonnnnnn");
       database
         .insertResult(
           req.body.selectedTeam1,
