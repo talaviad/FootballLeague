@@ -241,11 +241,11 @@ module.exports = class DataBase {
     }
   }
 
-  async getGameResults(collection_name) {
+  async getGameResults(monthName) {
     try {
       let result = await this.client
         .db("FootballLeague")
-        .collection(collection_name)
+        .collection(monthName)
         .find();
       result = await result.toArray();
       let results = result.map((game) => {
@@ -253,6 +253,7 @@ module.exports = class DataBase {
           game.team1.toString(),
           game.result.toString(),
           game.team2.toString(),
+          game.date.toString(),
         ];
       });
       let resultsToTheServer = {
@@ -311,61 +312,70 @@ module.exports = class DataBase {
     }
   }
 
-  async insertResult(data) {
+  async insertResult(
+    selectedTeam1,
+    selectedTeam2,
+    scoreTeam1,
+    scoreTeam2,
+    date
+  ) {
     let winner = 0;
     try {
-      let arr_data = data.split(",");
-      console.log(arr_data);
-      if (parseInt(arr_data[3]) > parseInt(arr_data[4])) {
+      //let arr_data = data.split(",");
+      //console.log(arr_data);
+      if (parseInt(scoreTeam1) > parseInt(scoreTeam2)) {
         winner = 1;
-      } else if (parseInt(arr_data[4]) > parseInt(arr_data[3])) {
+      } else if (parseInt(scoreTeam2) > parseInt(scoreTeam1)) {
         winner = 2;
       }
+
       let result = await this.client
         .db("FootballLeague")
         .collection("LeagueTable")
-        .find({ $or: [{ Club: arr_data[1] }, { Club: arr_data[2] }] });
+        .find({ $or: [{ Club: selectedTeam1 }, { Club: selectedTeam2 }] });
       result = await result.toArray();
       //We dont know the order the db return the 2 rows so we need this condition
-      if (result[0].Club === arr_data[0]) {
+      if (result[0].Club === selectedTeam1) {
         this.updateTeamInTable(
           result[0],
           1,
           winner,
-          parseInt(arr_data[3]),
-          parseInt(arr_data[4])
+          parseInt(scoreTeam1),
+          parseInt(scoreTeam2)
         );
         this.updateTeamInTable(
           result[1],
           2,
           winner,
-          parseInt(arr_data[3]),
-          parseInt(arr_data[4])
+          parseInt(scoreTeam1),
+          parseInt(scoreTeam2)
         );
       } else {
         this.updateTeamInTable(
           result[1],
           1,
           winner,
-          parseInt(arr_data[3]),
-          parseInt(arr_data[4])
+          parseInt(scoreTeam1),
+          parseInt(scoreTeam2)
         );
         this.updateTeamInTable(
           result[0],
           2,
           winner,
-          parseInt(arr_data[3]),
-          parseInt(arr_data[4])
+          parseInt(scoreTeam1),
+          parseInt(scoreTeam2)
         );
       }
 
+      var monthName = this.getMonthNameFromDate(date);
       await this.client
         .db("FootballLeague")
-        .collection("GamesWeek" + arr_data[5])
+        .collection(monthName)
         .insert({
-          team1: arr_data[1],
-          result: arr_data[3] + " - " + arr_data[4],
-          team2: arr_data[2],
+          team1: selectedTeam1,
+          result: scoreTeam1 + " - " + scoreTeam2,
+          team2: selectedTeam2,
+          date: date,
         });
 
       let resultsToTheServer = {
@@ -422,5 +432,35 @@ module.exports = class DataBase {
 
   sortNumber(a, b) {
     return a - b;
+  }
+
+  getMonthNameFromDate(date) {
+    var dateString = date.substring(3, 5);
+    console.log(dateString);
+    if (dateString === "01") {
+      return "January";
+    } else if (dateString === "02") {
+      return "February";
+    } else if (dateString === "03") {
+      return "March";
+    } else if (dateString === "04") {
+      return "April";
+    } else if (dateString === "05") {
+      return "May";
+    } else if (dateString === "06") {
+      return "June";
+    } else if (dateString === "07") {
+      return "July";
+    } else if (dateString === "08") {
+      return "August";
+    } else if (dateString === "09") {
+      return "September";
+    } else if (dateString === "10") {
+      return "October";
+    } else if (dateString === "11") {
+      return "November";
+    } else if (dateString === "12") {
+      return "December";
+    }
   }
 };

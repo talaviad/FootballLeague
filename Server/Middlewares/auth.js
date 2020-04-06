@@ -11,10 +11,10 @@ var possibleRequests = [
   "TeamsNames",
   "NumberOfWeeks",
   "Result",
-  "GamesWeek",
-  "ScorerTable"
+  "MonthlyGames",
+  "ScorerTable",
 ];
-module.exports = function(req, res, next) {
+module.exports = function (req, res, next) {
   //let data = req.query.data;
   let footballRequest = req.get("Football-Request");
   // check if there is such request
@@ -26,8 +26,8 @@ module.exports = function(req, res, next) {
       JSON.stringify({
         success: false,
         error: {
-          msg: "there is no such request"
-        }
+          msg: "there is no such request",
+        },
       })
     );
     return;
@@ -58,7 +58,7 @@ module.exports = function(req, res, next) {
       if (role === "referee" || role === "manager") {
         res.send(
           JSON.stringify({
-            success: true
+            success: true,
           })
         );
       } else {
@@ -66,8 +66,8 @@ module.exports = function(req, res, next) {
           JSON.stringify({
             success: false,
             error: {
-              msg: "you are not autorized to insert game results"
-            }
+              msg: "you are not autorized to insert game results",
+            },
           })
         );
       }
@@ -77,16 +77,16 @@ module.exports = function(req, res, next) {
       return res.status(401).json({
         success: false,
         error: {
-          msg: "Failed to authenticate token!"
-        }
+          msg: "Failed to authenticate token!",
+        },
       });
     }
   } else {
     return res.status(401).json({
       success: false,
       error: {
-        msg: "No token!"
-      }
+        msg: "No token!",
+      },
     });
   }
   return next();

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import 'isomorphic-fetch';
+import DatePicker from 'react-native-datepicker';
 
 export default class InsertGame extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ export default class InsertGame extends React.Component {
       scoreTeam1: '',
       scoreTeam2: '',
       week: '',
+      date: '',
       selectedTeam1: null,
       selectedTeam2: null,
       isLoading: true,
@@ -63,52 +65,55 @@ export default class InsertGame extends React.Component {
         (parseInt(this.state.scoreTeam1) > 30) ||
       parseInt(this.state.scoreTeam2) < 0 ||
       parseInt(this.state.scoreTeam2) > 30 ||
-      isNaN(parseInt(this.state.week)) ||
-      parseInt(this.state.week) < 0 ||
-      parseInt(this.state.week) > 30
+      isNaN(parseInt(this.state.date))
     ) {
       alert('Invalid Input');
       return;
     }
     try {
-      alert('scoreTeam1: ' + this.state.selectedTeam1);
-
-      alert('scoreTeam2: ' + this.state.selectedTeam2);
-      const response = await fetch(
-        'http://' +
-          this.props.navigation.getParam('IP') +
-          ':3000/?data=' +
-          'Result,' +
-          this.state.selectedTeam1 +
-          ',' +
-          this.state.selectedTeam2 +
-          ',' +
-          this.state.scoreTeam1 +
-          ',' +
-          this.state.scoreTeam2 +
-          ',' +
-          this.state.week,
+      let response = fetch(
+        'http://' + this.props.navigation.getParam('IP') + ':3000/',
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Football-Request': 'Result',
           },
+          body: JSON.stringify({
+            selectedTeam1: this.state.selectedTeam1,
+            selectedTeam2: this.state.selectedTeam2,
+            scoreTeam1: this.state.scoreTeam1,
+            scoreTeam2: this.state.scoreTeam2,
+            date: this.state.date,
+          }),
         },
-      );
-      const resJson = await response.json();
-      if (!resJson.success) {
-        alert('error: ' + resJson.error.msg);
-        return;
-      } else {
-        alert('The game updated successfully');
-        return;
-      }
+      )
+        .then((response) => response.json())
+        .then(async (resJson) => {
+          if (resJson.success) {
+            alert('The game updated successfully');
+            this.props.navigation.navigate('Home');
+          } else {
+            alert('error: ' + resJson.error.msg);
+            return;
+          }
+        })
+        .catch((err) => alert(err));
+      //   .then((response) => response.json())
+      //   .thenif (!resJson.success) {
+      //     alert('error: ' + resJson.error.msg);
+      //     return;
+      //   } else {
+      //     alert('The game updated successfully');
+      //     return;
+      //   }
+      // } catch (err) {
+      //   console.error(err);
+      // }
     } catch (err) {
-      console.error(err);
+      alert(err);
     }
   }
-
   teamList = () => {
     console.log(this.state.teamsNames);
     return this.state.teamsNames.map((x, i) => {
@@ -136,10 +141,36 @@ export default class InsertGame extends React.Component {
               borderWidth: 10,
             }}
             underlineColorAndroid="#2C3E50"
-            onChangeText={week => this.setState({week})}
+            onChangeText={(week) => this.setState({week})}
             value={this.state.week}
           />
         </View>
+        <DatePicker
+          style={{width: 200}}
+          date={this.state.date}
+          mode="date"
+          placeholder="Select Date"
+          format="DD/MM/YY"
+          minDate="01/11/19"
+          maxDate="01/11/20"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 0,
+            },
+            dateInput: {
+              marginLeft: 36,
+            },
+            // ... You can check the source to find the other keys.
+          }}
+          onDateChange={(date) => {
+            this.setState({date: date});
+          }}
+        />
         <View style={styles.rowTeam1}>
           <Text
             style={{
@@ -154,7 +185,7 @@ export default class InsertGame extends React.Component {
           <Picker
             style={{height: 50, width: 190, marginTop: 50}}
             selectedValue={this.state.selectedTeam1}
-            onValueChange={value => this.setState({selectedTeam1: value})}>
+            onValueChange={(value) => this.setState({selectedTeam1: value})}>
             {this.teamList()}
           </Picker>
           <Text
@@ -172,7 +203,7 @@ export default class InsertGame extends React.Component {
               borderWidth: 10,
             }}
             underlineColorAndroid="#2C3E50"
-            onChangeText={scoreTeam1 => this.setState({scoreTeam1})}
+            onChangeText={(scoreTeam1) => this.setState({scoreTeam1})}
             value={this.state.scoreTeam1}
           />
         </View>
@@ -195,7 +226,7 @@ export default class InsertGame extends React.Component {
               marginTop: 50,
             }}
             selectedValue={this.state.selectedTeam2}
-            onValueChange={value => this.setState({selectedTeam2: value})}>
+            onValueChange={(value) => this.setState({selectedTeam2: value})}>
             {this.teamList()}
           </Picker>
           <Text
@@ -213,7 +244,7 @@ export default class InsertGame extends React.Component {
               borderWidth: 10,
             }}
             underlineColorAndroid="#2C3E50"
-            onChangeText={scoreTeam2 => this.setState({scoreTeam2})}
+            onChangeText={(scoreTeam2) => this.setState({scoreTeam2})}
             value={this.state.scoreTeam2}
           />
         </View>

@@ -14,6 +14,8 @@ app.use("/", require("./Middlewares/auth.js"));
 
 app.get("/", function (req, res) {
   console.log("Got a GET request for the homepage");
+  //console.log("Got: " + JSON.stringify(req));
+
   let results = [];
   let data = req.query.data;
   if (data === "leagueTable") {
@@ -21,7 +23,7 @@ app.get("/", function (req, res) {
       console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
-  } else if (data.substring(0, 9) === "GamesWeek") {
+  } else if (req.get("Football-Request") === "MonthlyGames") {
     database.getGameResults(data).then((DBResponse) => {
       res.send(DBResponse);
     });
@@ -189,6 +191,21 @@ app.post("/", function (req, res) {
         req.body.requestedRole
       ).then((ans) => res.send(ans));
       break;
+    case "Result":
+      console.log("alonnnnnn");
+      database
+        .insertResult(
+          req.body.selectedTeam1,
+          req.body.selectedTeam2,
+          req.body.scoreTeam1,
+          req.body.scoreTeam2,
+          req.body.date
+        )
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+
     default:
       break;
   }
