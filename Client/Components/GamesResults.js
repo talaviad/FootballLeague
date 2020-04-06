@@ -9,7 +9,7 @@ export default class GamesResults extends React.Component {
 
     var TodayDate = new Date();
     var month = GLOBALS.monthList[TodayDate.getMonth()];
-
+    this.fetchData(month);
     this.state = {
       tableHead: ['Team1', 'Result', 'Team2', 'Date'],
       firstTableData: [],
