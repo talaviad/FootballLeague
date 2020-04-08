@@ -4,12 +4,14 @@ import {
   View,
   Picker,
   TextInput,
+  ScrollView,
   Text,
-  Button,
   TouchableOpacity,
 } from 'react-native';
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
+import TeamSelector from './TeamSelector';
+import NumericInput from 'react-native-numeric-input';
 
 export default class InsertGame extends React.Component {
   constructor(props) {
@@ -19,7 +21,6 @@ export default class InsertGame extends React.Component {
       teamsNames: [],
       scoreTeam1: '',
       scoreTeam2: '',
-      week: '',
       date: '',
       selectedTeam1: null,
       selectedTeam2: null,
@@ -88,8 +89,8 @@ export default class InsertGame extends React.Component {
           }),
         },
       )
-        .then((response) => response.json())
-        .then(async (resJson) => {
+        .then(response => response.json())
+        .then(async resJson => {
           if (resJson.success) {
             alert('The game updated successfully');
             this.props.navigation.navigate('Home');
@@ -98,58 +99,21 @@ export default class InsertGame extends React.Component {
             return;
           }
         })
-        .catch((err) => alert(err));
-      //   .then((response) => response.json())
-      //   .thenif (!resJson.success) {
-      //     alert('error: ' + resJson.error.msg);
-      //     return;
-      //   } else {
-      //     alert('The game updated successfully');
-      //     return;
-      //   }
-      // } catch (err) {
-      //   console.error(err);
-      // }
+        .catch(err => alert(err));
     } catch (err) {
       alert(err);
     }
   }
-  teamList = () => {
-    console.log(this.state.teamsNames);
-    return this.state.teamsNames.map((x, i) => {
-      return <Picker.Item label={x} key={i} value={x} />;
-    });
-  };
 
   render() {
     const state = this.state;
     return (
       <View style={styles.wrapper}>
-        <View style={styles.rowTeam3}>
-          <Text
-            style={{fontWeight: 'bold', marginLeft: 5, marginTop: 16}}
-            borderStyle={{borderWidth: 1, borderColor: ''}}>
-            Week:
-          </Text>
-          <TextInput
-            style={{
-              textAlign: 'center',
-              marginLeft: 20,
-              marginTop: 10,
-              height: 40,
-              borderColor: '#5499C7',
-              borderWidth: 10,
-            }}
-            underlineColorAndroid="#2C3E50"
-            onChangeText={(week) => this.setState({week})}
-            value={this.state.week}
-          />
-        </View>
         <DatePicker
-          style={{width: 200}}
+          style={{width: 200, paddingVertical: 20}}
           date={this.state.date}
           mode="date"
-          placeholder="Select Date"
+          placeholder="Date Of The Match"
           format="DD/MM/YY"
           minDate="01/11/19"
           maxDate="01/11/20"
@@ -165,94 +129,93 @@ export default class InsertGame extends React.Component {
             dateInput: {
               marginLeft: 36,
             },
-            // ... You can check the source to find the other keys.
           }}
-          onDateChange={(date) => {
+          onDateChange={date => {
             this.setState({date: date});
           }}
         />
-        <View style={styles.rowTeam1}>
-          <Text
+
+        <View style={styles.teamSelector}>
+          <View
             style={{
-              fontWeight: 'bold',
-              fontSize: 15,
-              marginLeft: 5,
-              marginTop: 65,
-            }}
-            borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
-            Team1:
-          </Text>
-          <Picker
-            style={{height: 50, width: 190, marginTop: 50}}
-            selectedValue={this.state.selectedTeam1}
-            onValueChange={(value) => this.setState({selectedTeam1: value})}>
-            {this.teamList()}
-          </Picker>
-          <Text
-            style={{fontWeight: 'bold', fontSize: 15, marginTop: 65}}
-            borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
-            Score:
-          </Text>
-          <TextInput
-            style={{
-              textAlign: 'center',
-              marginLeft: 20,
-              marginTop: 60,
-              height: 40,
-              borderColor: '#5499C7',
-              borderWidth: 10,
-            }}
-            underlineColorAndroid="#2C3E50"
-            onChangeText={(scoreTeam1) => this.setState({scoreTeam1})}
-            value={this.state.scoreTeam1}
-          />
+              paddingLeft: 20,
+              flexDirection: 'column',
+              width: 200,
+            }}>
+            <Text
+              style={{
+                alignSelf: 'flex-start',
+                fontWeight: 'bold',
+                fontSize: 15,
+              }}>
+              Team1
+            </Text>
+            <TeamSelector
+              teamList={this.props.navigation.getParam('teamList')}
+              onSelect={value => this.setState({selectedTeam1: value})}
+            />
+            <Text
+              style={{fontWeight: 'bold', fontSize: 15}}
+              borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
+              Score:
+            </Text>
+            {/* <NumericInput
+              value={this.state.scoreTeam1}
+              onChange={value => this.setState({scoreTeam1: value})}
+            /> */}
+            <TextInput
+              style={styles.textInput}
+              underlineColorAndroid="#2C3E50"
+              onChangeText={scoreTeam1 => this.setState({scoreTeam1})}
+              value={this.state.scoreTeam1}
+              placeholder="0"
+            />
+          </View>
         </View>
-        <View style={styles.rowTeam2}>
-          <Text
+        <View style={styles.teamSelector}>
+          <View
             style={{
-              fontWeight: 'bold',
-              fontSize: 15,
-              marginLeft: 5,
-              marginTop: 65,
-            }}
-            borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
-            Team2:
-          </Text>
-          <Picker
-            style={{
-              border: '100px solid red',
-              height: 50,
-              width: 190,
-              marginTop: 50,
-            }}
-            selectedValue={this.state.selectedTeam2}
-            onValueChange={(value) => this.setState({selectedTeam2: value})}>
-            {this.teamList()}
-          </Picker>
-          <Text
-            style={{fontWeight: 'bold', fontSize: 15, marginTop: 65}}
-            borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
-            Score:
-          </Text>
-          <TextInput
-            style={{
-              textAlign: 'center',
-              marginTop: 60,
-              marginLeft: 20,
-              height: 40,
-              borderColor: '#5499C7',
-              borderWidth: 10,
-            }}
-            underlineColorAndroid="#2C3E50"
-            onChangeText={(scoreTeam2) => this.setState({scoreTeam2})}
-            value={this.state.scoreTeam2}
-          />
+              paddingLeft: 20,
+              flexDirection: 'column',
+              width: 200,
+            }}>
+            <Text
+              style={{
+                alignSelf: 'flex-start',
+                fontWeight: 'bold',
+                fontSize: 15,
+              }}>
+              Team2
+            </Text>
+            <TeamSelector
+              teamList={this.props.navigation.getParam('teamList')}
+              onSelect={value => this.setState({selectedTeam2: value})}
+            />
+            <Text
+              style={{fontWeight: 'bold', fontSize: 15}}
+              borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
+              Score:
+            </Text>
+            {/* <NumericInput
+              value={this.state.scoreTeam1}
+              onChange={value => this.setState({scoreTeam1: value})}
+            /> */}
+            <TextInput
+              style={styles.textInput}
+              underlineColorAndroid="#2C3E50"
+              onChangeText={scoreTeam2 => this.setState({scoreTeam2})}
+              value={this.state.scoreTeam2}
+              placeholder="0"
+            />
+          </View>
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => this.sendResultToServer()}>
-          <Text style={styles.buttonText}>Insert Game Result</Text>
-        </TouchableOpacity>
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.sendResultToServer()}>
+            <Text style={styles.buttonText}>Insert Game Result</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -260,34 +223,30 @@ export default class InsertGame extends React.Component {
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: '100%',
-    flex: 2,
-    flexDirection: 'column',
+    // height: '100%',
     backgroundColor: '#5499C7',
-  },
-  rowTeam1: {
-    flex: 0.9,
-    flexDirection: 'row',
-  },
-  rowTeam2: {
-    flex: 0.9,
-    flexDirection: 'row',
-    marginTop: -250,
-  },
-  rowTeam3: {
-    flex: 0.2,
-    flexDirection: 'row',
-  },
-  rowButton: {
-    flex: 0.2,
-    justifyContent: 'center', //replace with flex-end or center
-    borderBottomWidth: 0,
-  },
-  inputWrap: {
     flex: 1,
-    borderColor: '#cccccc',
-    borderBottomWidth: 1,
-    marginBottom: 10,
+    flexDirection: 'column',
+  },
+  teamSelectorWrapper: {
+    //flex: 1,
+    paddingTop: 20,
+    textAlign: 'left',
+    backgroundColor: '#5499C7',
+    //justifyContent: 'space-between',
+    flexDirection: 'row',
+
+    paddingLeft: 20,
+  },
+  teamSelector: {
+    //flex: 1,
+    textAlign: 'left',
+    backgroundColor: '#5499C7',
+    alignItems: 'center',
+    //justifyContent: 'space-between',
+    paddingTop: 30,
+    width: 200,
+    flexDirection: 'row',
   },
   button: {
     width: '80%',
@@ -295,6 +254,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginHorizontal: '10%',
     paddingVertical: 13,
+    justifyContent: 'flex-end',
+  },
+  textInput: {
+    textAlign: 'center',
+    // marginLeft: 20,
+    // marginTop: 60,
+    // height: 40,
+    // borderColor: '#5499C7',
+    // borderWidth: 10,
   },
   buttonText: {
     fontSize: 20,

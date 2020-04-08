@@ -13,9 +13,10 @@ import TeamSelector from './TeamSelector';
 import Counter from 'react-native-counters';
 import DialogInput from 'react-native-dialog-input';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import DatePicker from 'react-native-datepicker';
 
 function Timer({interval, style}) {
-  const pad = (n) => (n < 10 ? '0' + n : n);
+  const pad = n => (n < 10 ? '0' + n : n);
   const duration = moment.duration(interval);
   const centiseconds = Math.floor(duration.milliseconds() / 10);
   return (
@@ -113,6 +114,7 @@ export default class GameMode extends React.Component {
       teamSelected: false,
       isDialogVisible1: false,
       isDialogVisible2: false,
+      date: '19/03/20',
     });
   };
   resume = () => {
@@ -126,13 +128,13 @@ export default class GameMode extends React.Component {
     }, 100);
   };
 
-  handleSelectTeam1 = (team1) => {
+  handleSelectTeam1 = team1 => {
     this.state.team1 = team1;
     if (this.state.team1 !== null && this.state.team2 !== null) {
       this.state.teamSelected = true;
     }
   };
-  handleSelectTeam2 = (team2) => {
+  handleSelectTeam2 = team2 => {
     this.state.team2 = team2;
     if (this.state.team1 !== null && this.state.team2 !== null) {
       this.state.teamSelected = true;
@@ -161,7 +163,7 @@ export default class GameMode extends React.Component {
         name = name.substring(1);
       }
       //Change the first letter in firstName and first letter in Last name to upper case
-      name = name.replace(/\b\w/g, (l) => l.toUpperCase());
+      name = name.replace(/\b\w/g, l => l.toUpperCase());
     } catch {
       num, (name = '');
     }
@@ -223,7 +225,9 @@ export default class GameMode extends React.Component {
     this.setState({
       submitConfirmationAlert: false,
     });
-    this.sendResultToServer();
+    this.updateScorerTable();
+    this.updateResult();
+
     //alert(JSON.stringify(this.state.team1ScorrersDic));
   };
 
@@ -233,7 +237,7 @@ export default class GameMode extends React.Component {
     });
   };
 
-  async sendResultToServer() {
+  async updateScorerTable() {
     let response = fetch(
       'http://' + this.props.navigation.getParam('IP') + ':3000/',
       {
@@ -248,8 +252,8 @@ export default class GameMode extends React.Component {
         }),
       },
     )
-      .then((response) => response.json())
-      .then(async (resJson) => {
+      .then(response => response.json())
+      .then(async resJson => {
         if (resJson.success) {
           alert('You submitted successfully');
           this.props.navigation.navigate('Home');
@@ -257,7 +261,42 @@ export default class GameMode extends React.Component {
           alert(resJson.error.msg);
         }
       })
-      .catch((err) => alert(err));
+      .catch(err => alert(err));
+  }
+
+  async updateResult() {
+    try {
+      let response = fetch(
+        'http://' + this.props.navigation.getParam('IP') + ':3000/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'Result',
+          },
+          body: JSON.stringify({
+            selectedTeam1: this.state.team1,
+            selectedTeam2: this.state.team2,
+            scoreTeam1: this.state.team1Goals,
+            scoreTeam2: this.state.team2Goals,
+            date: this.state.date,
+          }),
+        },
+      )
+        .then(response => response.json())
+        .then(async resJson => {
+          if (resJson.success) {
+            alert('The game updated successfully');
+            this.props.navigation.navigate('Home');
+          } else {
+            alert('error: ' + resJson.error.msg);
+            return;
+          }
+        })
+        .catch(err => alert(err));
+    } catch (err) {
+      alert(err);
+    }
   }
 
   render() {
@@ -269,17 +308,44 @@ export default class GameMode extends React.Component {
       <View style={styles.container}>
         {!this.state.teamSelected && (
           <View style={styles.teamSelectorWrapper}>
+            <DatePicker
+              style={{width: 200, alignSelf: 'flex-start'}}
+              date={this.state.date}
+              mode="date"
+              placeholder="Date Of The Match"
+              format="DD/MM/YY"
+              minDate="01/11/19"
+              maxDate="01/11/20"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                },
+              }}
+              onDateChange={date => {
+                this.setState({date: date});
+              }}
+            />
             <View style={styles.teamSelector}>
               <Text style={{alignSelf: 'flex-start'}}>Team1</Text>
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
-                onSelect={this.handleSelectTeam1}></TeamSelector>
+                onSelect={this.handleSelectTeam1}
+              />
             </View>
             <View style={styles.teamSelector}>
               <Text style={{alignSelf: 'flex-start'}}>Team2</Text>
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
-                onSelect={this.handleSelectTeam2}></TeamSelector>
+                onSelect={this.handleSelectTeam2}
+              />
             </View>
           </View>
         )}
@@ -393,7 +459,7 @@ export default class GameMode extends React.Component {
             title={'Scorrer Details'}
             message={"Enter the shirt's number and the scorrer name"}
             hintInput={'10 Alon'}
-            submitInput={(inputText) => {
+            submitInput={inputText => {
               this.sendDialogInput(inputText, this.state.isDialogVisible1);
             }}
             closeDialog={() => {
@@ -404,7 +470,8 @@ export default class GameMode extends React.Component {
                 this.setState({team2Goals: this.state.team2Goals - 1});
                 this.setState({isDialogVisible2: false});
               }
-            }}></DialogInput>
+            }}
+          />
         </View>
         <AwesomeAlert
           show={submitConfirmationAlert}
@@ -419,7 +486,8 @@ export default class GameMode extends React.Component {
           confirmText="Yes"
           confirmButtonColor="#DD6B55"
           onCancelPressed={this.cancelAlert}
-          onConfirmPressed={this.confirmAlert}></AwesomeAlert>
+          onConfirmPressed={this.confirmAlert}
+        />
       </View>
     );
   }
@@ -430,7 +498,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#5499C7',
     alignItems: 'center',
-    //paddingTop: 130,
+    paddingTop: 20,
     paddingHorizontal: 50,
   },
   teamSelectorWrapper: {

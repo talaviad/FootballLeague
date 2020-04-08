@@ -29,7 +29,7 @@ export default class Home extends React.Component {
     this.getTeamsNames();
   }
 
-  handleSendRequestToServer = async (param) => {
+  handleSendRequestToServer = async param => {
     let token = await AsyncStorage.getItem('token');
 
     let response = fetch('http://' + IP + ':3000/?data=' + param, {
@@ -40,10 +40,10 @@ export default class Home extends React.Component {
         Authorization: this.state.token,
       },
     })
-      .then((response) => {
+      .then(response => {
         return response.json();
       })
-      .then((resJson) => {
+      .then(resJson => {
         if (!resJson.success) {
           alert(resJson.error.msg);
           return;
@@ -72,7 +72,7 @@ export default class Home extends React.Component {
             break;
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(error);
       });
   };
@@ -166,7 +166,10 @@ export default class Home extends React.Component {
           <TouchableOpacity
             style={styles.touchAble}
             onPress={() =>
-              this.props.navigation.navigate('InsertGame', {IP: IP})
+              this.props.navigation.navigate('InsertGame', {
+                IP: IP,
+                teamList: this.state.teamsNames,
+              })
             }>
             <Text style={styles.buttonText}>Insert a game resultt</Text>
           </TouchableOpacity>
