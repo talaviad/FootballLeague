@@ -8,20 +8,22 @@ import {
 } from 'react-native-table-component';
 import {View, StyleSheet, ScrollView} from 'react-native';
 
-export default class LeagueTable extends React.Component {
+export default class ScorerTable extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
 
-    let sortedTableData = navigation.getParam('tableData').sort(function(a, b) {
-      if (parseInt(a[8]) == parseInt(b[8])) {
-        return parseInt(b[7]) - parseInt(a[7]);
-      }
-      return parseInt(b[8]) - parseInt(a[8]);
-    });
+    let sortedTableData = navigation
+      .getParam('tableData')
+      .sort(function (a, b) {
+        if (parseInt(a[8]) == parseInt(b[8])) {
+          return parseInt(b[2]) - parseInt(a[2]);
+        }
+        return parseInt(b[3]) - parseInt(a[3]);
+      });
 
     this.state = {
-      tableHead: ['Club', 'MP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts'],
+      tableHead: ['Name', 'Team', 'Number', 'Goals'],
       tableTitle: ['a', 'a', 'a', 'a'],
       tableData: sortedTableData,
     };

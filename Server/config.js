@@ -1,4 +1,4 @@
 module.exports = {
     JWT_SECRET: 'my secret is the best !',
-    BCRYPT_SALT_ROUNDS: 2,
+    BCRYPT_SALT_ROUNDS: 17,
 };
