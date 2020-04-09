@@ -107,7 +107,7 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
     let registerError = {
       success: false,
       error: {
-        msg: "the role you asked does not exists",
+        msg: "the role you asked does not exist",
       },
     };
     return JSON.stringify(registerError);
