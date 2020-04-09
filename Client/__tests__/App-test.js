@@ -7,12 +7,14 @@ import React from 'react';
 //import App from '../App';
 import InsertGame from '../Components/InsertGame';
 import GameResults from '../Components/GamesResults';
-
-
 //import "isomorphic-fetch"
 
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+continuewith = async () => {
+  let respone = await fetch('http://10.0.0.33:3000/').
+    then(res => console.log('responseeeeeeeeeeeee: ' + res)).
+    catch(res => console.log('responseeeeeeeeeeeee: ' + res))
+  //console.log('responseeeeeeeeeeeee: ' + response)
+}
 
 it('InsertGame renders correctly', () => {
   let insertGame = 
@@ -46,12 +48,10 @@ it('InsertGame renders correctly', () => {
   //     console.log('An error occured while was trying to connect to database..')
   //     console.error(e);
   // } /*finally {
-
-
 });
-  
-  it('GameResults renders correctly', () => {
-    let gameResults = 
-    renderer.create(<GameResults />).getInstance();
-  });
+
+// it('GameResults renders correctly', () => {
+//   let gameResults =
+//     renderer.create(<GameResults />).getInstance();
+// });
 
