@@ -12,7 +12,7 @@ import GameMode from './GameMode';
 import Register from './Register';
 import {Table, Row, Rows} from 'react-native-table-component';
 
-var IP = '10.0.0.33';
+var IP = '192.168.1.124';
 
 export default class Home extends React.Component {
   constructor(props) {

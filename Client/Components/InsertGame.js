@@ -12,7 +12,6 @@ import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
 import TeamSelector from './TeamSelector';
 
-
 export default class InsertGame extends React.Component {
   constructor(props) {
     super(props);
@@ -196,6 +195,8 @@ export default class InsertGame extends React.Component {
             scoreTeam1: this.state.team1Goals,
             scoreTeam2: this.state.team2Goals,
             date: this.state.date,
+            team1ScorrersDic: this.state.team1ScorrersDic,
+            team2ScorrersDic: this.state.team2ScorrersDic,
           }),
         },
       )
@@ -417,4 +418,3 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 });
-

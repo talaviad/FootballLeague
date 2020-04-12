@@ -174,48 +174,48 @@ export default class GameMode extends React.Component {
     }
 
     if (isTeam1) {
-      var scorerExit = false;
-      for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
-        if (this.state.team1ScorrersDic[i].Number === num) {
-          this.state.team1ScorrersDic[i].Goals =
-            this.state.team1ScorrersDic[i].Goals + 1;
-          if (!this.state.team1ScorrersDic[i].Name.includes(name)) {
-            this.state.team1ScorrersDic[i].Name.push(name);
-          }
-          scorerExit = true;
-          break;
-        }
-      }
-      if (!scorerExit) {
-        this.state.team1ScorrersDic.push({
-          Name: [name],
-          Team: this.state.team1,
-          Number: num,
-          Goals: 1,
-        });
-      }
+      // var scorerExit = false;
+      // for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
+      //   if (this.state.team1ScorrersDic[i].Number === num) {
+      //     this.state.team1ScorrersDic[i].Goals =
+      //       this.state.team1ScorrersDic[i].Goals + 1;
+      //     if (!this.state.team1ScorrersDic[i].Name.includes(name)) {
+      //       this.state.team1ScorrersDic[i].Name.push(name);
+      //     }
+      //     scorerExit = true;
+      //     break;
+      //   }
+      // }
+      //if (!scorerExit) {
+      this.state.team1ScorrersDic.push({
+        Name: [name],
+        Team: this.state.team1,
+        Number: num,
+        Goals: 1,
+      });
+      //}
       this.setState({isDialogVisible1: false});
     } else {
-      var scorerExit = false;
-      for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
-        if (this.state.team2ScorrersDic[i].Number === num) {
-          this.state.team2ScorrersDic[i].Goals =
-            this.state.team2ScorrersDic[i].Goals + 1;
-          if (!this.state.team2ScorrersDic[i].Name.incldes(name)) {
-            this.state.team2ScorrersDic[i].Name.push(name);
-          }
-          scorerExit = true;
-          break;
-        }
-      }
-      if (!scorerExit) {
-        this.state.team2ScorrersDic.push({
-          Name: [name],
-          Team: this.state.team2,
-          Number: num,
-          Goals: 1,
-        });
-      }
+      // var scorerExit = false;
+      // for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
+      //   if (this.state.team2ScorrersDic[i].Number === num) {
+      //     this.state.team2ScorrersDic[i].Goals =
+      //       this.state.team2ScorrersDic[i].Goals + 1;
+      //     if (!this.state.team2ScorrersDic[i].Name.incldes(name)) {
+      //       this.state.team2ScorrersDic[i].Name.push(name);
+      //     }
+      //     scorerExit = true;
+      //     break;
+      //   }
+      // }
+      // if (!scorerExit) {
+      this.state.team2ScorrersDic.push({
+        Name: [name],
+        Team: this.state.team2,
+        Number: num,
+        Goals: 1,
+      });
+      //}
       this.setState({isDialogVisible2: false});
     }
   };
@@ -231,7 +231,7 @@ export default class GameMode extends React.Component {
       submitConfirmationAlert: false,
     });
     this.updateScorerTable();
-    this.updateResult();
+    this.sendResultToServer();
 
     //alert(JSON.stringify(this.state.team1ScorrersDic));
   };
@@ -260,7 +260,7 @@ export default class GameMode extends React.Component {
       .then(response => response.json())
       .then(async resJson => {
         if (resJson.success) {
-          alert('You submitted successfully');
+          alert('The game submited successfully');
           this.props.navigation.navigate('Home');
         } else {
           alert(resJson.error.msg);
@@ -269,7 +269,7 @@ export default class GameMode extends React.Component {
       .catch(err => alert(err));
   }
 
-  async updateResult() {
+  async sendResultToServer() {
     try {
       let response = fetch(
         'http://' + this.props.navigation.getParam('IP') + ':3000/',
@@ -280,22 +280,22 @@ export default class GameMode extends React.Component {
             'Football-Request': 'Result',
           },
           body: JSON.stringify({
-            selectedTeam1: this.state.team1,
-            selectedTeam2: this.state.team2,
+            selectedTeam1: this.state.team1Name,
+            selectedTeam2: this.state.team2Name,
             scoreTeam1: this.state.team1Goals,
             scoreTeam2: this.state.team2Goals,
             date: this.state.date,
+            team1ScorrersDic: this.state.team1ScorrersDic,
+            team2ScorrersDic: this.state.team2ScorrersDic,
           }),
         },
       )
         .then(response => response.json())
         .then(async resJson => {
           if (resJson.success) {
-            alert('The game updated successfully');
-            this.props.navigation.navigate('Home');
+            this.updateScorerTable();
           } else {
             alert('error: ' + resJson.error.msg);
-            return;
           }
         })
         .catch(err => alert(err));

@@ -255,6 +255,8 @@ module.exports = class DataBase {
           game.result.toString(),
           game.team2.toString(),
           game.date.toString(),
+          game.team1ScorrersDic,
+          game.team2ScorrersDic,
         ];
       });
       let resultsToTheServer = {
@@ -318,7 +320,9 @@ module.exports = class DataBase {
     selectedTeam2,
     scoreTeam1,
     scoreTeam2,
-    date
+    date,
+    team1ScorrersDic,
+    team2ScorrersDic
   ) {
     let winner = 0;
     try {
@@ -377,6 +381,8 @@ module.exports = class DataBase {
           result: scoreTeam1 + " - " + scoreTeam2,
           team2: selectedTeam2,
           date: date,
+          team1ScorrersDic: team1ScorrersDic,
+          team2ScorrersDic: team2ScorrersDic,
         });
 
       let resultsToTheServer = {

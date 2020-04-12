@@ -29,7 +29,6 @@ app.get("/", function (req, res) {
     });
   } else if (data === "scorerTable") {
     database.getScorerTable().then((DBResponse) => {
-      console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
   } else if (data === "TeamsNames") {
@@ -41,7 +40,6 @@ app.get("/", function (req, res) {
       res.send(DBResponse);
     });
   } else if (data.substring(0, 6) === "Result") {
-    console.log("indexJS: " + data);
     database.insertResult(data).then((DBResponse) => {
       res.send(DBResponse);
     });
@@ -197,7 +195,9 @@ app.post("/", function (req, res) {
           req.body.selectedTeam2,
           req.body.scoreTeam1,
           req.body.scoreTeam2,
-          req.body.date
+          req.body.date,
+          req.body.team1ScorrersDic,
+          req.body.team2ScorrersDic
         )
         .then((DBResponse) => {
           res.send(DBResponse);

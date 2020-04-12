@@ -59,7 +59,6 @@ export default class Register extends React.Component {
     }
   }
 
-<<<<<< GameMode
   async onButtonPress() {
     if (
       this.state.user === '' ||

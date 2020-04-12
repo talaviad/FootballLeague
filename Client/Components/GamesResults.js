@@ -1,14 +1,23 @@
 import React from 'react';
-import {StyleSheet, View, Picker, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Picker,
+  ScrollView,
+  Text,
+} from 'react-native';
 import {Table, Row, Rows, TableWrapper} from 'react-native-table-component';
 import GLOBALS from '../Globals';
 export default class GamesResults extends React.Component {
   constructor(props) {
     super(props);
+
     const {navigation} = this.props;
 
     var TodayDate = new Date();
     var month = GLOBALS.monthList[TodayDate.getMonth()];
+    month = 'May'; //to delete
     this.fetchData(month);
     this.state = {
       tableHead: ['Team1', 'Result', 'Team2', 'Date'],
@@ -20,10 +29,6 @@ export default class GamesResults extends React.Component {
       selectedMonth: month,
       isLoading: true,
     };
-  }
-
-  componentDidMount() {
-    //this.getNumberOfWeeks();
   }
 
   async fetchData(monthName) {
@@ -59,6 +64,20 @@ export default class GamesResults extends React.Component {
       console.error(err);
     }
   }
+  createButton = (team1Dic, team2Dic) => (
+    <TouchableOpacity
+      onPress={() => {
+        this.setState({
+          firstTableData: this.state.firstTableData.concat([
+            ['a', 'b', 'c', 'd', 'e'],
+          ]),
+        });
+      }}>
+      <View>
+        <Text style={{textAlign: 'center'}}>+</Text>
+      </View>
+    </TouchableOpacity>
+  );
   getMonthListInItems = () => {
     return GLOBALS.monthList.map((x, i) => {
       return <Picker.Item label={x.toString()} key={i} value={x.toString()} />;
@@ -98,7 +117,7 @@ export default class GamesResults extends React.Component {
               />
 
               <Row
-                data={state.tableHead}
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
                 flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
                 style={styles.head}
                 textStyle={styles.textHead}
@@ -119,6 +138,7 @@ export default class GamesResults extends React.Component {
               </TableWrapper>
             </Table>
           </View>
+
           <View style={{paddingTop: 20}}>
             <Table borderStyle={{borderWidth: 1}}>
               <Row
@@ -216,7 +236,15 @@ export default class GamesResults extends React.Component {
 
   sortToTablesByDate = line => {
     if (parseInt(line[3].substring(0, 2)) < 8) {
-      this.state.firstTableData.push(line);
+      this.state.firstTableData.push(
+        [].concat([
+          line[0],
+          line[1],
+          line[2],
+          line[3],
+          this.createButton(line[4], line[5]),
+        ]),
+      );
     } else if (parseInt(line[3].substring(0, 2)) < 15) {
       this.state.secondTableData.push(line);
     } else if (parseInt(line[3].substring(0, 2)) < 22) {
@@ -227,13 +255,19 @@ export default class GamesResults extends React.Component {
   };
 }
 
+// buttonCreator = () => {
+//   <Button
+//     onPress={() => {
+//       this.submitGame();
+//     }}
+//     title="Submit"
+//     color="#841584"
+//   />;
+// };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //padding: 16,
-    //paddingTop: 30,
     backgroundColor: '#5499C7',
-    //justifyContent: 'space-between',
   },
   itemStyle: {
     fontSize: 45,
@@ -276,6 +310,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Times',
     color: 'black',
   },
+  textLines: {
+    textAlign: 'center',
+    fontFamily: 'Times',
+    color: '#2C3E50',
+  },
+
   text: {
     textAlign: 'center',
     fontFamily: 'Times',
@@ -287,13 +327,8 @@ const styles = StyleSheet.create({
   // },
   row: {
     height: 55,
-    color: '#AED6F1',
   },
-  row: {
-    height: 50,
-    backgroundColor: '#D6EAF8',
-    color: '#2C3E50',
-  },
+
   pickerContainer: {
     flex: 1,
     flexDirection: 'column',
