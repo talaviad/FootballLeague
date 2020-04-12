@@ -214,7 +214,7 @@ export default class GamesResults extends React.Component {
     );
   }
 
-  sortToTablesByDate = (line) => {
+  sortToTablesByDate = line => {
     if (parseInt(line[3].substring(0, 2)) < 8) {
       this.state.firstTableData.push(line);
     } else if (parseInt(line[3].substring(0, 2)) < 15) {
@@ -287,12 +287,11 @@ const styles = StyleSheet.create({
   // },
   row: {
     height: 55,
-=======
-    color: '#AED6F1'
+    color: '#AED6F1',
   },
   row: {
     height: 50,
-    backgroundColor: '#D6EAF8'
+    backgroundColor: '#D6EAF8',
     color: '#2C3E50',
   },
   pickerContainer: {
