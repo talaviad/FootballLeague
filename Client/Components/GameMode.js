@@ -60,9 +60,11 @@ export default class GameMode extends React.Component {
       laps: [],
       firstStart: true,
       teamSelected: false,
+      dateSelected: false,
       isDialogVisible1: false,
       isDialogVisible2: false,
       submitConfirmationAlert: false,
+      date: '',
     };
     const {navigation} = this.props;
   }
@@ -75,6 +77,8 @@ export default class GameMode extends React.Component {
       alert('First Select The Teams');
     } else if (this.state.team1 === this.state.team2) {
       alert('Please Select Two Different Teams');
+    } else if (!this.state.dateSelected) {
+      alert('Please Select Date First');
     } else {
       const now = new Date().getTime();
       this.setState({
@@ -112,9 +116,10 @@ export default class GameMode extends React.Component {
       team2ScorrersDic: [],
       firstStart: true,
       teamSelected: false,
+      dateSelected: false,
       isDialogVisible1: false,
       isDialogVisible2: false,
-      date: '19/03/20',
+      date: '',
     });
   };
   resume = () => {
@@ -306,7 +311,7 @@ export default class GameMode extends React.Component {
     const timer = now - start;
     return (
       <View style={styles.container}>
-        {!this.state.teamSelected && (
+        {this.state.firstStart && (
           <View style={styles.teamSelectorWrapper}>
             <DatePicker
               style={{width: 200, alignSelf: 'flex-start'}}
@@ -331,6 +336,7 @@ export default class GameMode extends React.Component {
               }}
               onDateChange={date => {
                 this.setState({date: date});
+                this.setState({dateSelected: true});
               }}
             />
             <View style={styles.teamSelector}>

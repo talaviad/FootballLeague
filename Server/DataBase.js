@@ -216,10 +216,11 @@ module.exports = class DataBase {
         .collection("ScorerTable")
         .find();
       result = await result.toArray();
-      console.log("for alon: " + result[0].Name);
+      console.log("for alon: " + result[2].Name);
       let results = result.map((scorer) => {
+        console.log(JSON.stringify(JSON.stringify(scorer)));
         return [
-          scorer.Name,
+          scorer.Name.toString(),
           scorer.Team.toString(),
           scorer.Number.toString(),
           scorer.Goals.toString(),
