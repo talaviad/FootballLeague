@@ -233,10 +233,7 @@ const styles = StyleSheet.create({
     //padding: 16,
     //paddingTop: 30,
     backgroundColor: '#5499C7',
-
     //justifyContent: 'space-between',
-
-    // justifyContent: 'space-between',
   },
   itemStyle: {
     fontSize: 45,
@@ -290,10 +287,12 @@ const styles = StyleSheet.create({
   // },
   row: {
     height: 55,
+=======
+    color: '#AED6F1'
   },
-  textLines: {
-    textAlign: 'center',
-    fontFamily: 'Times',
+  row: {
+    height: 50,
+    backgroundColor: '#D6EAF8'
     color: '#2C3E50',
   },
   pickerContainer: {
