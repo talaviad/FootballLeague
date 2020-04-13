@@ -25,6 +25,10 @@ export default class GamesResults extends React.Component {
       secondTableData: [],
       thirdTableData: [],
       fourthTableData: [],
+      firstTableColorRows: [],
+      secondTableColorRows: [],
+      thirdTableColorRows: [],
+      fourthTableColorRows: [],
       tableData: null,
       selectedMonth: month,
       isLoading: true,
@@ -64,20 +68,7 @@ export default class GamesResults extends React.Component {
       console.error(err);
     }
   }
-  createButton = (team1Dic, team2Dic) => (
-    <TouchableOpacity
-      onPress={() => {
-        this.setState({
-          firstTableData: this.state.firstTableData.concat([
-            ['a', 'b', 'c', 'd', 'e'],
-          ]),
-        });
-      }}>
-      <View>
-        <Text style={{textAlign: 'center'}}>+</Text>
-      </View>
-    </TouchableOpacity>
-  );
+
   getMonthListInItems = () => {
     return GLOBALS.monthList.map((x, i) => {
       return <Picker.Item label={x.toString()} key={i} value={x.toString()} />;
@@ -109,7 +100,7 @@ export default class GamesResults extends React.Component {
         </View>
         <ScrollView>
           <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 1}}>
+            <Table borderStyle={{borderWidth: 0.5}}>
               <Row
                 data={[['1-7 In ' + this.state.selectedMonth]]}
                 style={styles.headDate}
@@ -118,121 +109,297 @@ export default class GamesResults extends React.Component {
 
               <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                flexArr={[60, 30, 60, 40, 20]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
-              <TableWrapper style={styles.wrapper}>
-                <Rows
-                  data={
-                    this.state.isLoading
-                      ? null
-                      : this.state.firstTableData.length === 0
-                      ? [['No Games']]
-                      : this.state.firstTableData
-                  }
-                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                  style={styles.row}
-                  textStyle={styles.textLines}
-                />
-              </TableWrapper>
+              <Table style={{borderColor: '#C1C0B9'}}>
+                {this.state.isLoading ? null : this.state.firstTableData
+                    .length === 0 ? (
+                  <Row
+                    style={styles.row}
+                    textStyle={styles.textLines}
+                    data={['No Games']}
+                  />
+                ) : (
+                  this.state.firstTableData.map((dataRow, index) => (
+                    <Row
+                      key={index}
+                      data={dataRow}
+                      style={
+                        this.state.firstTableColorRows.includes(index)
+                          ? [
+                              styles.row,
+                              {
+                                backgroundColor: '#b0c4de',
+                                alignSelf: 'flex-start',
+                                height:
+                                  40 +
+                                  5 * (dataRow[0].match(/\n/g) || '').length,
+                              },
+                            ]
+                          : styles.row
+                      }
+                      // flexArr={[60, 30, 60, 40, 20]}
+                      textStyle={
+                        this.state.firstTableColorRows.includes(index)
+                          ? [
+                              styles.textLines,
+                              {
+                                //textAlign: 'left',
+                              },
+                            ]
+                          : styles.textLines
+                      }
+                      flexArr={
+                        this.state.firstTableColorRows.includes(index)
+                          ? [50, 50]
+                          : [60, 30, 60, 40, 20]
+                      }
+                    />
+                  ))
+                )}
+              </Table>
             </Table>
           </View>
 
           <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 1}}>
+            <Table borderStyle={{borderWidth: 0.5}}>
               <Row
                 data={[['8-14 In ' + this.state.selectedMonth]]}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
                 style={styles.headDate}
                 textStyle={styles.textHeadDate}
               />
+
               <Row
-                data={state.tableHead}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 20]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
-              <TableWrapper style={styles.wrapper}>
-                <Rows
-                  data={
-                    this.state.isLoading
-                      ? null
-                      : this.state.secondTableData.length === 0
-                      ? [['No Games']]
-                      : this.state.secondTableData
-                  }
-                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                  style={styles.row}
-                  textStyle={styles.textLines}
-                />
-              </TableWrapper>
+              <Table style={{borderColor: '#C1C0B9'}}>
+                {this.state.isLoading ? null : this.state.secondTableData
+                    .length === 0 ? (
+                  <Row
+                    style={styles.row}
+                    textStyle={styles.textLines}
+                    data={['No Games']}
+                  />
+                ) : (
+                  this.state.secondTableData.map((dataRow, index) => (
+                    <Row
+                      key={index}
+                      data={dataRow}
+                      style={
+                        this.state.secondTableColorRows.includes(index)
+                          ? [
+                              styles.row,
+                              {
+                                backgroundColor: '#b0c4de',
+                                alignSelf: 'flex-start',
+                                height:
+                                  55 +
+                                  5 * (dataRow[0].match(/\n/g) || '').length,
+                              },
+                            ]
+                          : styles.row
+                      }
+                      // flexArr={[60, 30, 60, 40, 20]}
+                      textStyle={
+                        this.state.secondTableColorRows.includes(index)
+                          ? [
+                              styles.textLines,
+                              {
+                                //textAlign: 'center',
+                              },
+                            ]
+                          : styles.textLines
+                      }
+                      flexArr={
+                        this.state.secondTableColorRows.includes(index)
+                          ? [50, 50]
+                          : [60, 30, 60, 40, 20]
+                      }
+                    />
+                  ))
+                )}
+              </Table>
             </Table>
           </View>
           <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 1}}>
+            <Table borderStyle={{borderWidth: 0.5}}>
               <Row
                 data={[['15-21 In ' + this.state.selectedMonth]]}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
                 style={styles.headDate}
                 textStyle={styles.textHeadDate}
               />
+
               <Row
-                data={state.tableHead}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 20]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
-              <TableWrapper style={styles.wrapper}>
-                <Rows
-                  data={
-                    this.state.isLoading
-                      ? null
-                      : this.state.thirdTableData.length === 0
-                      ? [['No Games']]
-                      : this.state.thirdTableData
-                  }
-                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                  style={styles.row}
-                  textStyle={styles.textLines}
-                />
-              </TableWrapper>
+              <Table style={{borderColor: '#C1C0B9'}}>
+                {this.state.isLoading ? null : this.state.thirdTableData
+                    .length === 0 ? (
+                  <Row
+                    style={styles.row}
+                    textStyle={styles.textLines}
+                    data={['No Games']}
+                  />
+                ) : (
+                  this.state.thirdTableData.map((dataRow, index) => (
+                    <Row
+                      key={index}
+                      data={dataRow}
+                      style={
+                        this.state.thirdTableColorRows.includes(index)
+                          ? [
+                              styles.row,
+                              {
+                                backgroundColor: '#b0c4de',
+                                alignSelf: 'flex-start',
+                                height:
+                                  55 +
+                                  5 * (dataRow[0].match(/\n/g) || '').length,
+                              },
+                            ]
+                          : styles.row
+                      }
+                      // flexArr={[60, 30, 60, 40, 20]}
+                      textStyle={
+                        this.state.thirdTableColorRows.includes(index)
+                          ? [
+                              styles.textLines,
+                              {
+                                //textAlign: 'center',
+                              },
+                            ]
+                          : styles.textLines
+                      }
+                      flexArr={
+                        this.state.secondTableColorRows.includes(index)
+                          ? [50, 50]
+                          : [60, 30, 60, 40, 20]
+                      }
+                    />
+                  ))
+                )}
+              </Table>
             </Table>
           </View>
           <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 1}}>
+            <Table borderStyle={{borderWidth: 0.5}}>
               <Row
                 data={[['22-31 In ' + this.state.selectedMonth]]}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
                 style={styles.headDate}
                 textStyle={styles.textHeadDate}
               />
+
               <Row
-                data={state.tableHead}
-                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 20]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
-              <TableWrapper style={styles.wrapper}>
-                <Rows
-                  data={
-                    this.state.isLoading
-                      ? null
-                      : this.state.fourthTableData.length === 0
-                      ? [['No Games']]
-                      : this.state.fourthTableData
-                  }
-                  flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-                  style={styles.row}
-                  textStyle={styles.textLines}
-                />
-              </TableWrapper>
+              <Table style={{borderColor: '#C1C0B9'}}>
+                {this.state.isLoading ? null : this.state.fourthTableData
+                    .length === 0 ? (
+                  <Row
+                    style={styles.row}
+                    textStyle={styles.textLines}
+                    data={['No Games']}
+                  />
+                ) : (
+                  this.state.fourthTableData.map((dataRow, index) => (
+                    <Row
+                      key={index}
+                      data={dataRow}
+                      style={
+                        this.state.fourthTableColorRows.includes(index)
+                          ? [
+                              styles.row,
+                              {
+                                backgroundColor: '#b0c4de',
+                                alignSelf: 'flex-start',
+                                height:
+                                  55 +
+                                  5 * (dataRow[0].match(/\n/g) || '').length,
+                              },
+                            ]
+                          : styles.row
+                      }
+                      // flexArr={[60, 30, 60, 40, 20]}
+                      textStyle={
+                        this.state.fourthTableColorRows.includes(index)
+                          ? [
+                              styles.textLines,
+                              {
+                                //textAlign: 'center',
+                              },
+                            ]
+                          : styles.textLines
+                      }
+                      flexArr={
+                        this.state.fourthTableColorRows.includes(index)
+                          ? [50, 50]
+                          : [60, 30, 60, 40, 20]
+                      }
+                    />
+                  ))
+                )}
+              </Table>
             </Table>
           </View>
         </ScrollView>
       </View>
     );
   }
+  createButton = (
+    team1Dic,
+    team2Dic,
+    indexToInsert,
+    team1Name,
+    team2Name,
+    tableData,
+    tableColorData,
+  ) => (
+    <TouchableOpacity
+      onPress={() => {
+        if (tableColorData.includes(indexToInsert)) {
+          tableData.splice(indexToInsert, 1);
+          const index = tableColorData.indexOf(indexToInsert);
+          if (index > -1) {
+            tableColorData.splice(index, 1);
+          }
+
+          this.setState({
+            tableData: tableData,
+            tableColorData: tableColorData,
+          });
+          return;
+        }
+        tableColorData.push(indexToInsert);
+        var strTeam1 = '\n' + team1Name + ':\n';
+        team1Dic.map(x => {
+          strTeam1 = strTeam1 + '#' + x.Number + ' ' + x.Name[0] + '\n';
+        });
+        var strTeam2 = '\n' + team2Name + ':\n';
+        team2Dic.map(x => {
+          strTeam2 = strTeam2 + '#' + x.Number + ' ' + x.Name[0] + '\n';
+        });
+        tableData.splice(indexToInsert, 0, [strTeam1, strTeam2]);
+        this.setState({
+          tableData: tableData,
+          tableColorData: tableColorData,
+        });
+      }}>
+      <View>
+        <Text style={{textAlign: 'center'}}>+</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   sortToTablesByDate = line => {
     if (parseInt(line[3].substring(0, 2)) < 8) {
@@ -242,15 +409,71 @@ export default class GamesResults extends React.Component {
           line[1],
           line[2],
           line[3],
-          this.createButton(line[4], line[5]),
+          this.createButton(
+            line[4],
+            line[5],
+            this.state.firstTableData.length + 1,
+            line[0],
+            line[2],
+            this.state.firstTableData,
+            this.state.firstTableColorRows,
+          ),
         ]),
       );
     } else if (parseInt(line[3].substring(0, 2)) < 15) {
-      this.state.secondTableData.push(line);
+      this.state.secondTableData.push(
+        [].concat([
+          line[0],
+          line[1],
+          line[2],
+          line[3],
+          this.createButton(
+            line[4],
+            line[5],
+            this.state.secondTableData.length + 1,
+            line[0],
+            line[2],
+            this.state.secondTableData,
+            this.state.secondTableColorRows,
+          ),
+        ]),
+      );
     } else if (parseInt(line[3].substring(0, 2)) < 22) {
-      this.state.thirdTableData.push(line);
+      this.state.thirdTableData.push(
+        [].concat([
+          line[0],
+          line[1],
+          line[2],
+          line[3],
+          this.createButton(
+            line[4],
+            line[5],
+            this.state.thirdTableData.length + 1,
+            line[0],
+            line[2],
+            this.state.thirdTableData,
+            this.state.thirdTableColorRows,
+          ),
+        ]),
+      );
     } else {
-      this.state.fourthTableData.push(line);
+      this.state.fourthTableData.push(
+        [].concat([
+          line[0],
+          line[1],
+          line[2],
+          line[3],
+          this.createButton(
+            line[4],
+            line[5],
+            this.state.fourthTableData.length + 1,
+            line[0],
+            line[2],
+            this.state.fourthTableData,
+            this.state.fourthTableColorRows,
+          ),
+        ]),
+      );
     }
   };
 }
@@ -292,6 +515,7 @@ const styles = StyleSheet.create({
   head: {
     height: 28,
     backgroundColor: '#5D6D7E',
+    borderWidth: 1,
   },
   headDate: {
     height: 18,
@@ -327,6 +551,7 @@ const styles = StyleSheet.create({
   // },
   row: {
     height: 55,
+    // backgroundColor: 'brown',
   },
 
   pickerContainer: {
