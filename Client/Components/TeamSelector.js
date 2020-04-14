@@ -24,7 +24,7 @@ export default class TeamSelector extends Component {
       <View>
         <Select2
           isSelectSingle
-          style={{borderRadius: 5}}
+          style={{borderRadius: 10}}
           colorTheme={'blue'}
           popupTitle="Select Team"
           title="Select Team"

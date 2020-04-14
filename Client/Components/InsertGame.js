@@ -80,7 +80,7 @@ export default class InsertGame extends React.Component {
               <Text style={{alignSelf: 'flex-start'}}>score:</Text>
               <TextInput
                 style={[
-                  {borderWidth: 0.6, width: 60},
+                  styles.scoreTextInput,
                   !this.state.score1Legal
                     ? {backgroundColor: 'red'}
                     : this.state.selectedTeam1
@@ -131,7 +131,8 @@ export default class InsertGame extends React.Component {
               <Text style={{alignSelf: 'flex-start'}}>score:</Text>
               <TextInput
                 style={[
-                  {borderWidth: 0.6, width: 60},
+                  styles.scoreTextInput,
+                  ,
                   !this.state.score2Legal
                     ? {backgroundColor: 'red'}
                     : this.state.selectedTeam2
@@ -171,7 +172,7 @@ export default class InsertGame extends React.Component {
                 this.submitGame();
               }}
               title="Submit"
-              color="#841584"
+              color="#000080"
             />
           </View>
         </ScrollView>
@@ -413,6 +414,12 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: '#7a42f4',
     borderWidth: 1,
+  },
+  scoreTextInput: {
+    borderWidth: 0.6,
+    width: 50,
+    borderRadius: 10,
+    textAlign: 'center',
   },
   errorMsg: {
     color: 'red',

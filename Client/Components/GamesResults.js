@@ -8,7 +8,9 @@ import {
   Text,
 } from 'react-native';
 import {Table, Row, Rows, TableWrapper} from 'react-native-table-component';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import GLOBALS from '../Globals';
+
 export default class GamesResults extends React.Component {
   constructor(props) {
     super(props);
@@ -109,7 +111,7 @@ export default class GamesResults extends React.Component {
 
               <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 20]}
+                flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
@@ -154,7 +156,7 @@ export default class GamesResults extends React.Component {
                       flexArr={
                         this.state.firstTableColorRows.includes(index)
                           ? [50, 50]
-                          : [60, 30, 60, 40, 20]
+                          : [60, 30, 60, 40, 22]
                       }
                     />
                   ))
@@ -173,7 +175,7 @@ export default class GamesResults extends React.Component {
 
               <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 20]}
+                flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
@@ -218,7 +220,7 @@ export default class GamesResults extends React.Component {
                       flexArr={
                         this.state.secondTableColorRows.includes(index)
                           ? [50, 50]
-                          : [60, 30, 60, 40, 20]
+                          : [60, 30, 60, 40, 22]
                       }
                     />
                   ))
@@ -236,7 +238,7 @@ export default class GamesResults extends React.Component {
 
               <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 20]}
+                flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
@@ -281,7 +283,7 @@ export default class GamesResults extends React.Component {
                       flexArr={
                         this.state.secondTableColorRows.includes(index)
                           ? [50, 50]
-                          : [60, 30, 60, 40, 20]
+                          : [60, 30, 60, 40, 22]
                       }
                     />
                   ))
@@ -299,7 +301,7 @@ export default class GamesResults extends React.Component {
 
               <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 20]}
+                flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
               />
@@ -344,7 +346,7 @@ export default class GamesResults extends React.Component {
                       flexArr={
                         this.state.fourthTableColorRows.includes(index)
                           ? [50, 50]
-                          : [60, 30, 60, 40, 20]
+                          : [60, 30, 60, 40, 22]
                       }
                     />
                   ))
@@ -356,6 +358,7 @@ export default class GamesResults extends React.Component {
       </View>
     );
   }
+
   createButton = (
     team1Dic,
     team2Dic,
@@ -365,7 +368,11 @@ export default class GamesResults extends React.Component {
     tableData,
     tableColorData,
   ) => (
-    <TouchableOpacity
+    <Icon.Button
+      name="angle-down"
+      style={{backgroundColor: '#5499C7'}}
+      color={'black'}
+      size={22}
       onPress={() => {
         if (tableColorData.includes(indexToInsert)) {
           tableData.splice(indexToInsert, 1);
@@ -373,7 +380,6 @@ export default class GamesResults extends React.Component {
           if (index > -1) {
             tableColorData.splice(index, 1);
           }
-
           this.setState({
             tableData: tableData,
             tableColorData: tableColorData,
@@ -394,13 +400,9 @@ export default class GamesResults extends React.Component {
           tableData: tableData,
           tableColorData: tableColorData,
         });
-      }}>
-      <View>
-        <Text style={{textAlign: 'center'}}>+</Text>
-      </View>
-    </TouchableOpacity>
+      }}
+    />
   );
-
   sortToTablesByDate = line => {
     if (parseInt(line[3].substring(0, 2)) < 8) {
       this.state.firstTableData.push(
