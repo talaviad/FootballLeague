@@ -1,4 +1,3 @@
-//import DataBase from './DataBase.js'
 var DataBase = require("./DataBase.js");
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -14,7 +13,6 @@ app.use("/", require("./Middlewares/auth.js"));
 
 app.get("/", function (req, res) {
   console.log("Got a GET request for the homepage");
-  //console.log("Got: " + JSON.stringify(req));
 
   let results = [];
   let data = req.query.data;
@@ -29,7 +27,6 @@ app.get("/", function (req, res) {
     });
   } else if (data === "scorerTable") {
     database.getScorerTable().then((DBResponse) => {
-      console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
   } else if (data === "TeamsNames") {
@@ -41,7 +38,6 @@ app.get("/", function (req, res) {
       res.send(DBResponse);
     });
   } else if (data.substring(0, 6) === "Result") {
-    console.log("indexJS: " + data);
     database.insertResult(data).then((DBResponse) => {
       res.send(DBResponse);
     });
@@ -164,11 +160,6 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
 };
 
 app.post("/", function (req, res) {
-  // console.log("Got a Post message");
-  // console.log("user: " + req.body.user);
-  // console.log("pass: " + req.body.pass);
-  // console.log("role: " + req.body.requestedRole);
-  // console.log("email: " + req.body.email);
   switch (req.get("Football-Request")) {
     case "login":
       handleLoginRequest(req.body.user, req.body.pass).then((ans) =>
@@ -197,7 +188,9 @@ app.post("/", function (req, res) {
           req.body.selectedTeam2,
           req.body.scoreTeam1,
           req.body.scoreTeam2,
-          req.body.date
+          req.body.date,
+          req.body.team1ScorrersDic,
+          req.body.team2ScorrersDic
         )
         .then((DBResponse) => {
           res.send(DBResponse);

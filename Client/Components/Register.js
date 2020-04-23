@@ -59,7 +59,6 @@ export default class Register extends React.Component {
     }
   }
 
-<<<<<< GameMode
   async onButtonPress() {
     if (
       this.state.user === '' ||
@@ -72,7 +71,11 @@ export default class Register extends React.Component {
     }
 
     let response = fetch(
-      'http://' + this.props.navigation.getParam('IP') + ':3000/',
+      'http://' +
+        this.props.navigation.getParam('IP') +
+        ':' +
+        this.props.navigation.getParam('port') +
+        '/',
       {
         method: 'POST',
         headers: {

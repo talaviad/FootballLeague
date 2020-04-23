@@ -13,14 +13,12 @@ export default class ScorerTable extends React.Component {
     super(props);
     const {navigation} = this.props;
 
-    let sortedTableData = navigation
-      .getParam('tableData')
-      .sort(function (a, b) {
-        if (parseInt(a[8]) == parseInt(b[8])) {
-          return parseInt(b[2]) - parseInt(a[2]);
-        }
-        return parseInt(b[3]) - parseInt(a[3]);
-      });
+    let sortedTableData = navigation.getParam('tableData').sort(function(a, b) {
+      if (parseInt(a[8]) == parseInt(b[8])) {
+        return parseInt(b[2]) - parseInt(a[2]);
+      }
+      return parseInt(b[3]) - parseInt(a[3]);
+    });
 
     this.state = {
       tableHead: ['Name', 'Team', 'Number', 'Goals'],

@@ -12,7 +12,8 @@ import GameMode from './GameMode';
 import Register from './Register';
 import {Table, Row, Rows} from 'react-native-table-component';
 
-var IP = '10.0.0.33';
+var IP = '132.72.23.63';
+var port = '3079';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -32,7 +33,7 @@ export default class Home extends React.Component {
   handleSendRequestToServer = async param => {
     let token = await AsyncStorage.getItem('token');
 
-    let response = fetch('http://' + IP + ':3000/?data=' + param, {
+    let response = fetch('http://' + IP + ':3079/?data=' + param, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -81,13 +82,16 @@ export default class Home extends React.Component {
     let response;
 
     try {
-      response = await fetch('http://' + IP + ':3000/?data=TeamsNames', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Football-Request': 'TeamsNames',
+      response = await fetch(
+        'http://' + IP + ':' + port + '/?data=TeamsNames',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'TeamsNames',
+          },
         },
-      });
+      );
       const json = await response.json();
       this.state.teamsNames = json.teamsNames;
     } catch (err) {
@@ -129,14 +133,16 @@ export default class Home extends React.Component {
             <TouchableOpacity
               style={styles.divided}
               onPress={() =>
-                this.props.navigation.navigate('Register', {IP: IP})
+                this.props.navigation.navigate('Register', {IP: IP, port: port})
               }>
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
           ) : null}
           <TouchableOpacity
             style={styles.divided}
-            onPress={() => this.props.navigation.navigate('Login', {IP: IP})}>
+            onPress={() =>
+              this.props.navigation.navigate('Login', {IP: IP, port: port})
+            }>
             <Text style={styles.buttonText}>
               {this.state.isLoggedIn ? 'Logout' : 'Login'}
             </Text>
@@ -151,7 +157,7 @@ export default class Home extends React.Component {
         <TouchableOpacity
           style={styles.touchAble}
           onPress={() =>
-            this.props.navigation.navigate('GamesResults', {IP: IP})
+            this.props.navigation.navigate('GamesResults', {IP: IP, port: port})
           }>
           <Text style={styles.buttonText}>Games Results</Text>
         </TouchableOpacity>
@@ -168,6 +174,7 @@ export default class Home extends React.Component {
             onPress={() =>
               this.props.navigation.navigate('InsertGame', {
                 IP: IP,
+                port: port,
                 teamList: this.state.teamsNames,
               })
             }>
@@ -181,6 +188,7 @@ export default class Home extends React.Component {
             onPress={() =>
               this.props.navigation.navigate('GameMode', {
                 IP: IP,
+                port: port,
                 teamList: this.state.teamsNames,
               })
             }>

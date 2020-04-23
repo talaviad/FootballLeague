@@ -216,10 +216,11 @@ module.exports = class DataBase {
         .collection("ScorerTable")
         .find();
       result = await result.toArray();
-      console.log("for alon: " + result[0].Name);
+      console.log("for alon: " + result[2].Name);
       let results = result.map((scorer) => {
+        console.log(JSON.stringify(JSON.stringify(scorer)));
         return [
-          scorer.Name,
+          scorer.Name.toString(),
           scorer.Team.toString(),
           scorer.Number.toString(),
           scorer.Goals.toString(),
@@ -254,6 +255,8 @@ module.exports = class DataBase {
           game.result.toString(),
           game.team2.toString(),
           game.date.toString(),
+          game.team1ScorrersDic,
+          game.team2ScorrersDic,
         ];
       });
       let resultsToTheServer = {
@@ -317,7 +320,9 @@ module.exports = class DataBase {
     selectedTeam2,
     scoreTeam1,
     scoreTeam2,
-    date
+    date,
+    team1ScorrersDic,
+    team2ScorrersDic
   ) {
     let winner = 0;
     try {
@@ -376,6 +381,8 @@ module.exports = class DataBase {
           result: scoreTeam1 + " - " + scoreTeam2,
           team2: selectedTeam2,
           date: date,
+          team1ScorrersDic: team1ScorrersDic,
+          team2ScorrersDic: team2ScorrersDic,
         });
 
       let resultsToTheServer = {
