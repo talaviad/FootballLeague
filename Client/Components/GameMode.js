@@ -174,48 +174,20 @@ export default class GameMode extends React.Component {
     }
 
     if (isTeam1) {
-      // var scorerExit = false;
-      // for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
-      //   if (this.state.team1ScorrersDic[i].Number === num) {
-      //     this.state.team1ScorrersDic[i].Goals =
-      //       this.state.team1ScorrersDic[i].Goals + 1;
-      //     if (!this.state.team1ScorrersDic[i].Name.includes(name)) {
-      //       this.state.team1ScorrersDic[i].Name.push(name);
-      //     }
-      //     scorerExit = true;
-      //     break;
-      //   }
-      // }
-      //if (!scorerExit) {
       this.state.team1ScorrersDic.push({
         Name: [name],
         Team: this.state.team1,
         Number: num,
         Goals: 1,
       });
-      //}
       this.setState({isDialogVisible1: false});
     } else {
-      // var scorerExit = false;
-      // for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
-      //   if (this.state.team2ScorrersDic[i].Number === num) {
-      //     this.state.team2ScorrersDic[i].Goals =
-      //       this.state.team2ScorrersDic[i].Goals + 1;
-      //     if (!this.state.team2ScorrersDic[i].Name.incldes(name)) {
-      //       this.state.team2ScorrersDic[i].Name.push(name);
-      //     }
-      //     scorerExit = true;
-      //     break;
-      //   }
-      // }
-      // if (!scorerExit) {
       this.state.team2ScorrersDic.push({
         Name: [name],
         Team: this.state.team2,
         Number: num,
         Goals: 1,
       });
-      //}
       this.setState({isDialogVisible2: false});
     }
   };
@@ -232,8 +204,6 @@ export default class GameMode extends React.Component {
     });
     this.updateScorerTable();
     this.sendResultToServer();
-
-    //alert(JSON.stringify(this.state.team1ScorrersDic));
   };
 
   pressSubmitButton = () => {
@@ -448,13 +418,6 @@ export default class GameMode extends React.Component {
                 />
               </View>
             </View>
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                marginTop: 110,
-                marginRight: 15,
-              }}> */}
             <TouchableOpacity
               style={styles.submitButton}
               onPress={() => this.pressSubmitButton()}>
@@ -462,7 +425,6 @@ export default class GameMode extends React.Component {
                 Finish Game And Submit Result
               </Text>
             </TouchableOpacity>
-            {/* </View> */}
           </View>
         )}
         <View style={styles.dialogBox}>
@@ -521,18 +483,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#5499C7',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingTop: 130,
-    // paddingHorizontal: 20,
   },
   teamSelector: {
-    //flex: 1,
     textAlign: 'left',
     backgroundColor: '#5499C7',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: 30,
-    // paddingHorizontal: 20,
-    //flexDirection: 'column',
   },
   timer: {
     paddingTop: 30,
@@ -543,17 +500,12 @@ const styles = StyleSheet.create({
     width: 110,
   },
   submitButton: {
-    // width: '70%',
-    // height: '20%',
     marginTop: 10,
     backgroundColor: '#2C3E50',
     borderRadius: 20,
     justifyContent: 'flex-end',
-
-    // //marginHorizontal: '10%',
     paddingVertical: 10,
     paddingHorizontal: 10,
-    // justifyContent: 'flex-end',
     paddingTop: 20,
     paddingLeft: 20,
   },

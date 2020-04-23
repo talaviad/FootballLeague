@@ -1,36 +1,37 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Picker,
-  ScrollView,
-  Text,
-} from 'react-native';
-import {Table, Row, Rows, TableWrapper} from 'react-native-table-component';
+import {StyleSheet, View, Picker, ScrollView} from 'react-native';
+import {Table, Row} from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import GLOBALS from '../Globals';
 
 export default class GamesResults extends React.Component {
   constructor(props) {
     super(props);
-
     const {navigation} = this.props;
 
     var TodayDate = new Date();
     var month = GLOBALS.monthList[TodayDate.getMonth()];
-    month = 'May'; //to delete
+    month = 'June';
     this.fetchData(month);
     this.state = {
       tableHead: ['Team1', 'Result', 'Team2', 'Date'],
-      firstTableData: [],
+      firstTableData: [], //each item is an array(in size 4) that includes the details of one match.
       secondTableData: [],
       thirdTableData: [],
       fourthTableData: [],
-      firstTableColorRows: [],
+      firstScorersDictList: [], //each item is an array(of size 2) that includes the string of the scorrers
+      secondScorersDictList: [],
+      thirdScorersDictList: [],
+      fourthScorersDictList: [],
+      firstTableColorRows: [], //includes all the indexes of the games that their button is pressed
       secondTableColorRows: [],
       thirdTableColorRows: [],
       fourthTableColorRows: [],
+      firstMaxScorrersOfMatch: [], //each item is the maximum scorers of a match(just for the height of the cell of the scorers)
+      secondMaxScorrersOfMatch: [],
+      thirdMaxScorrersOfMatch: [],
+      fourthMaxScorrersOfMatch: [],
+
       tableData: null,
       selectedMonth: month,
       isLoading: true,
@@ -110,7 +111,6 @@ export default class GamesResults extends React.Component {
                 style={styles.headDate}
                 textStyle={styles.textHeadDate}
               />
-
               <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
                 flexArr={[60, 30, 60, 40, 22]}
@@ -126,42 +126,39 @@ export default class GamesResults extends React.Component {
                     data={['No Games']}
                   />
                 ) : (
-                  this.state.firstTableData.map((dataRow, index) => (
+                  this.state.firstTableData.map((dataRow, index) => [
                     <Row
                       key={index}
-                      data={dataRow}
-                      style={
-                        this.state.firstTableColorRows.includes(index)
-                          ? [
-                              styles.row,
-                              {
-                                backgroundColor: '#b0c4de',
-                                alignSelf: 'flex-start',
-                                height:
-                                  40 +
-                                  5 * (dataRow[0].match(/\n/g) || '').length,
-                              },
-                            ]
-                          : styles.row
-                      }
-                      // flexArr={[60, 30, 60, 40, 20]}
-                      textStyle={
-                        this.state.firstTableColorRows.includes(index)
-                          ? [
-                              styles.textLines,
-                              {
-                                //textAlign: 'left',
-                              },
-                            ]
-                          : styles.textLines
-                      }
-                      flexArr={
-                        this.state.firstTableColorRows.includes(index)
-                          ? [50, 50]
-                          : [60, 30, 60, 40, 22]
-                      }
-                    />
-                  ))
+                      data={dataRow.concat(
+                        this.createButton(
+                          index,
+                          this.state.firstTableColorRows,
+                        ),
+                      )}
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      flexArr={[60, 30, 60, 40, 22]}
+                    />,
+                    this.state.firstTableColorRows.includes(index) ? (
+                      <Row
+                        style={[
+                          styles.row,
+                          {
+                            backgroundColor: '#b0c4de',
+                            alignSelf: 'flex-start',
+                            height:
+                              40 +
+                              12 * this.state.firstMaxScorrersOfMatch[index],
+                          },
+                        ]}
+                        flexArr={[50, 50]}
+                        textStyle={styles.textLines}
+                        data={this.state.firstScorersDictList[index]}
+                      />
+                    ) : (
+                      <Row />
+                    ),
+                  ])
                 )}
               </Table>
             </Table>
@@ -190,42 +187,39 @@ export default class GamesResults extends React.Component {
                     data={['No Games']}
                   />
                 ) : (
-                  this.state.secondTableData.map((dataRow, index) => (
+                  this.state.secondTableData.map((dataRow, index) => [
                     <Row
                       key={index}
-                      data={dataRow}
-                      style={
-                        this.state.secondTableColorRows.includes(index)
-                          ? [
-                              styles.row,
-                              {
-                                backgroundColor: '#b0c4de',
-                                alignSelf: 'flex-start',
-                                height:
-                                  55 +
-                                  5 * (dataRow[0].match(/\n/g) || '').length,
-                              },
-                            ]
-                          : styles.row
-                      }
-                      // flexArr={[60, 30, 60, 40, 20]}
-                      textStyle={
-                        this.state.secondTableColorRows.includes(index)
-                          ? [
-                              styles.textLines,
-                              {
-                                //textAlign: 'center',
-                              },
-                            ]
-                          : styles.textLines
-                      }
-                      flexArr={
-                        this.state.secondTableColorRows.includes(index)
-                          ? [50, 50]
-                          : [60, 30, 60, 40, 22]
-                      }
-                    />
-                  ))
+                      data={dataRow.concat(
+                        this.createButton(
+                          index,
+                          this.state.secondTableColorRows,
+                        ),
+                      )}
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      flexArr={[60, 30, 60, 40, 22]}
+                    />,
+                    this.state.secondTableColorRows.includes(index) ? (
+                      <Row
+                        style={[
+                          styles.row,
+                          {
+                            backgroundColor: '#b0c4de',
+                            alignSelf: 'flex-start',
+                            height:
+                              40 +
+                              12 * this.state.secondMaxScorrersOfMatch[index],
+                          },
+                        ]}
+                        flexArr={[50, 50]}
+                        textStyle={styles.textLines}
+                        data={this.state.secondScorersDictList[index]}
+                      />
+                    ) : (
+                      <Row />
+                    ),
+                  ])
                 )}
               </Table>
             </Table>
@@ -253,42 +247,39 @@ export default class GamesResults extends React.Component {
                     data={['No Games']}
                   />
                 ) : (
-                  this.state.thirdTableData.map((dataRow, index) => (
+                  this.state.thirdTableData.map((dataRow, index) => [
                     <Row
                       key={index}
-                      data={dataRow}
-                      style={
-                        this.state.thirdTableColorRows.includes(index)
-                          ? [
-                              styles.row,
-                              {
-                                backgroundColor: '#b0c4de',
-                                alignSelf: 'flex-start',
-                                height:
-                                  55 +
-                                  5 * (dataRow[0].match(/\n/g) || '').length,
-                              },
-                            ]
-                          : styles.row
-                      }
-                      // flexArr={[60, 30, 60, 40, 20]}
-                      textStyle={
-                        this.state.thirdTableColorRows.includes(index)
-                          ? [
-                              styles.textLines,
-                              {
-                                //textAlign: 'center',
-                              },
-                            ]
-                          : styles.textLines
-                      }
-                      flexArr={
-                        this.state.secondTableColorRows.includes(index)
-                          ? [50, 50]
-                          : [60, 30, 60, 40, 22]
-                      }
-                    />
-                  ))
+                      data={dataRow.concat(
+                        this.createButton(
+                          index,
+                          this.state.thirdTableColorRows,
+                        ),
+                      )}
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      flexArr={[60, 30, 60, 40, 22]}
+                    />,
+                    this.state.thirdTableColorRows.includes(index) ? (
+                      <Row
+                        style={[
+                          styles.row,
+                          {
+                            backgroundColor: '#b0c4de',
+                            alignSelf: 'flex-start',
+                            height:
+                              40 +
+                              12 * this.state.thirdMaxScorrersOfMatch[index],
+                          },
+                        ]}
+                        flexArr={[50, 50]}
+                        textStyle={styles.textLines}
+                        data={this.state.thirdScorersDictList[index]}
+                      />
+                    ) : (
+                      <Row />
+                    ),
+                  ])
                 )}
               </Table>
             </Table>
@@ -316,42 +307,39 @@ export default class GamesResults extends React.Component {
                     data={['No Games']}
                   />
                 ) : (
-                  this.state.fourthTableData.map((dataRow, index) => (
+                  this.state.fourthTableData.map((dataRow, index) => [
                     <Row
                       key={index}
-                      data={dataRow}
-                      style={
-                        this.state.fourthTableColorRows.includes(index)
-                          ? [
-                              styles.row,
-                              {
-                                backgroundColor: '#b0c4de',
-                                alignSelf: 'flex-start',
-                                height:
-                                  55 +
-                                  5 * (dataRow[0].match(/\n/g) || '').length,
-                              },
-                            ]
-                          : styles.row
-                      }
-                      // flexArr={[60, 30, 60, 40, 20]}
-                      textStyle={
-                        this.state.fourthTableColorRows.includes(index)
-                          ? [
-                              styles.textLines,
-                              {
-                                //textAlign: 'center',
-                              },
-                            ]
-                          : styles.textLines
-                      }
-                      flexArr={
-                        this.state.fourthTableColorRows.includes(index)
-                          ? [50, 50]
-                          : [60, 30, 60, 40, 22]
-                      }
-                    />
-                  ))
+                      data={dataRow.concat(
+                        this.createButton(
+                          index,
+                          this.state.fourthTableColorRows,
+                        ),
+                      )}
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      flexArr={[60, 30, 60, 40, 22]}
+                    />,
+                    this.state.fourthTableColorRows.includes(index) ? (
+                      <Row
+                        style={[
+                          styles.row,
+                          {
+                            backgroundColor: '#b0c4de',
+                            alignSelf: 'flex-start',
+                            height:
+                              40 +
+                              12 * this.state.fourthMaxScorrersOfMatch[index],
+                          },
+                        ]}
+                        flexArr={[50, 50]}
+                        textStyle={styles.textLines}
+                        data={this.state.fourthScorersDictList[index]}
+                      />
+                    ) : (
+                      <Row />
+                    ),
+                  ])
                 )}
               </Table>
             </Table>
@@ -361,161 +349,105 @@ export default class GamesResults extends React.Component {
     );
   }
 
-  createButton = (
-    team1Dic,
-    team2Dic,
-    indexToInsert,
-    team1Name,
-    team2Name,
-    tableData,
-    tableColorData,
-  ) => (
+  createButton = (index, arr) => (
     <Icon.Button
-      name="angle-down"
+      name={arr.includes(index) ? 'angle-up' : 'angle-down'}
       style={{backgroundColor: '#5499C7'}}
       color={'black'}
       size={22}
       onPress={() => {
-        if (tableColorData.includes(indexToInsert)) {
-          tableData.splice(indexToInsert, 1);
-          const index = tableColorData.indexOf(indexToInsert);
-          if (index > -1) {
-            tableColorData.splice(index, 1);
-          }
+        if (arr.includes(index)) {
+          arr.splice(index, 1);
           this.setState({
-            tableData: tableData,
-            tableColorData: tableColorData,
+            arr: arr,
           });
           return;
         }
-        tableColorData.push(indexToInsert);
-        var strTeam1 = '\n' + team1Name + ':\n';
-        team1Dic.map(x => {
-          strTeam1 = strTeam1 + '#' + x.Number + ' ' + x.Name[0] + '\n';
-        });
-        var strTeam2 = '\n' + team2Name + ':\n';
-        team2Dic.map(x => {
-          strTeam2 = strTeam2 + '#' + x.Number + ' ' + x.Name[0] + '\n';
-        });
-        tableData.splice(indexToInsert, 0, [strTeam1, strTeam2]);
+        arr.push(index);
         this.setState({
-          tableData: tableData,
-          tableColorData: tableColorData,
+          arr: arr,
         });
       }}
     />
   );
+
+  buildScorresData = (arr, team1Dic, team2Dic, team1Name, team2Name) => {
+    var strTeam1 = '\n' + team1Name + ':\n';
+    team1Dic.map(x => {
+      strTeam1 = strTeam1 + '#' + x.Number + ' ' + x.Name[0] + '\n';
+    });
+    var strTeam2 = '\n' + team2Name + ':\n';
+    team2Dic.map(x => {
+      strTeam2 = strTeam2 + '#' + x.Number + ' ' + x.Name[0] + '\n';
+    });
+    arr.push([strTeam1, strTeam2]);
+  };
+
   sortToTablesByDate = line => {
     if (parseInt(line[3].substring(0, 2)) < 8) {
       this.state.firstTableData.push(
-        [].concat([
-          line[0],
-          line[1],
-          line[2],
-          line[3],
-          this.createButton(
-            line[4],
-            line[5],
-            this.state.firstTableData.length + 1,
-            line[0],
-            line[2],
-            this.state.firstTableData,
-            this.state.firstTableColorRows,
-          ),
-        ]),
+        [].concat([line[0], line[1], line[2], line[3]]),
+      );
+      this.buildScorresData(
+        this.state.firstScorersDictList,
+        line[4],
+        line[5],
+        line[0],
+        line[2],
+      );
+      this.state.firstMaxScorrersOfMatch.push(
+        Math.max(line[4].length, line[5].length),
       );
     } else if (parseInt(line[3].substring(0, 2)) < 15) {
       this.state.secondTableData.push(
-        [].concat([
-          line[0],
-          line[1],
-          line[2],
-          line[3],
-          this.createButton(
-            line[4],
-            line[5],
-            this.state.secondTableData.length + 1,
-            line[0],
-            line[2],
-            this.state.secondTableData,
-            this.state.secondTableColorRows,
-          ),
-        ]),
+        [].concat([line[0], line[1], line[2], line[3]]),
+      );
+      this.buildScorresData(
+        this.state.secondScorersDictList,
+        line[4],
+        line[5],
+        line[0],
+        line[2],
+      );
+      this.state.secondMaxScorrersOfMatch.push(
+        Math.max(line[4].length, line[5].length),
       );
     } else if (parseInt(line[3].substring(0, 2)) < 22) {
       this.state.thirdTableData.push(
-        [].concat([
-          line[0],
-          line[1],
-          line[2],
-          line[3],
-          this.createButton(
-            line[4],
-            line[5],
-            this.state.thirdTableData.length + 1,
-            line[0],
-            line[2],
-            this.state.thirdTableData,
-            this.state.thirdTableColorRows,
-          ),
-        ]),
+        [].concat([line[0], line[1], line[2], line[3]]),
+      );
+      this.buildScorresData(
+        this.state.thirdScorersDictList,
+        line[4],
+        line[5],
+        line[0],
+        line[2],
+      );
+      this.state.thirdMaxScorrersOfMatch.push(
+        Math.max(line[4].length, line[5].length),
       );
     } else {
       this.state.fourthTableData.push(
-        [].concat([
-          line[0],
-          line[1],
-          line[2],
-          line[3],
-          this.createButton(
-            line[4],
-            line[5],
-            this.state.fourthTableData.length + 1,
-            line[0],
-            line[2],
-            this.state.fourthTableData,
-            this.state.fourthTableColorRows,
-          ),
-        ]),
+        [].concat([line[0], line[1], line[2], line[3]]),
+      );
+      this.buildScorresData(this.state.fourthScorersDictList, line[4], line[5]);
+      this.state.fourthMaxScorrersOfMatch.push(
+        Math.max(line[4].length, line[5].length),
       );
     }
   };
 }
 
-// buttonCreator = () => {
-//   <Button
-//     onPress={() => {
-//       this.submitGame();
-//     }}
-//     title="Submit"
-//     color="#841584"
-//   />;
-// };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#5499C7',
-  },
-  itemStyle: {
-    fontSize: 45,
-    height: 278,
-    color: 'black',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  tableStyle: {
-    height: '30%',
-    marginTop: 32,
   },
   picker: {
     height: '10%',
     width: '100%',
     textAlign: 'center',
   },
-  pickerItem: {
-    textAlign: 'center',
-  },
-
   head: {
     height: 28,
     backgroundColor: '#5D6D7E',
@@ -543,36 +475,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Times',
     color: '#2C3E50',
   },
-
   text: {
     textAlign: 'center',
     fontFamily: 'Times',
     color: '#AED6F1',
   },
-  // row: {
-  //   height: '50%',
-  //   backgroundColor: '#D6EAF8',
-  // },
   row: {
     height: 55,
-    // backgroundColor: 'brown',
   },
 
-  pickerContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: 'white',
-  },
   picker: {
     width: 200,
     backgroundColor: '#FFF0E0',
     borderColor: 'black',
     borderWidth: 5,
-  }, // textLines: {
-  //   textAlign: 'center',
-  //   fontFamily: 'Times',
-  //   color: '#2C3E50',
-  // },
+  },
 });
