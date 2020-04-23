@@ -1,4 +1,3 @@
-//import DataBase from './DataBase.js'
 var DataBase = require("./DataBase.js");
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -14,7 +13,6 @@ app.use("/", require("./Middlewares/auth.js"));
 
 app.get("/", function (req, res) {
   console.log("Got a GET request for the homepage");
-  //console.log("Got: " + JSON.stringify(req));
 
   let results = [];
   let data = req.query.data;
@@ -162,11 +160,6 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
 };
 
 app.post("/", function (req, res) {
-  // console.log("Got a Post message");
-  // console.log("user: " + req.body.user);
-  // console.log("pass: " + req.body.pass);
-  // console.log("role: " + req.body.requestedRole);
-  // console.log("email: " + req.body.email);
   switch (req.get("Football-Request")) {
     case "login":
       handleLoginRequest(req.body.user, req.body.pass).then((ans) =>

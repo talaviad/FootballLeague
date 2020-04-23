@@ -43,7 +43,9 @@ export default class GamesResults extends React.Component {
       response = await fetch(
         'http://' +
           this.props.navigation.getParam('IP') +
-          ':3000/?data=' +
+          ':' +
+          this.props.navigation.getParam('port') +
+          '/?data=' +
           monthName,
         {
           method: 'GET',

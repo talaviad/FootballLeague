@@ -244,7 +244,11 @@ export default class GameMode extends React.Component {
 
   async updateScorerTable() {
     let response = fetch(
-      'http://' + this.props.navigation.getParam('IP') + ':3000/',
+      'http://' +
+        this.props.navigation.getParam('IP') +
+        ':' +
+        this.props.navigation.getParam('port') +
+        '/',
       {
         method: 'POST',
         headers: {
@@ -272,7 +276,11 @@ export default class GameMode extends React.Component {
   async sendResultToServer() {
     try {
       let response = fetch(
-        'http://' + this.props.navigation.getParam('IP') + ':3000/',
+        'http://' +
+          this.props.navigation.getParam('IP') +
+          ':' +
+          this.props.navigation.getParam('port') +
+          '/',
         {
           method: 'POST',
           headers: {
@@ -280,8 +288,8 @@ export default class GameMode extends React.Component {
             'Football-Request': 'Result',
           },
           body: JSON.stringify({
-            selectedTeam1: this.state.team1Name,
-            selectedTeam2: this.state.team2Name,
+            selectedTeam1: this.state.team1,
+            selectedTeam2: this.state.team2,
             scoreTeam1: this.state.team1Goals,
             scoreTeam2: this.state.team2Goals,
             date: this.state.date,

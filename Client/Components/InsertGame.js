@@ -10,6 +10,7 @@ import {
 
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
+
 import TeamSelector from './TeamSelector';
 
 export default class InsertGame extends React.Component {
@@ -183,7 +184,11 @@ export default class InsertGame extends React.Component {
   async sendResultToServer() {
     try {
       let response = fetch(
-        'http://' + this.props.navigation.getParam('IP') + ':3000/',
+        'http://' +
+          this.props.navigation.getParam('IP') +
+          ':' +
+          this.props.navigation.getParam('port') +
+          '/',
         {
           method: 'POST',
           headers: {
@@ -217,7 +222,11 @@ export default class InsertGame extends React.Component {
 
   async updateScorerTable() {
     let response = fetch(
-      'http://' + this.props.navigation.getParam('IP') + ':3000/',
+      'http://' +
+        this.props.navigation.getParam('IP') +
+        ':' +
+        this.props.navigation.getParam('port') +
+        '/',
       {
         method: 'POST',
         headers: {
