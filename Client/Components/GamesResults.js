@@ -430,7 +430,13 @@ export default class GamesResults extends React.Component {
       this.state.fourthTableData.push(
         [].concat([line[0], line[1], line[2], line[3]]),
       );
-      this.buildScorresData(this.state.fourthScorersDictList, line[4], line[5]);
+      this.buildScorresData(
+        this.state.fourthScorersDictList,
+        line[4],
+        line[5],
+        line[0],
+        line[2],
+      );
       this.state.fourthMaxScorrersOfMatch.push(
         Math.max(line[4].length, line[5].length),
       );
