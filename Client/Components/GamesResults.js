@@ -152,7 +152,7 @@ export default class GamesResults extends React.Component {
                           },
                         ]}
                         flexArr={[50, 50]}
-                        textStyle={styles.textLines}
+                        textStyle={styles.textLinesScorers}
                         data={this.state.firstScorersDictList[index]}
                       />
                     ) : (
@@ -213,7 +213,7 @@ export default class GamesResults extends React.Component {
                           },
                         ]}
                         flexArr={[50, 50]}
-                        textStyle={styles.textLines}
+                        textStyle={styles.textLinesScorers}
                         data={this.state.secondScorersDictList[index]}
                       />
                     ) : (
@@ -273,7 +273,7 @@ export default class GamesResults extends React.Component {
                           },
                         ]}
                         flexArr={[50, 50]}
-                        textStyle={styles.textLines}
+                        textStyle={styles.textLinesScorers}
                         data={this.state.thirdScorersDictList[index]}
                       />
                     ) : (
@@ -333,7 +333,7 @@ export default class GamesResults extends React.Component {
                           },
                         ]}
                         flexArr={[50, 50]}
-                        textStyle={styles.textLines}
+                        textStyle={styles.textLinesScorers}
                         data={this.state.fourthScorersDictList[index]}
                       />
                     ) : (
@@ -480,6 +480,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Times',
     color: '#2C3E50',
+  },
+  textLinesScorers: {
+    textAlign: 'center',
+    fontFamily: 'Times',
+    color: '#2C3E50',
+    fontWeight: 'bold',
   },
   text: {
     textAlign: 'center',

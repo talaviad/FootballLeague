@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import moment from 'moment';
 import TeamSelector from './TeamSelector';
@@ -65,6 +66,7 @@ export default class GameMode extends React.Component {
       isDialogVisible2: false,
       submitConfirmationAlert: false,
       date: '',
+      isLoading: false,
     };
     const {navigation} = this.props;
   }
@@ -202,7 +204,6 @@ export default class GameMode extends React.Component {
     this.setState({
       submitConfirmationAlert: false,
     });
-    this.updateScorerTable();
     this.sendResultToServer();
   };
 
@@ -245,6 +246,8 @@ export default class GameMode extends React.Component {
 
   async sendResultToServer() {
     try {
+      this.setState({isLoading: true});
+
       let response = fetch(
         'http://' +
           this.props.navigation.getParam('IP') +
@@ -449,6 +452,11 @@ export default class GameMode extends React.Component {
             }}
           />
         </View>
+        <View style={styles.loadingStyle}>
+          {this.state.isLoading && (
+            <ActivityIndicator color={'#fff'} size={80} />
+          )}
+        </View>
         <AwesomeAlert
           show={submitConfirmationAlert}
           showProgress={false}
@@ -563,5 +571,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  loadingStyle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

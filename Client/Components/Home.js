@@ -1,5 +1,12 @@
 import React from 'react';
-import {StyleSheet, View, Button, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Button,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
   Colors,
@@ -19,11 +26,13 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
+
     this.state = {
       isLoggedIn: false,
       role: null,
       token: null,
       teamsNames: [],
+      isLoading: false,
     };
     this.handleSendRequestToServer = this.handleSendRequestToServer.bind(this);
     this.load = this.load.bind(this);
@@ -32,7 +41,7 @@ export default class Home extends React.Component {
 
   handleSendRequestToServer = async param => {
     let token = await AsyncStorage.getItem('token');
-
+    this.setState({isLoading: true});
     let response = fetch('http://' + IP + ':3079/?data=' + param, {
       method: 'GET',
       headers: {
@@ -122,7 +131,11 @@ export default class Home extends React.Component {
       throw err;
     }
 
-    this.setState({isLoggedIn: token !== 'none', token: token, role: currRole});
+    this.setState({
+      isLoggedIn: token !== 'none',
+      token: token,
+      role: currRole,
+    });
   }
 
   render() {
@@ -195,6 +208,11 @@ export default class Home extends React.Component {
             <Text style={styles.buttonText}>Enter game mode</Text>
           </TouchableOpacity>
         ) : null}
+        <View style={styles.loadingStyle}>
+          {this.state.isLoading && (
+            <ActivityIndicator color={'#fff'} size={80} />
+          )}
+        </View>
       </View>
     );
   }
@@ -237,5 +255,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#AED6F1',
     textAlign: 'center',
+  },
+  loadingStyle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

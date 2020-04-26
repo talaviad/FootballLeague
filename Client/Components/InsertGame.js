@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ActivityIndicator,
 } from 'react-native';
 
 import 'isomorphic-fetch';
@@ -30,6 +31,7 @@ export default class InsertGame extends React.Component {
       selectedTeam2: false,
       score1Legal: true,
       score2Legal: true,
+      isLoading: false,
     };
   }
 
@@ -67,14 +69,15 @@ export default class InsertGame extends React.Component {
               <Text style={{alignSelf: 'flex-start'}}>Team1</Text>
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
-                onSelect={text =>
+                onSelect={text => {
+                  alert(this.state.team1Name);
                   this.setState({
                     team1Name: text,
                     team1Goals: '',
                     team1ScorrersDic: [],
                     selectedTeam1: true,
-                  })
-                }
+                  });
+                }}
               />
             </View>
             <View style={{marginRight: 10, width: 200}}>
@@ -176,6 +179,12 @@ export default class InsertGame extends React.Component {
               color="#000080"
             />
           </View>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            {this.state.isLoading && (
+              <ActivityIndicator color={'#fff'} size={80} />
+            )}
+          </View>
         </ScrollView>
       </View>
     );
@@ -183,6 +192,7 @@ export default class InsertGame extends React.Component {
 
   async sendResultToServer() {
     try {
+      this.setState({isLoading: true});
       let response = fetch(
         'http://' +
           this.props.navigation.getParam('IP') +
@@ -219,7 +229,22 @@ export default class InsertGame extends React.Component {
       alert(err);
     }
   }
-
+  initalizeState = () => {
+    this.setState({
+      date: '',
+      team1Name: '',
+      team2Name: '',
+      team1Goals: '',
+      team2Goals: '',
+      team1ScorrersDic: [],
+      team2ScorrersDic: [],
+      selectedTeam1: false,
+      selectedTeam2: false,
+      score1Legal: true,
+      score2Legal: true,
+      isLoading: false,
+    });
+  };
   async updateScorerTable() {
     let response = fetch(
       'http://' +
@@ -243,7 +268,7 @@ export default class InsertGame extends React.Component {
       .then(async resJson => {
         if (resJson.success) {
           alert('The game submited successfully');
-          this.props.navigation.navigate('Home');
+          this.initalizeState();
         } else {
           alert(resJson.error.msg);
         }
