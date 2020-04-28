@@ -70,7 +70,6 @@ export default class InsertGame extends React.Component {
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
-                  alert(this.state.team1Name);
                   this.setState({
                     team1Name: text,
                     team1Goals: '',
@@ -92,11 +91,10 @@ export default class InsertGame extends React.Component {
                     : {backgroundColor: '#c0c0c0'},
                 ]}
                 keyboardType="number-pad"
-                placeholder="0"
                 value={this.state.team1Goals}
                 editable={this.state.selectedTeam1}
                 onChangeText={text => {
-                  if (!this.isNumeric(text)) {
+                  if (!this.isNumericAndLegal(text)) {
                     this.setState({score1Legal: false});
                   } else {
                     this.setState({score1Legal: true});
@@ -144,11 +142,10 @@ export default class InsertGame extends React.Component {
                     : {backgroundColor: '#c0c0c0'},
                 ]}
                 keyboardType="numeric"
-                placeholder="0"
                 value={this.state.team2Goals}
                 editable={this.state.selectedTeam2}
                 onChangeText={text => {
-                  if (!this.isNumeric(text)) {
+                  if (!this.isNumericAndLegal(text)) {
                     this.setState({score2Legal: false});
                   } else {
                     this.setState({score2Legal: true});
@@ -168,8 +165,8 @@ export default class InsertGame extends React.Component {
               />
             </View>
           </View>
-          {this.displayScorersFields(1)}
-          {this.displayScorersFields(2)}
+          {this.state.score1Legal && this.displayScorersFields(1)}
+          {this.state.score2Legal && this.displayScorersFields(2)}
           <View style={styles.button}>
             <Button
               onPress={() => {
@@ -307,7 +304,11 @@ export default class InsertGame extends React.Component {
         return;
       }
       if (!this.isNumeric(this.state.team1ScorrersDic[i].Number)) {
-        alert('Illegal scorer details');
+        alert('Illegal scorer jersy number details');
+        return;
+      }
+      if (!this.isLegalName(this.state.team1ScorrersDic[i].Name[0])) {
+        alert('Illegal scorer name details');
         return;
       }
     }
@@ -320,7 +321,11 @@ export default class InsertGame extends React.Component {
         return;
       }
       if (!this.isNumeric(this.state.team2ScorrersDic[i].Number)) {
-        alert('Illegal scorer details');
+        alert('Illegal scorer jersy number details');
+        return;
+      }
+      if (!this.isLegalName(this.state.team2ScorrersDic[i].Name[0])) {
+        alert('Illegal scorer name details');
         return;
       }
     }
@@ -395,8 +400,17 @@ export default class InsertGame extends React.Component {
     });
   };
 
+  isNumericAndLegal = value => {
+    return /^\d+$/.test(value) && parseInt(value) < 25;
+  };
+
   isNumeric = value => {
     return /^\d+$/.test(value);
+  };
+
+  isLegalName = value => {
+    var reg = new RegExp('^[a-zA-Z]+([\\s]+[a-zA-Z]+)*$');
+    return reg.test(value);
   };
 }
 

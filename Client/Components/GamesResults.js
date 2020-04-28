@@ -96,6 +96,18 @@ export default class GamesResults extends React.Component {
               this.state.secondTableData = [];
               this.state.thirdTableData = [];
               this.state.fourthTableData = [];
+              this.state.firstScorersDictList = []; //each item is an array(of size 2) that includes the string of the scorrers
+              this.state.secondScorersDictList = [];
+              this.state.thirdScorersDictList = [];
+              this.state.fourthScorersDictList = [];
+              this.state.firstTableColorRows = []; //includes all the indexes of the games that their button is pressed
+              this.state.secondTableColorRows = [];
+              this.state.thirdTableColorRows = [];
+              this.state.fourthTableColorRows = [];
+              this.state.firstMaxScorrersOfMatch = []; //each item is the maximum scorers of a match(just for the height of the cell of the scorers)
+              this.state.secondMaxScorrersOfMatch = [];
+              this.state.thirdMaxScorrersOfMatch = [];
+              this.state.fourthMaxScorrersOfMatch = [];
               this.setState({selectedMonth: itemValue});
               this.state.isLoading = true;
               this.fetchData(itemValue);
@@ -357,7 +369,8 @@ export default class GamesResults extends React.Component {
       size={22}
       onPress={() => {
         if (arr.includes(index)) {
-          arr.splice(index, 1);
+          var position = arr.indexOf(index);
+          arr.splice(position, 1);
           this.setState({
             arr: arr,
           });

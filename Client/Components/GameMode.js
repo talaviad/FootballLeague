@@ -23,7 +23,10 @@ function Timer({interval, style}) {
   return (
     <View style={styles.timerContainer}>
       <Text style={style}>{pad(duration.minutes())}:</Text>
-      <Text style={style}>{pad(duration.seconds())},</Text>
+      <Text style={style}>
+        {pad(duration.seconds())}
+        {':'}
+      </Text>
       <Text style={style}>{pad(centiseconds)}</Text>
     </View>
   );
@@ -75,12 +78,12 @@ export default class GameMode extends React.Component {
   }
 
   start = () => {
-    if (!this.state.teamSelected) {
-      alert('First Select The Teams');
+    if (!this.state.dateSelected) {
+      alert('Please Select The Date');
+    } else if (!this.state.teamSelected) {
+      alert('Please Select The Teams');
     } else if (this.state.team1 === this.state.team2) {
       alert('Please Select Two Different Teams');
-    } else if (!this.state.dateSelected) {
-      alert('Please Select Date First');
     } else {
       const now = new Date().getTime();
       this.setState({
@@ -159,6 +162,24 @@ export default class GameMode extends React.Component {
   };
 
   sendDialogInput = (textInput, isTeam1) => {
+    var reg = new RegExp('^[\\s]*[0-9]+[\\s-:,]+[a-zA-Z]+([\\s]+[a-zA-Z]+)*$');
+    if (!reg.test(textInput)) {
+      alert('bad input');
+      return;
+    }
+    var jerzyNumber = textInput.match(/^\d+/g);
+    var tempPlayerName = textInput.match(/[a-zA-Z]+/g); //if it's the first and the last name return array of 2
+    var playerName = '';
+    for (var i = 0; i < tempPlayerName.length; i++) {
+      playerName =
+        playerName +
+        tempPlayerName[i][0].toUpperCase() +
+        tempPlayerName[i].substring(1).toLowerCase();
+      if (i !== tempPlayerName.length - 1) {
+        playerName = playerName + ' ';
+      }
+    }
+    /*
     var num;
     var name;
     try {
@@ -174,20 +195,20 @@ export default class GameMode extends React.Component {
     } catch {
       num, (name = '');
     }
-
+*/
     if (isTeam1) {
       this.state.team1ScorrersDic.push({
-        Name: [name],
+        Name: [playerName],
         Team: this.state.team1,
-        Number: num,
+        Number: jerzyNumber,
         Goals: 1,
       });
       this.setState({isDialogVisible1: false});
     } else {
       this.state.team2ScorrersDic.push({
-        Name: [name],
+        Name: [playerName],
         Team: this.state.team2,
-        Number: num,
+        Number: jerzyNumber,
         Goals: 1,
       });
       this.setState({isDialogVisible2: false});
@@ -399,7 +420,6 @@ export default class GameMode extends React.Component {
                 onPress={this.resume}
               />
             </ButtonsRow>
-
             <View
               style={{
                 flexDirection: 'row',
@@ -468,7 +488,7 @@ export default class GameMode extends React.Component {
           showConfirmButton={true}
           cancelText="No"
           confirmText="Yes"
-          confirmButtonColor="#DD6B55"
+          confirmButtonColor="#8fbc8f"
           onCancelPressed={this.cancelAlert}
           onConfirmPressed={this.confirmAlert}
         />

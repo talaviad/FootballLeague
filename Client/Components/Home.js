@@ -33,7 +33,6 @@ export default class Home extends React.Component {
       token: null,
       teamsNames: [],
       isLoading: false,
-      alon: true,
     };
     this.handleSendRequestToServer = this.handleSendRequestToServer.bind(this);
     this.load = this.load.bind(this);
@@ -73,7 +72,6 @@ export default class Home extends React.Component {
           case 'scorerTable':
             this.props.navigation.navigate('ScorerTable', {
               tableData: resJson.tableData,
-              callHome: this.handleBack.bind(this),
             });
             break;
           case 'register':
