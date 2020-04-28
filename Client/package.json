@@ -31,6 +31,7 @@
     "react-native-numeric-input": "^1.8.3",
     "react-native-safe-area-context": "^0.6.2",
     "react-native-safe-area-view": "^1.0.0",
+    "react-native-search-bar": "^3.5.1",
     "react-native-select-plus": "^0.1.10",
     "react-native-select-two": "^1.1.0",
     "react-native-table-component": "^1.2.1",
