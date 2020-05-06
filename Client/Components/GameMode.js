@@ -13,7 +13,7 @@ import TeamSelector from './TeamSelector';
 import Counter from 'react-native-counters';
 import DialogInput from 'react-native-dialog-input';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import DatePicker from 'react-native-datepicker';
+import DatePicker from 'react-native-datepicker'; // tal's old state
 
 function Timer({interval, style}) {
   const pad = n => (n < 10 ? '0' + n : n);

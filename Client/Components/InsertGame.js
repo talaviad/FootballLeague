@@ -11,7 +11,7 @@ import {
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
 import TeamSelector from './TeamSelector';
-import NumericInput from 'react-native-numeric-input';
+import NumericInput from 'react-native-numeric-input'; // tal's old state
 
 
 export default class InsertGame extends React.Component {

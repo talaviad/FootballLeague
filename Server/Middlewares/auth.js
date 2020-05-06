@@ -4,7 +4,7 @@ var permission = {
   CAPTAIN: "captain",
   REFEREE: "referee",
   MANAGER: "manager",
-};
+}; // tal's old state
 
 var possibleRequests = [
   "register",

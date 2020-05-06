@@ -8,7 +8,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import {Table, Row, Rows } from 'react-native-table-component';
 
-var IP = '10.0.0.33';
+var IP = '10.0.0.33'; // tal's old state
 
 export default class Home extends React.Component {
   constructor(props) {

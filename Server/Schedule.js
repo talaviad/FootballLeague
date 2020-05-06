@@ -1,4 +1,4 @@
-module.exports = class Schedule {
+module.exports = class Schedule { // tal's old state
     constructor(database) {
       console.log("connecting to database...");
       this.database = database;

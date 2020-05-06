@@ -8,7 +8,7 @@ import {
 } from 'react-native-table-component';
 import { View, StyleSheet, ScrollView, Button, Text, TouchableOpacity, TextInput, Dimensions, Modal } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import DatePicker from 'react-native-datepicker';
+import DatePicker from 'react-native-datepicker'; // tal's old state
 
 export default class Inbox extends React.Component {
   constructor(props) {

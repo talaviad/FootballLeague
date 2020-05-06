@@ -1,4 +1,4 @@
-export default {
+export default { // tal's old state
   monthList: [
       'January',
       'February',

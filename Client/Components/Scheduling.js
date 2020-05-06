@@ -18,7 +18,7 @@ import {
     Col,
 } from 'react-native-table-component';
 import { Header } from 'react-navigation-stack';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-community/async-storage'; // tal's old state
 
 var windowHeightSize = (Dimensions.get('window').height)-(Header.HEIGHT);
 

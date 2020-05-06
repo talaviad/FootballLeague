@@ -6,7 +6,7 @@ import {
   Col,
   TableWrapper,
 } from 'react-native-table-component';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native'; // tal's old state
 
 export default class LeagueTable extends React.Component {
   constructor(props) {

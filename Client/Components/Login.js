@@ -8,7 +8,7 @@ import {
     TextInput,
     TouchableOpacity
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-community/async-storage'; // tal's old state
 
 export default class Login extends React.Component {
     constructor(props) {

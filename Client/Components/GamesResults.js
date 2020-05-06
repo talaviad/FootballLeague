@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Picker, ScrollView} from 'react-native';
 import {Table, Row, Rows, TableWrapper} from 'react-native-table-component';
-import GLOBALS from '../Globals';
+import GLOBALS from '../Globals'; // tal's old state
 export default class GamesResults extends React.Component {
   constructor(props) {
     super(props);

@@ -1,5 +1,4 @@
-//import DataBase from './DataBase.js'
-var DataBase = require("./DataBase.js");
+var DataBase = require("./DataBase.js"); // tal's old state
 var Schedule = require("./Schedule.js");
 var express = require("express");
 var bodyParser = require("body-parser");
