@@ -6,7 +6,7 @@ import {
   Col,
   TableWrapper,
 } from 'react-native-table-component';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 
 export default class LeagueTable extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ export default class LeagueTable extends React.Component {
     });
 
     this.state = {
-      tableHead: ['Club', 'MP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts'],
+      tableHead: ['Club', 'MP', 'W', 'D', 'L', 'GS', 'GA', 'GD', 'Pts'],
       tableTitle: ['a', 'a', 'a', 'a'],
       tableData: sortedTableData,
     };
@@ -47,6 +47,20 @@ export default class LeagueTable extends React.Component {
             />
           </TableWrapper>
         </Table>
+        <View style={styles.decleration}>
+          <View style={styles.declerationLine}>
+            <Text style={{alignSelf: 'flex-start'}}>MP - Matches Played</Text>
+            <Text style={{alignSelf: 'flex-start'}}>W - Won</Text>
+            <Text style={{alignSelf: 'flex-start'}}>D - Draw</Text>
+            <Text style={{alignSelf: 'flex-start'}}>L - Loss</Text>
+          </View>
+          <View style={styles.declerationLine}>
+            <Text style={{alignSelf: 'flex-start'}}>GS - Goals Scored</Text>
+            <Text style={{alignSelf: 'flex-start'}}>GA - Goals Against</Text>
+            <Text style={{alignSelf: 'flex-start'}}>GD - Goal Difference</Text>
+            <Text style={{alignSelf: 'flex-start'}}>Pts - points</Text>
+          </View>
+        </View>
       </ScrollView>
     );
   }
@@ -71,6 +85,7 @@ const styles = StyleSheet.create({
   row: {
     height: 55,
   },
+
   textHead: {
     textAlign: 'center',
     fontFamily: 'Times',
@@ -80,5 +95,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Times',
     color: '#2C3E50',
+  },
+  decleration: {
+    borderWidth: 1,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  declerationLine: {
+    //flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });

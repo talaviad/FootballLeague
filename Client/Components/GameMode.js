@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import moment from 'moment';
 import TeamSelector from './TeamSelector';
@@ -22,7 +23,10 @@ function Timer({interval, style}) {
   return (
     <View style={styles.timerContainer}>
       <Text style={style}>{pad(duration.minutes())}:</Text>
-      <Text style={style}>{pad(duration.seconds())},</Text>
+      <Text style={style}>
+        {pad(duration.seconds())}
+        {':'}
+      </Text>
       <Text style={style}>{pad(centiseconds)}</Text>
     </View>
   );
@@ -65,6 +69,7 @@ export default class GameMode extends React.Component {
       isDialogVisible2: false,
       submitConfirmationAlert: false,
       date: '',
+      isLoading: false,
     };
     const {navigation} = this.props;
   }
@@ -73,12 +78,12 @@ export default class GameMode extends React.Component {
   }
 
   start = () => {
-    if (!this.state.teamSelected) {
-      alert('First Select The Teams');
+    if (!this.state.dateSelected) {
+      alert('Please Select The Date');
+    } else if (!this.state.teamSelected) {
+      alert('Please Select The Teams');
     } else if (this.state.team1 === this.state.team2) {
       alert('Please Select Two Different Teams');
-    } else if (!this.state.dateSelected) {
-      alert('Please Select Date First');
     } else {
       const now = new Date().getTime();
       this.setState({
@@ -157,6 +162,24 @@ export default class GameMode extends React.Component {
   };
 
   sendDialogInput = (textInput, isTeam1) => {
+    var reg = new RegExp('^[\\s]*[0-9]+[\\s-:,]+[a-zA-Z]+([\\s]+[a-zA-Z]+)*$');
+    if (!reg.test(textInput)) {
+      alert('bad input');
+      return;
+    }
+    var jerzyNumber = textInput.match(/^\d+/g);
+    var tempPlayerName = textInput.match(/[a-zA-Z]+/g); //if it's the first and the last name return array of 2
+    var playerName = '';
+    for (var i = 0; i < tempPlayerName.length; i++) {
+      playerName =
+        playerName +
+        tempPlayerName[i][0].toUpperCase() +
+        tempPlayerName[i].substring(1).toLowerCase();
+      if (i !== tempPlayerName.length - 1) {
+        playerName = playerName + ' ';
+      }
+    }
+    /*
     var num;
     var name;
     try {
@@ -172,50 +195,22 @@ export default class GameMode extends React.Component {
     } catch {
       num, (name = '');
     }
-
+*/
     if (isTeam1) {
-      // var scorerExit = false;
-      // for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
-      //   if (this.state.team1ScorrersDic[i].Number === num) {
-      //     this.state.team1ScorrersDic[i].Goals =
-      //       this.state.team1ScorrersDic[i].Goals + 1;
-      //     if (!this.state.team1ScorrersDic[i].Name.includes(name)) {
-      //       this.state.team1ScorrersDic[i].Name.push(name);
-      //     }
-      //     scorerExit = true;
-      //     break;
-      //   }
-      // }
-      //if (!scorerExit) {
       this.state.team1ScorrersDic.push({
-        Name: [name],
+        Name: [playerName],
         Team: this.state.team1,
-        Number: num,
+        Number: jerzyNumber,
         Goals: 1,
       });
-      //}
       this.setState({isDialogVisible1: false});
     } else {
-      // var scorerExit = false;
-      // for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
-      //   if (this.state.team2ScorrersDic[i].Number === num) {
-      //     this.state.team2ScorrersDic[i].Goals =
-      //       this.state.team2ScorrersDic[i].Goals + 1;
-      //     if (!this.state.team2ScorrersDic[i].Name.incldes(name)) {
-      //       this.state.team2ScorrersDic[i].Name.push(name);
-      //     }
-      //     scorerExit = true;
-      //     break;
-      //   }
-      // }
-      // if (!scorerExit) {
       this.state.team2ScorrersDic.push({
-        Name: [name],
+        Name: [playerName],
         Team: this.state.team2,
-        Number: num,
+        Number: jerzyNumber,
         Goals: 1,
       });
-      //}
       this.setState({isDialogVisible2: false});
     }
   };
@@ -230,10 +225,7 @@ export default class GameMode extends React.Component {
     this.setState({
       submitConfirmationAlert: false,
     });
-    this.updateScorerTable();
     this.sendResultToServer();
-
-    //alert(JSON.stringify(this.state.team1ScorrersDic));
   };
 
   pressSubmitButton = () => {
@@ -275,6 +267,8 @@ export default class GameMode extends React.Component {
 
   async sendResultToServer() {
     try {
+      this.setState({isLoading: true});
+
       let response = fetch(
         'http://' +
           this.props.navigation.getParam('IP') +
@@ -426,7 +420,6 @@ export default class GameMode extends React.Component {
                 onPress={this.resume}
               />
             </ButtonsRow>
-
             <View
               style={{
                 flexDirection: 'row',
@@ -448,13 +441,6 @@ export default class GameMode extends React.Component {
                 />
               </View>
             </View>
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                marginTop: 110,
-                marginRight: 15,
-              }}> */}
             <TouchableOpacity
               style={styles.submitButton}
               onPress={() => this.pressSubmitButton()}>
@@ -462,7 +448,6 @@ export default class GameMode extends React.Component {
                 Finish Game And Submit Result
               </Text>
             </TouchableOpacity>
-            {/* </View> */}
           </View>
         )}
         <View style={styles.dialogBox}>
@@ -487,6 +472,11 @@ export default class GameMode extends React.Component {
             }}
           />
         </View>
+        <View style={styles.loadingStyle}>
+          {this.state.isLoading && (
+            <ActivityIndicator color={'#fff'} size={80} />
+          )}
+        </View>
         <AwesomeAlert
           show={submitConfirmationAlert}
           showProgress={false}
@@ -498,7 +488,7 @@ export default class GameMode extends React.Component {
           showConfirmButton={true}
           cancelText="No"
           confirmText="Yes"
-          confirmButtonColor="#DD6B55"
+          confirmButtonColor="#8fbc8f"
           onCancelPressed={this.cancelAlert}
           onConfirmPressed={this.confirmAlert}
         />
@@ -521,18 +511,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#5499C7',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingTop: 130,
-    // paddingHorizontal: 20,
   },
   teamSelector: {
-    //flex: 1,
     textAlign: 'left',
     backgroundColor: '#5499C7',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: 30,
-    // paddingHorizontal: 20,
-    //flexDirection: 'column',
   },
   timer: {
     paddingTop: 30,
@@ -543,17 +528,12 @@ const styles = StyleSheet.create({
     width: 110,
   },
   submitButton: {
-    // width: '70%',
-    // height: '20%',
     marginTop: 10,
     backgroundColor: '#2C3E50',
     borderRadius: 20,
     justifyContent: 'flex-end',
-
-    // //marginHorizontal: '10%',
     paddingVertical: 10,
     paddingHorizontal: 10,
-    // justifyContent: 'flex-end',
     paddingTop: 20,
     paddingLeft: 20,
   },
@@ -611,5 +591,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  loadingStyle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

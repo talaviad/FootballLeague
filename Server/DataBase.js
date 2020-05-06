@@ -1,4 +1,6 @@
 var MongoClient = require("mongodb").MongoClient;
+var bcrypt = require("bcrypt");
+var config = require("./config.js");
 
 module.exports = class DataBase {
   constructor() {
@@ -170,6 +172,87 @@ module.exports = class DataBase {
         role: result[0].role,
       };
       return resultToServer;
+    }
+  }
+
+  async addNewClub(clubName) {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("LeagueTable")
+        .insertOne({
+          Club: clubName,
+          MP: 0,
+          W: 0,
+          D: 0,
+          L: 0,
+          GF: 0,
+          GA: 0,
+          GD: 0,
+          Pts: 0,
+        });
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+  async changePassword(username, oldPassword, newPassword) {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("Users")
+        .find({ username: username });
+      result = await result.toArray();
+      if (result.length === 0) {
+        let error = {
+          success: false,
+          error: {
+            msg: "Not exist such username",
+          },
+        };
+        return error;
+      } else {
+        let passwordAreMatch = await bcrypt.compare(
+          oldPassword,
+          result[0].password
+        );
+        if (passwordAreMatch) {
+          let hashPassword = await bcrypt.hash(
+            newPassword,
+            config.BCRYPT_SALT_ROUNDS
+          );
+          result[0].password = hashPassword;
+          let ans = this.client
+            .db("FootballLeague")
+            .collection("Users")
+            .replaceOne({ username: result[0].username }, result[0]);
+          return {
+            success: true,
+          };
+        } else {
+          let error = {
+            success: false,
+            error: {
+              msg: "The password is incorrect",
+            },
+          };
+          return error;
+        }
+      }
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: "Server Error, Please try again later",
+        },
+      };
+      return error;
     }
   }
 
