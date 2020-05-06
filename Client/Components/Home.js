@@ -8,21 +8,16 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors, DebugInstructions, ReloadInstructions, } from 'react-native/Libraries/NewAppScreen';
 import LeagueTable from './LeagueTable';
 import GamesResults from './GamesResults';
 import AddReferee from './AddReferee';
 import AddClub from './AddClub';
-
 import ChangePassword from './ChangePassword';
-
 import GameMode from './GameMode';
 import Register from './Register';
-import {Table, Row, Rows} from 'react-native-table-component';
+import { Table, Row, Rows } from 'react-native-table-component';
+import {
   StyleSheet,
   View,
   Button,
@@ -31,8 +26,8 @@ import {Table, Row, Rows} from 'react-native-table-component';
   ActivityIndicator,
 } from 'react-native';
 
-var IP = '10.0.0.33'; // tal's old state
-var PORT = '3079';
+var IP = '10.0.0.33'; 
+var PORT = '3000';
 
 function RoundButton({title, color, background, onPress, disabled}) {
   return (
@@ -72,7 +67,7 @@ export default class Home extends React.Component {
   handleSendRequestToServer = async param => {
     let token = await AsyncStorage.getItem('token');
     this.setState({isLoading: true});
-    let response = fetch('http://' + IP + ':PORT/?data=' + param, {
+    let response = fetch('http://' + IP + ':' +PORT +'/?data=' + param, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
