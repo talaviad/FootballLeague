@@ -10,7 +10,7 @@ import {
   Picker,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen'; // tal's old state
 
 export default class Register extends React.Component {
   constructor(props) {

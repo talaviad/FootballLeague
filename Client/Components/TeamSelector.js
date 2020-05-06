@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import Select2 from 'react-native-select-two';
+import Select2 from 'react-native-select-two'; // tal's old state
 
 buildData = teamList => {
   const data = [];

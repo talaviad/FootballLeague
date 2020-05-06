@@ -1,4 +1,5 @@
 var DataBase = require("./DataBase.js");
+var Schedule = require("./Schedule.js");
 var express = require("express");
 var bodyParser = require("body-parser");
 var jwt = require("jsonwebtoken");
@@ -21,6 +22,30 @@ app.get("/", function (req, res) {
       console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
+  } else if (data === 'GetInbox') {
+      console.log('taking get action, case "GetInbox"....')
+      database.getMessages(req.user.username)
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+  } else if (data === 'GetManagerSchedule') {
+      console.log('taking get action, case "GetManagerSchedule"....')
+      database.getManagerSchedule()
+        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+  } else if (data === 'StartScheduling') {
+      console.log('taking get action, case "StartScheduling"....')
+      schedule.computeScheduling().
+        then((response) => res.send(JSON.stringify(response)));
+  } else if (data === "GetPitchConstraints") {
+      console.log('taking get action, case "GetPitchConstraints"....')
+      database.getPitchConstraints()
+        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+  } else if (data === "GetConstraints") {
+      console.log('taking get action, case "GetConstraints"....')
+      database.getConstraints(req.user.username)
+        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+  } else if (data == "GetTeamsConstraints") {
+      database.getTeamsConstraints(data).then((DBResponse) => {
+        res.send(DBResponse);
+      });
   } else if (req.get("Football-Request") === "MonthlyGames") {
     database.getGameResults(data).then((DBResponse) => {
       res.send(DBResponse);
@@ -47,6 +72,7 @@ app.get("/", function (req, res) {
 });
 
 var database = new DataBase();
+var schedule = new Schedule(database);
 
 handleLoginRequest = async (user, pass) => {
   let DBresponse = await database.getUser(user);
@@ -265,7 +291,27 @@ app.post("/", function (req, res) {
           res.send(DBResponse);
         });
       break;
-
+    case "CaptainConstraints":
+      console.log('taking post action, case "CaptainConstraints"....')
+      database.insertOrUpdateConstraints(req.user.username, req.body.weeklyConstraints, req.body.specificConstraints)
+        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+      break;
+    case "PitchConstraints":
+      console.log('taking post action, case "PitchConstraints"....')
+      database.insertOrUpdatePitchConstraints(req.body.pitchConstraints)
+        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));        
+      break;
+    case "AddGame": 
+    case "DeleteGame":
+    case "ChangeGame":
+      database.updateSchedule(req.body.schedule, req.body.gamesToBeCompleted, req.body.teamsNumbers, req.body.teamsConstraints, null, req.body.changeDetails)
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));  
+      break;
+    case "UpdateInbox":
+      console.log('taking post action, case "UpdateInbox"....')
+      database.updateInbox(req.body.inbox, req.user.username)
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+      break;
     default:
       break;
   }

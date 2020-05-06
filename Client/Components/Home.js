@@ -23,9 +23,16 @@ import ChangePassword from './ChangePassword';
 import GameMode from './GameMode';
 import Register from './Register';
 import {Table, Row, Rows} from 'react-native-table-component';
+  StyleSheet,
+  View,
+  Button,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 
-var IP = '132.72.23.63';
-var port = '3079';
+var IP = '10.0.0.33'; // tal's old state
+var PORT = '3079';
 
 function RoundButton({title, color, background, onPress, disabled}) {
   return (
@@ -65,7 +72,7 @@ export default class Home extends React.Component {
   handleSendRequestToServer = async param => {
     let token = await AsyncStorage.getItem('token');
     this.setState({isLoading: true});
-    let response = fetch('http://' + IP + ':3079/?data=' + param, {
+    let response = fetch('http://' + IP + ':PORT/?data=' + param, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -117,7 +124,7 @@ export default class Home extends React.Component {
 
     try {
       response = await fetch(
-        'http://' + IP + ':' + port + '/?data=TeamsNames',
+        'http://' + IP + ':' + PORT + '/?data=TeamsNames',
         {
           method: 'GET',
           headers: {
@@ -173,7 +180,7 @@ export default class Home extends React.Component {
             <TouchableOpacity
               style={styles.divided}
               onPress={() =>
-                this.props.navigation.navigate('Register', {IP: IP, port: port})
+                this.props.navigation.navigate('Register', {IP: IP, PORT: PORT})
               }>
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
@@ -181,7 +188,7 @@ export default class Home extends React.Component {
           <TouchableOpacity
             style={styles.divided}
             onPress={() =>
-              this.props.navigation.navigate('Login', {IP: IP, port: port})
+              this.props.navigation.navigate('Login', {IP: IP, PORT: PORT})
             }>
             <Text style={styles.buttonText}>
               {this.state.isLoggedIn ? 'Logout' : 'Login'}
@@ -197,7 +204,7 @@ export default class Home extends React.Component {
         <TouchableOpacity
           style={styles.touchAble}
           onPress={() =>
-            this.props.navigation.navigate('GamesResults', {IP: IP, port: port})
+            this.props.navigation.navigate('GamesResults', {IP: IP, PORT: PORT})
           }>
           <Text style={styles.buttonText}>Games Results</Text>
         </TouchableOpacity>
@@ -216,7 +223,7 @@ export default class Home extends React.Component {
             onPress={() =>
               this.props.navigation.navigate('InsertGame', {
                 IP: IP,
-                port: port,
+                PORT: PORT,
                 teamList: this.state.teamsNames,
               })
             }>
@@ -230,7 +237,7 @@ export default class Home extends React.Component {
             onPress={() =>
               this.props.navigation.navigate('GameMode', {
                 IP: IP,
-                port: port,
+                PORT: PORT,
                 teamList: this.state.teamsNames,
               })
             }>
@@ -243,7 +250,7 @@ export default class Home extends React.Component {
             onPress={() =>
               this.props.navigation.navigate('ManagementOptions', {
                 IP: IP,
-                port: port,
+                PORT: PORT,
               })
             }>
             <Text style={styles.buttonText}>Management Options</Text>
@@ -257,7 +264,7 @@ export default class Home extends React.Component {
             onPress={() => {
               this.props.navigation.navigate('AddReferee', {
                 IP: IP,
-                port: port,
+                PORT: PORT,
               });
             }}
           />
@@ -268,7 +275,7 @@ export default class Home extends React.Component {
             onPress={() => {
               this.props.navigation.navigate('AddClub', {
                 IP: IP,
-                port: port,
+                PORT: PORT,
               });
             }}
           />
@@ -279,7 +286,7 @@ export default class Home extends React.Component {
             onPress={() => {
               this.props.navigation.navigate('ChangePassword', {
                 IP: IP,
-                port: port,
+                PORT: PORT,
                 username: this.state.username,
               });
             }}
