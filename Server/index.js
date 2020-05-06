@@ -1,6 +1,4 @@
-//import DataBase from './DataBase.js'
 var DataBase = require("./DataBase.js");
-var Schedule = require("./Schedule.js");
 var express = require("express");
 var bodyParser = require("body-parser");
 var jwt = require("jsonwebtoken");
@@ -15,7 +13,6 @@ app.use("/", require("./Middlewares/auth.js"));
 
 app.get("/", function (req, res) {
   console.log("Got a GET request for the homepage");
-  //console.log("Got: " + JSON.stringify(req));
 
   let results = [];
   let data = req.query.data;
@@ -24,59 +21,32 @@ app.get("/", function (req, res) {
       console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
-  } else if (data === 'GetInbox') {
-      console.log('taking get action, case "GetInbox"....')
-      database.getMessages(req.user.username)
-      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
-  } else if (data === 'GetManagerSchedule') {
-      console.log('taking get action, case "GetManagerSchedule"....')
-      database.getManagerSchedule()
-        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
-  } else if (data === 'StartScheduling') {
-      console.log('taking get action, case "StartScheduling"....')
-      schedule.computeScheduling().
-        then((response) => res.send(JSON.stringify(response)));
-  } else if (data === "GetPitchConstraints") {
-      console.log('taking get action, case "GetPitchConstraints"....')
-      database.getPitchConstraints()
-        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
-  } else if (data === "GetConstraints") {
-      console.log('taking get action, case "GetConstraints"....')
-      database.getConstraints(req.user.username)
-        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
-  } else if (data == "GetTeamsConstraints") {
-      database.getTeamsConstraints(data).then((DBResponse) => {
-        res.send(DBResponse);
-      });
   } else if (req.get("Football-Request") === "MonthlyGames") {
-      database.getGameResults(data).then((DBResponse) => {
-        res.send(DBResponse);
-      });
+    database.getGameResults(data).then((DBResponse) => {
+      res.send(DBResponse);
+    });
   } else if (data === "scorerTable") {
-      database.getScorerTable().then((DBResponse) => {
-        console.log("results:" + DBResponse);
-        res.send(JSON.stringify(DBResponse));
-      });
+    database.getScorerTable().then((DBResponse) => {
+      res.send(JSON.stringify(DBResponse));
+    });
   } else if (data === "TeamsNames") {
-      database.getTeamsNames().then((DBResponse) => {
-        res.send(DBResponse);
-      });
+    database.getTeamsNames().then((DBResponse) => {
+      res.send(DBResponse);
+    });
   } else if (data === "NumberOfWeeks") {
-      database.getNumberOfWeeks().then((DBResponse) => {
-        res.send(DBResponse);
-      });
+    database.getNumberOfWeeks().then((DBResponse) => {
+      res.send(DBResponse);
+    });
   } else if (data.substring(0, 6) === "Result") {
-      console.log("indexJS: " + data);
-      database.insertResult(data).then((DBResponse) => {
-        res.send(DBResponse);
-      });
+    database.insertResult(data).then((DBResponse) => {
+      res.send(DBResponse);
+    });
   } else {
-      console.log("not supposed to be here");
+    console.log("not supposed to be here");
   }
 });
 
 var database = new DataBase();
-var schedule = new Schedule(database);
 
 handleLoginRequest = async (user, pass) => {
   let DBresponse = await database.getUser(user);
@@ -124,10 +94,55 @@ handleLoginRequest = async (user, pass) => {
   }
 };
 
+handleChangePasswordRequest = async (username, oldPassword, newPassword) => {
+  let DBresponse = await database.changePassword(
+    username,
+    oldPassword,
+    newPassword
+  );
+  return DBresponse;
+  /*
+  if (DBresponse.success) {
+    try {
+      let passwordAreMatch = await bcrypt.compare(
+        oldPassword,
+        DBresponse.password
+      );
+      if (passwordAreMatch) {
+        let DBResponse = await database.changePassword(username, newPassword);
+        let resultsToTheServer = {
+          success: true,
+        };
+        return JSON.stringify(resultsToTheServer);
+      } else {
+        let resultsToTheServer = {
+          success: false,
+          error: {
+            msg: "username or password are incorrect",
+          },
+        };
+        return JSON.stringify(resultsToTheServer);
+      }
+    } catch (err) {
+      console.error(err);
+      let resultsToTheServer = {
+        success: false,
+        error: {
+          msg: "some error occured with the hashing",
+        },
+      };
+      return JSON.stringify(resultsToTheServer);
+    }
+  } else {
+    return JSON.stringify(DBresponse);
+  }*/
+};
+
 handleRegisterRequest = async (user, pass, requestedRole, email) => {
   if (
     requestedRole !== "referee" &&
     requestedRole !== "captain" &&
+    requestedRole !== "manager" &&
     requestedRole !== "regular"
   ) {
     let registerError = {
@@ -144,7 +159,7 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
       user,
       hashPassword,
       email,
-      requestedRole,
+      requestedRole
     );
     console.log("DBResponse: " + DBResponse);
     console.log("DBResponse.success: " + DBResponse.success);
@@ -189,12 +204,28 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
   }
 };
 
+handleAddNewClubRequest = async (clubName) => {
+  try {
+    let DBResponse = await database.addNewClub(clubName);
+    if (DBResponse.success) {
+      return JSON.stringify({
+        success: true,
+      });
+    } else {
+      return JSON.stringify(DBResponse);
+    }
+  } catch (err) {
+    console.error(err);
+    return JSON.stringify({
+      success: false,
+      error: {
+        msg: "some error occured while trying to register the user",
+      },
+    });
+  }
+};
+
 app.post("/", function (req, res) {
-  // console.log("Got a Post message");
-  // console.log("user: " + req.body.user);
-  // console.log("pass: " + req.body.pass);
-  // console.log("role: " + req.body.requestedRole);
-  // console.log("email: " + req.body.email);
   switch (req.get("Football-Request")) {
     case "login":
       handleLoginRequest(req.body.user, req.body.pass).then((ans) =>
@@ -206,7 +237,7 @@ app.post("/", function (req, res) {
         req.body.user,
         req.body.pass,
         req.body.requestedRole,
-        req.body.email,
+        req.body.email
       ).then((ans) => res.send(ans));
       break;
     case "ScorerTable":
@@ -216,6 +247,9 @@ app.post("/", function (req, res) {
         req.body.requestedRole
       ).then((ans) => res.send(ans));
       break;
+    case "addNewClub":
+      handleAddNewClubRequest(req.body.clubName).then((ans) => res.send(ans));
+      break;
     case "Result":
       database
         .insertResult(
@@ -223,32 +257,28 @@ app.post("/", function (req, res) {
           req.body.selectedTeam2,
           req.body.scoreTeam1,
           req.body.scoreTeam2,
-          req.body.date
+          req.body.date,
+          req.body.team1ScorrersDic,
+          req.body.team2ScorrersDic
         )
         .then((DBResponse) => {
           res.send(DBResponse);
         });
       break;
-    case "CaptainConstraints":
-      console.log('taking post action, case "CaptainConstraints"....')
-      database.insertOrUpdateConstraints(req.user.username, req.body.weeklyConstraints, req.body.specificConstraints)
-        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+
+    default:
       break;
-    case "PitchConstraints":
-      console.log('taking post action, case "PitchConstraints"....')
-      database.insertOrUpdatePitchConstraints(req.body.pitchConstraints)
-        .then((DBResponse) => res.send(JSON.stringify(DBResponse)));        
-      break;
-    case "AddGame": 
-    case "DeleteGame":
-    case "ChangeGame":
-      database.updateSchedule(req.body.schedule, req.body.gamesToBeCompleted, req.body.teamsNumbers, req.body.teamsConstraints, null, req.body.changeDetails)
-      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));  
-      break;
-    case "UpdateInbox":
-      console.log('taking post action, case "UpdateInbox"....')
-      database.updateInbox(req.body.inbox, req.user.username)
-      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));  
+  }
+});
+
+app.put("/", function (req, res) {
+  switch (req.get("Football-Request")) {
+    case "changePassword":
+      handleChangePasswordRequest(
+        req.body.username,
+        req.body.oldPassword,
+        req.body.newPassword
+      ).then((ans) => res.send(ans));
       break;
     default:
       break;
