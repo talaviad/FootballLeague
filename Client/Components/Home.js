@@ -15,12 +15,34 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import LeagueTable from './LeagueTable';
 import GamesResults from './GamesResults';
+import AddReferee from './AddReferee';
+import AddClub from './AddClub';
+
+import ChangePassword from './ChangePassword';
+
 import GameMode from './GameMode';
 import Register from './Register';
 import {Table, Row, Rows} from 'react-native-table-component';
 
 var IP = '132.72.23.63';
 var port = '3079';
+
+function RoundButton({title, color, background, onPress, disabled}) {
+  return (
+    <TouchableOpacity
+      onPress={() => onPress()}
+      style={[styles.button, {backgroundColor: background}]}
+      activeOpacity={disabled ? 1.0 : 0.7}>
+      <View style={styles.buttonBorder}>
+        <Text style={[styles.buttonTitle, {color}]}>{title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function ButtonsRow({children}) {
+  return <View style={styles.buttonsRow}>{children}</View>;
+}
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -31,6 +53,7 @@ export default class Home extends React.Component {
       isLoggedIn: false,
       role: null,
       token: null,
+      username: null,
       teamsNames: [],
       isLoading: false,
     };
@@ -129,6 +152,7 @@ export default class Home extends React.Component {
     try {
       token = await AsyncStorage.getItem('token');
       currRole = await AsyncStorage.getItem('role');
+      username = await AsyncStorage.getItem('username');
     } catch (err) {
       throw err;
     }
@@ -137,6 +161,7 @@ export default class Home extends React.Component {
       isLoggedIn: token !== 'none',
       token: token,
       role: currRole,
+      username: username,
     });
   }
 
@@ -212,6 +237,54 @@ export default class Home extends React.Component {
             <Text style={styles.buttonText}>Enter game mode</Text>
           </TouchableOpacity>
         ) : null}
+        {/* {this.state.role === 'referee' && (
+          <TouchableOpacity
+            style={styles.touchAble}
+            onPress={() =>
+              this.props.navigation.navigate('ManagementOptions', {
+                IP: IP,
+                port: port,
+              })
+            }>
+            <Text style={styles.buttonText}>Management Options</Text>
+          </TouchableOpacity>
+        )} */}
+        <ButtonsRow>
+          <RoundButton
+            title="Add New Referee"
+            color="#5f9ea0"
+            background="#3D3D3D"
+            onPress={() => {
+              this.props.navigation.navigate('AddReferee', {
+                IP: IP,
+                port: port,
+              });
+            }}
+          />
+          <RoundButton
+            title="Add New Club"
+            color="#5f9ea0"
+            background="#3D3D3D"
+            onPress={() => {
+              this.props.navigation.navigate('AddClub', {
+                IP: IP,
+                port: port,
+              });
+            }}
+          />
+          <RoundButton
+            title="Change Password"
+            color="#5f9ea0"
+            background="#3D3D3D"
+            onPress={() => {
+              this.props.navigation.navigate('ChangePassword', {
+                IP: IP,
+                port: port,
+                username: this.state.username,
+              });
+            }}
+          />
+        </ButtonsRow>
         <View style={styles.loadingStyle}>
           {this.state.isLoading && (
             <ActivityIndicator color={'#fff'} size={80} />
@@ -259,6 +332,42 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#AED6F1',
     textAlign: 'center',
+  },
+  button: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonTitle: {
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  buttonBorder: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonsRow: {
+    backgroundColor: '#4682b4',
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    justifyContent: 'space-around',
+    //marginTop: 80,
+    //marginBottom: 30,
+    borderWidth: 0.8,
+    //marginBottom: 0,
+    position: 'absolute',
+    alignSelf: 'center',
+    //flex: 1,
+    width: '100%',
+
+    bottom: 0,
+    flex: 1,
   },
   loadingStyle: {
     position: 'absolute',

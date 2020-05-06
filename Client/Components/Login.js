@@ -84,6 +84,8 @@ export default class Login extends React.Component {
           console.log('resJson.jwt: ' + resJson.jwt);
           await AsyncStorage.setItem('role', resJson.role);
           await AsyncStorage.setItem('token', resJson.jwt);
+          await AsyncStorage.setItem('username', resJson.username);
+
           this.props.navigation.navigate('Home');
         } else {
           alert(resJson.error.msg);

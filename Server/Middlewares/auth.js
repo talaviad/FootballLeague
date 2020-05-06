@@ -13,6 +13,8 @@ var possibleRequests = [
   "Result",
   "MonthlyGames",
   "ScorerTable",
+  "changePassword",
+  "addNewClub",
 ];
 module.exports = function (req, res, next) {
   //let data = req.query.data;
@@ -22,6 +24,7 @@ module.exports = function (req, res, next) {
     footballRequest === undefined ||
     !possibleRequests.includes(footballRequest)
   ) {
+    console.log("here is the error");
     res.send(
       JSON.stringify({
         success: false,
@@ -41,6 +44,11 @@ module.exports = function (req, res, next) {
 
   // handle GET requests
   if (req.method === "GET" && footballRequest !== "insertGameResult") {
+    return next();
+  }
+
+  // handle PUT requests
+  if (req.method === "PUT") {
     return next();
   }
 

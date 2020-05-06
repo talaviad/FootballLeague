@@ -61,15 +61,14 @@ export default class Register extends React.Component {
 
   async onButtonPress() {
     if (
-      this.state.user === '' ||
-      this.state.password === '' ||
+      this.state.user.length < 4 ||
+      this.state.password.length < 6 ||
       this.state.email === '' ||
       this.state.role === ''
     ) {
       alert('you did not fill all the fields');
       return;
     }
-
     let response = fetch(
       'http://' +
         this.props.navigation.getParam('IP') +
@@ -93,7 +92,6 @@ export default class Register extends React.Component {
       .then(response => response.json())
       .then(async resJson => {
         if (resJson.success) {
-          console.log('you registered successfully');
           alert('you registered successfully');
           this.props.navigation.navigate('Home');
         } else {
@@ -138,6 +136,7 @@ export default class Register extends React.Component {
           <Picker.Item label="regular" value="regular" />
           <Picker.Item label="captain" value="captain" />
           <Picker.Item label="referee" value="referee" />
+          <Picker.Item label="manager" value="manager" />
         </Picker>
         <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
           <Text style={styles.buttonText}>register</Text>

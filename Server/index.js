@@ -94,10 +94,55 @@ handleLoginRequest = async (user, pass) => {
   }
 };
 
+handleChangePasswordRequest = async (username, oldPassword, newPassword) => {
+  let DBresponse = await database.changePassword(
+    username,
+    oldPassword,
+    newPassword
+  );
+  return DBresponse;
+  /*
+  if (DBresponse.success) {
+    try {
+      let passwordAreMatch = await bcrypt.compare(
+        oldPassword,
+        DBresponse.password
+      );
+      if (passwordAreMatch) {
+        let DBResponse = await database.changePassword(username, newPassword);
+        let resultsToTheServer = {
+          success: true,
+        };
+        return JSON.stringify(resultsToTheServer);
+      } else {
+        let resultsToTheServer = {
+          success: false,
+          error: {
+            msg: "username or password are incorrect",
+          },
+        };
+        return JSON.stringify(resultsToTheServer);
+      }
+    } catch (err) {
+      console.error(err);
+      let resultsToTheServer = {
+        success: false,
+        error: {
+          msg: "some error occured with the hashing",
+        },
+      };
+      return JSON.stringify(resultsToTheServer);
+    }
+  } else {
+    return JSON.stringify(DBresponse);
+  }*/
+};
+
 handleRegisterRequest = async (user, pass, requestedRole, email) => {
   if (
     requestedRole !== "referee" &&
     requestedRole !== "captain" &&
+    requestedRole !== "manager" &&
     requestedRole !== "regular"
   ) {
     let registerError = {
@@ -159,6 +204,27 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
   }
 };
 
+handleAddNewClubRequest = async (clubName) => {
+  try {
+    let DBResponse = await database.addNewClub(clubName);
+    if (DBResponse.success) {
+      return JSON.stringify({
+        success: true,
+      });
+    } else {
+      return JSON.stringify(DBResponse);
+    }
+  } catch (err) {
+    console.error(err);
+    return JSON.stringify({
+      success: false,
+      error: {
+        msg: "some error occured while trying to register the user",
+      },
+    });
+  }
+};
+
 app.post("/", function (req, res) {
   switch (req.get("Football-Request")) {
     case "login":
@@ -181,6 +247,9 @@ app.post("/", function (req, res) {
         req.body.requestedRole
       ).then((ans) => res.send(ans));
       break;
+    case "addNewClub":
+      handleAddNewClubRequest(req.body.clubName).then((ans) => res.send(ans));
+      break;
     case "Result":
       database
         .insertResult(
@@ -197,6 +266,20 @@ app.post("/", function (req, res) {
         });
       break;
 
+    default:
+      break;
+  }
+});
+
+app.put("/", function (req, res) {
+  switch (req.get("Football-Request")) {
+    case "changePassword":
+      handleChangePasswordRequest(
+        req.body.username,
+        req.body.oldPassword,
+        req.body.newPassword
+      ).then((ans) => res.send(ans));
+      break;
     default:
       break;
   }
