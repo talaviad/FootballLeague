@@ -12,7 +12,7 @@ import GameMode from './Components/GameMode';
 import Constraints from './Components/Constraints';
 import Scheduling from './Components/Scheduling';
 import PitchConstraints from './Components/PitchConstraints';
-import Inbox from './Components/Inbox';
+import Inbox from './Components/Inbox'; // tal's old state
 
 
 const AppNavigator = createStackNavigator(
