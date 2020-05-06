@@ -24,10 +24,10 @@ export default class TeamSelector extends Component {
       <View>
         <Select2
           isSelectSingle
-          style={{borderRadius: 10}}
+          style={{borderRadius: 5}}
           colorTheme={'blue'}
-          popupTitle="Select Team"
-          title="Select Team"
+          popupTitle="Select item"
+          title="Select item"
           data={this.teamsData}
           onSelect={data => {
             this.setState({data});
@@ -40,20 +40,6 @@ export default class TeamSelector extends Component {
       </View>
     );
   }
-
-  //All this this metohds: onPress,getValue, fucus, un focus are neccesary to combine TeamSelector
-  //Inside the Form in InsertGame
-  onPress = () => {
-    // this.props.onChange(!this.props.turnedOn);
-  };
-
-  getValue() {
-    // return this.props.turnedOn;
-  }
-
-  // still need these methods even if they're empty
-  focus() {}
-  unfocus() {}
 }
 
 const styles = StyleSheet.create({
