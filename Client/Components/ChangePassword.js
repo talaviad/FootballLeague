@@ -42,9 +42,9 @@ export default class ChangePassword extends React.Component {
     this.setState({isLoading: true});
     let response = fetch(
       'http://' +
-        /*this.props.navigation.getParam('IP')*/ '192.168.1.124' +
+        this.props.navigation.getParam('IP') +
         ':' +
-        /*this.props.navigation.getParam('port')*/ '3000' +
+        this.props.navigation.getParam('port') +
         '/',
       {
         method: 'PUT',

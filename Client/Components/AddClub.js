@@ -49,9 +49,9 @@ export default class AddClub extends React.Component {
     this.setState({isLoading: true});
     let response = fetch(
       'http://' +
-        /*this.props.navigation.getParam('IP')*/ '192.168.1.124' +
+        this.props.navigation.getParam('IP') +
         ':' +
-        /*this.props.navigation.getParam('port')*/ '3000' +
+        this.props.navigation.getParam('port') +
         '/',
       {
         method: 'POST',
@@ -86,9 +86,9 @@ export default class AddClub extends React.Component {
     this.state.password = randomstring;
     let response = fetch(
       'http://' +
-        /*this.props.navigation.getParam('IP')*/ '192.168.1.124' +
+        this.props.navigation.getParam('IP') +
         ':' +
-        /*this.props.navigation.getParam('port')*/ '3000' +
+        this.props.navigation.getParam('port') +
         '/',
       {
         method: 'POST',
@@ -149,7 +149,7 @@ export default class AddClub extends React.Component {
             </Text>
             <Text style={styles.recommendationText}>
               {
-                'Give the referee the username and the password\n and ask him to change the password'
+                'Give the captain the username and the password\n and ask him to change the password'
               }
             </Text>
           </View>
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   passwordText: {
     //width: '80%',
     //paddingHorizontal: 16,
-    fontSize: 20,
+    fontSize: 23,
     //marginVertical: 10,
     marginBottom: 10,
     fontWeight: 'bold',
