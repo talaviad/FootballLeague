@@ -4,7 +4,7 @@ var permission = {
   CAPTAIN: "captain",
   REFEREE: "referee",
   MANAGER: "manager",
-}; // tal's old state
+};
 
 var possibleRequests = [
   "register",
@@ -18,6 +18,8 @@ var possibleRequests = [
   "Result",
   "MonthlyGames",
   "ScorerTable",
+  "changePassword",
+  "addNewClub",
   "CaptainConstraints",
   "GetConstraints",
   'GetTeamsConstraints',
@@ -31,6 +33,7 @@ var possibleRequests = [
   'GetInbox',
   'UpdateInbox',
 ];
+
 var needAuthorization = {
   'insertGameResult': { 'permissions': [permission.REFEREE, permission.MANAGER] },
   'CaptainConstraints': { 'permissions': [permission.CAPTAIN] },
@@ -46,15 +49,13 @@ var needAuthorization = {
   'GetInbox': { 'permissions': [permission.MANAGER, permission.CAPTAIN] },
   'UpdateInbox': { 'permissions': [permission.MANAGER, permission.CAPTAIN] },
 };
-
 module.exports = function (req, res, next) {
   //let data = req.query.data;
   let footballRequest = req.get("Football-Request");
-
   console.log("Football-Requesttttt: " + req.get("Football-Request"));
 
   // check if there is such request
-  if (footballRequest === undefined || !possibleRequests.includes(footballRequest)) {
+ if (footballRequest === undefined || !possibleRequests.includes(footballRequest)) {
     res.send(
       JSON.stringify({
         success: false,
@@ -65,6 +66,7 @@ module.exports = function (req, res, next) {
     );
     return;
   }
+
   
   // check if there is a need for authorization
   if (needAuthorization[footballRequest]) 
@@ -79,8 +81,9 @@ module.exports = function (req, res, next) {
   if (req.method === "GET")
     return next();
 
-  return;
-};
+  // handle PUT requests
+  if (req.method === "PUT")
+    return next();
 
 isAuthorized = (footballRequest, req, res, next) => {
     // checking authorization

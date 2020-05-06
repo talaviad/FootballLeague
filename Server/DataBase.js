@@ -1,4 +1,6 @@
-var MongoClient = require("mongodb").MongoClient; // tal's old state
+var MongoClient = require("mongodb").MongoClient;
+var bcrypt = require("bcrypt");
+var config = require("./config.js");
 
 module.exports = class DataBase {
   constructor() {
@@ -57,11 +59,6 @@ module.exports = class DataBase {
           password: pass,
           email: email,
           role: requestedRole,
-          inbox: {
-            messages: [ 
-              { msg: 'Hello ' + user + ', we hope you will enjoy our app', read: false, },
-            ]
-          },
         });
     } catch (err) {
       console.error(err);
@@ -174,9 +171,89 @@ module.exports = class DataBase {
         success: true,
         password: result[0].password,
         role: result[0].role,
-        inbox: result[0].inbox,
       };
       return resultToServer;
+    }
+  }
+
+  async addNewClub(clubName) {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("LeagueTable")
+        .insertOne({
+          Club: clubName,
+          MP: 0,
+          W: 0,
+          D: 0,
+          L: 0,
+          GF: 0,
+          GA: 0,
+          GD: 0,
+          Pts: 0,
+        });
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+  async changePassword(username, oldPassword, newPassword) {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("Users")
+        .find({ username: username });
+      result = await result.toArray();
+      if (result.length === 0) {
+        let error = {
+          success: false,
+          error: {
+            msg: "Not exist such username",
+          },
+        };
+        return error;
+      } else {
+        let passwordAreMatch = await bcrypt.compare(
+          oldPassword,
+          result[0].password
+        );
+        if (passwordAreMatch) {
+          let hashPassword = await bcrypt.hash(
+            newPassword,
+            config.BCRYPT_SALT_ROUNDS
+          );
+          result[0].password = hashPassword;
+          let ans = this.client
+            .db("FootballLeague")
+            .collection("Users")
+            .replaceOne({ username: result[0].username }, result[0]);
+          return {
+            success: true,
+          };
+        } else {
+          let error = {
+            success: false,
+            error: {
+              msg: "The password is incorrect",
+            },
+          };
+          return error;
+        }
+      }
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: "Server Error, Please try again later",
+        },
+      };
+      return error;
     }
   }
 
@@ -223,10 +300,11 @@ module.exports = class DataBase {
         .collection("ScorerTable")
         .find();
       result = await result.toArray();
-      console.log("for alon: " + result[0].Name);
+      console.log("for alon: " + result[2].Name);
       let results = result.map((scorer) => {
+        console.log(JSON.stringify(JSON.stringify(scorer)));
         return [
-          scorer.Name,
+          scorer.Name.toString(),
           scorer.Team.toString(),
           scorer.Number.toString(),
           scorer.Goals.toString(),
@@ -261,6 +339,8 @@ module.exports = class DataBase {
           game.result.toString(),
           game.team2.toString(),
           game.date.toString(),
+          game.team1ScorrersDic,
+          game.team2ScorrersDic,
         ];
       });
       let resultsToTheServer = {
@@ -324,7 +404,9 @@ module.exports = class DataBase {
     selectedTeam2,
     scoreTeam1,
     scoreTeam2,
-    date
+    date,
+    team1ScorrersDic,
+    team2ScorrersDic
   ) {
     let winner = 0;
     try {
@@ -383,6 +465,8 @@ module.exports = class DataBase {
           result: scoreTeam1 + " - " + scoreTeam2,
           team2: selectedTeam2,
           date: date,
+          team1ScorrersDic: team1ScorrersDic,
+          team2ScorrersDic: team2ScorrersDic,
         });
 
       let resultsToTheServer = {
@@ -470,7 +554,7 @@ module.exports = class DataBase {
       return "December";
     }
   }
-
+  
   async insertOrUpdatePitchConstraints(pitchConstraints) {
     let result = await this.client
     .db("FootballLeague")
