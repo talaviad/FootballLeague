@@ -31,7 +31,7 @@ module.exports = class DataBase {
     await this.client.close();
   }
 
-  async registerNewUser(user, pass, email, requestedRole) {
+  async registerNewUser(user, pass, email, requestedRole, team) {
     let result = await this.client
       .db("FootballLeague")
       .collection("Users")
@@ -59,6 +59,12 @@ module.exports = class DataBase {
           password: pass,
           email: email,
           role: requestedRole,
+          team: team,
+          inbox: {
+            messages: [ 
+              { msg: 'Hello ' + user + ', we hope you will enjoy our app', read: false, },
+            ]
+          },
         });
     } catch (err) {
       console.error(err);
@@ -71,10 +77,6 @@ module.exports = class DataBase {
       return registerError;
     }
 
-    // let results = result.map(doc => {
-    //     console.log(doc.username.toString());
-    //     console.log(doc.email.toString());
-    // })
     return { success: true };
   }
 
@@ -150,6 +152,7 @@ module.exports = class DataBase {
     }
     return { success: true };
   }
+
   async getUser(user) {
     console.log('Trying to find user: ' + user)
     let result = await this.client
@@ -171,6 +174,7 @@ module.exports = class DataBase {
         success: true,
         password: result[0].password,
         role: result[0].role,
+        inbox: result[0].inbox,
       };
       return resultToServer;
     }
@@ -178,6 +182,7 @@ module.exports = class DataBase {
 
   async addNewClub(clubName) {
     try {
+      console.log('In DataBase, addNewClub()');
       let result = await this.client
         .db("FootballLeague")
         .collection("LeagueTable")
@@ -192,8 +197,10 @@ module.exports = class DataBase {
           GD: 0,
           Pts: 0,
         });
+      console.log('In DataBase, addNewClub()- succeed to insert a new club - ' + clubName);
       return { success: true };
     } catch (err) {
+      console.log('In DataBase, addNewClub() - error: ' + err);
       let error = {
         success: false,
         error: {
@@ -598,7 +605,6 @@ module.exports = class DataBase {
       result = await result.toArray();
       console.log('result: ' + result);
       if (result.length !== 0) {
-          console.log('specificConstraints: ' + specificConstraints);
           console.log('there is already user, now we will update')
           let teamName = result[0].teamName;
           result = this.client
@@ -623,10 +629,14 @@ module.exports = class DataBase {
         .collection("CaptainConstraints")
         .insertOne({
           user: user,
-          team: team,
+          teamName: team,
           weeklyConstraints: weeklyConstraints,
-          specificConstraints: specificConstraints,
+          specificConstraints: {
+            counter: 0,
+            constraints: [],
+          }
         });
+        console.log('uuuuuuuuuuuuuuuuuuuuuu');
         return { 
           success: true
         }
@@ -775,12 +785,17 @@ module.exports = class DataBase {
       }
     }
     else {
-      return {
-        success: false,
-        error: {
-          msg: 'there is no schedule set'
+      result = await this.getTeamsConstraints();
+      if (!result.success) {
+        return {
+          success: false,
+          error: {
+            msg: 'there is no schedule set'
+          }
         }
       }
+
+      return result;
     }
   }
 

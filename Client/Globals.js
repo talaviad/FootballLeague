@@ -1,4 +1,7 @@
-export default { // tal's old state
+import { Header } from 'react-navigation-stack';
+import { Dimensions } from 'react-native';
+
+export default {
   monthList: [
       'January',
       'February',
@@ -13,4 +16,5 @@ export default { // tal's old state
       'November',
       'December',
     ],
+    windowHeightSize: (Dimensions.get('window').height)-(Header.HEIGHT),
 };

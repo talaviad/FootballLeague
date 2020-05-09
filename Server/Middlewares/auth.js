@@ -6,7 +6,7 @@ var permission = {
   MANAGER: "manager",
 };
 var possibleRequests = [
-  "register",
+  // "register",
   "login",
   "leagueTable",
   "gameResults",
@@ -18,7 +18,8 @@ var possibleRequests = [
   "MonthlyGames",
   "ScorerTable",
   "changePassword",
-  "addNewClub",
+  "AddNewClub",
+  "AddReferee",
   "CaptainConstraints",
   "GetConstraints",
   'GetTeamsConstraints',
@@ -33,6 +34,7 @@ var possibleRequests = [
   'UpdateInbox',
 ];
 var needAuthorization = {
+  // 'register': { 'permissions': [permission.REFEREE, permission.MANAGER] },
   'insertGameResult': { 'permissions': [permission.REFEREE, permission.MANAGER] },
   'CaptainConstraints': { 'permissions': [permission.CAPTAIN] },
   'GetConstraints': { 'permissions': [permission.CAPTAIN] },
@@ -44,9 +46,10 @@ var needAuthorization = {
   'DeleteGame': { 'permissions': [permission.MANAGER] },
   'ChangeGame': { 'permissions': [permission.MANAGER] },
   'GetManagerSchedule': { 'permissions': [permission.MANAGER] },
-  'GetInbox': { 'permissions': [permission.MANAGER, permission.CAPTAIN] },
-  'UpdateInbox': { 'permissions': [permission.MANAGER, permission.CAPTAIN] },
-  'addNewClub': { 'permissions': [permission.MANAGER] },
+  'GetInbox': { 'permissions': [permission.MANAGER, permission.REFEREE, permission.CAPTAIN] },
+  'UpdateInbox': { 'permissions': [permission.MANAGER, permission.REFEREE, permission.CAPTAIN] },
+  'AddNewClub': { 'permissions': [permission.MANAGER] },
+  'AddReferee': { 'permissions': [permission.MANAGER] },
 };
 
 module.exports = function (req, res, next) {
@@ -85,50 +88,52 @@ module.exports = function (req, res, next) {
   if (req.method === "PUT")
     return next();
 
-  isAuthorized = (footballRequest, req, res, next) => {
-    // checking authorization
-    console.log(JSON.stringify(req.headers));
-    console.log("req.headers.Authorization: " + req.get("authorization"));
-    console.log("req.headers.Football-Request: " + req.get("Football-Request"));
-    if (req.headers && req.get("authorization")) {
-      try {
-        console.log("in try");
-        req.user = jwt.verify(req.get("authorization"), config.JWT_SECRET);
-        let role = req.user.role;
-        console.log("id: " + req.user.id);
-        console.log("role: " + role);
-        
-        if (needAuthorization[footballRequest].permissions.includes(role)) {
-          console.log('There is permission... next middleware..')
-          return next();
-        } else {
-          res.send(
-            JSON.stringify({
-              success: false,
-              error: {
-                msg: "you are not autorized to that action",
-              },
-            })
-          );
-        }
-        console.log("successss");
-        return;
-      } catch (err) {
-        return res.status(401).json({
-          success: false,
-          error: {
-            msg: "Failed to authenticate token!",
-          },
-        });
+  return;
+}
+
+isAuthorized = (footballRequest, req, res, next) => {
+  // checking authorization
+  console.log(JSON.stringify(req.headers));
+  console.log("req.headers.Authorization: " + req.get("authorization"));
+  console.log("req.headers.Football-Request: " + req.get("Football-Request"));
+  if (req.headers && req.get("authorization")) {
+    try {
+      console.log("in try");
+      req.user = jwt.verify(req.get("authorization"), config.JWT_SECRET);
+      let role = req.user.role;
+      console.log("id: " + req.user.id);
+      console.log("role: " + role);
+      
+      if (needAuthorization[footballRequest].permissions.includes(role)) {
+        console.log('There is permission... next middleware..')
+        return next();
+      } else {
+        res.send(
+          JSON.stringify({
+            success: false,
+            error: {
+              msg: "you are not autorized to that action",
+            },
+          })
+        );
       }
-    } else {
+      console.log("successss");
+      return;
+    } catch (err) {
       return res.status(401).json({
         success: false,
         error: {
-          msg: "No token!",
+          msg: "Failed to authenticate token!",
         },
       });
     }
-    //return next();
+  } else {
+    return res.status(401).json({
+      success: false,
+      error: {
+        msg: "No token!",
+      },
+    });
   }
-};
+  //return next();
+}

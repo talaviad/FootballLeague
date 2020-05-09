@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 export default class AddReferee extends React.Component {
@@ -52,13 +53,14 @@ export default class AddReferee extends React.Component {
       'http://' +
         this.props.navigation.getParam('IP') +
         ':' +
-        this.props.navigation.getParam('port') +
+        this.props.navigation.getParam('PORT') +
         '/',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Football-Request': 'register',
+          'Football-Request': 'AddReferee',
+          Authorization: await AsyncStorage.getItem('token'),
         },
         body: JSON.stringify({
           user: this.state.username,

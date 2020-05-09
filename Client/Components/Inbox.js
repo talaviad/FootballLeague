@@ -18,7 +18,7 @@ export default class Inbox extends React.Component {
 
     // Initialize state
     this.state = {
-        inbox: navigation.getParam('inbox'),
+        inbox: this.props.navigation.getParam('inbox'),
         msgIsShown: false,
         currMsg: '',
     };
@@ -61,7 +61,7 @@ export default class Inbox extends React.Component {
     console.log('In Inbox.js - updateServer()');
     console.log('this.props.navigation.getParam(IP): ' + this.props.navigation.getParam('IP'));
     try {
-        let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/', {
+        let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') +'/', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',

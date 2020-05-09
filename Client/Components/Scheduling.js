@@ -18,9 +18,9 @@ import {
     Col,
 } from 'react-native-table-component';
 import { Header } from 'react-navigation-stack';
-import AsyncStorage from '@react-native-community/async-storage'; // tal's old state
+import AsyncStorage from '@react-native-community/async-storage';
+import GLOBALS from '../Globals';
 
-var windowHeightSize = (Dimensions.get('window').height)-(Header.HEIGHT);
 
 export default class Scheduling extends React.Component {
     constructor(props) {
@@ -80,7 +80,7 @@ export default class Scheduling extends React.Component {
 
     async getScheduling() {
         try {
-            let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=GetManagerSchedule', {
+            let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') + '/?data=GetManagerSchedule', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -91,6 +91,10 @@ export default class Scheduling extends React.Component {
             const json = await response.json();
             console.log('json.success: ' + json.success);
             if (json.success) {
+              if (this.state.isScheduleSet === 'notSet') {
+                this.setState({ teamsConstraints: json.teamsConstraints });
+                return;
+              }
               this.setState({ isScheduleSet: 'set', schedule: json.schedule, gamesToBeCompleted: json.gamesToBeCompleted, teamsNumbers: json.teamsNumbers, teamsConstraints: json.teamsConstraints });
             }
             else {
@@ -106,7 +110,7 @@ export default class Scheduling extends React.Component {
 
     async scheduling() {
         try {
-            let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=StartScheduling', {
+            let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') + '/?data=StartScheduling', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -145,9 +149,7 @@ export default class Scheduling extends React.Component {
         console.log('load(): ' + 'going to make/get schedule');
         let isSchedule = await AsyncStorage.getItem('isSchedule');
         console.log('load(): ' + 'isSchedule - ' + isSchedule);
-
-        if (isSchedule === 'true')
-            this.getScheduling();
+        this.getScheduling();
     }
 
     changeDayOrHour(teamVsTeamId, dayToBeChanged, hourToBeChanged) {
@@ -260,7 +262,7 @@ export default class Scheduling extends React.Component {
                     onRequestClose={() => {
                     Alert.alert("Modal has been closed.");
                     }}
-                >
+            >
                     <View style={{ height: '40%', width: '100%', backgroundColor: '#14B1F8', margin: 20}}>
                         <Text>Are you sure you want to delete that game?</Text>
                         <TouchableOpacity style={{ backgroundColor: '#1BA446', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelDelete(1)}>
@@ -484,7 +486,9 @@ export default class Scheduling extends React.Component {
             let response = await fetch(
               'http://' +
                 this.props.navigation.getParam('IP') +
-                ':3000/',
+                ':' +
+                this.props.navigation.getParam('PORT') +
+                '/',
               {
                 method: 'POST',
                 headers: {
@@ -653,6 +657,7 @@ export default class Scheduling extends React.Component {
     }
 
     createTeamsConstraintsView() {
+        console.log('uuuuuuuuuuuuuuuu');
         const teamsCViews = [];
         const teamsConstraints = this.state.teamsConstraints;
         for (let teamNum in teamsConstraints) {
@@ -712,6 +717,7 @@ export default class Scheduling extends React.Component {
             console.log('aaaa');
             teamsCViews.push(teamView);
         }
+        console.log('teamsCViews: ' + teamsCViews);
         return teamsCViews
     }
 
@@ -726,7 +732,7 @@ export default class Scheduling extends React.Component {
                                             this.scheduling()
                                             this.setState({isScheduleSet: 'inProcess'});
                                             }}>
-                            <Text style={{ font: 80, textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> Start Scheduling </Text>
+                            <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> Start Scheduling </Text>
                         </TouchableOpacity>           
                     </View>
                     <View style={{ height: '5%', width: '100%', alignItems: 'center' }}>
@@ -735,11 +741,11 @@ export default class Scheduling extends React.Component {
                                                 console.log('this.state.showTeamsConstraints before: ' + this.state.showTeamsConstraints);
                                                 this.setState({ showTeamsConstraints: !this.state.showTeamsConstraints });
                                                 }}>
-                                <Text style={{ font: 80, textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
+                                <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
                         </TouchableOpacity> 
                     </View>
                     <ScrollView style={styles.AllTeamsContainer}>
-                        {(this.state.showTeamsConstraints && this.state.isScheduleSet === 'set')? this.createTeamsConstraintsView() : null}
+                        {(this.state.showTeamsConstraints)? this.createTeamsConstraintsView() : null}
                     </ScrollView>
                 </View>
             );
@@ -777,24 +783,24 @@ export default class Scheduling extends React.Component {
                         <Text></Text>
                     </View>
                 </View>
-                <ScrollView style={{ height: Math.floor(windowHeightSize*(6/10)), flexDirection: 'column' }}>
+                <ScrollView style={{ height: Math.floor(GLOBALS.windowHeightSize*(6/10)), flexDirection: 'column' }}>
                     {weekGames}
                 </ScrollView>
-                <View style={{ height: Math.floor(windowHeightSize/10), width: '100%', alignItems: 'center',  }}>
+                <View style={{ height: Math.floor(GLOBALS.windowHeightSize/10), width: '100%', alignItems: 'center',  }}>
                     <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#11B23C', borderRadius: 25, width: '50%', height: '100%' }} onPress={() => this.addGame()}>
-                        <Text style={{ font: 80, marginTop: '10%', textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> Add Game </Text>
+                        <Text style={{ marginTop: '10%', textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> Add Game </Text>
                     </TouchableOpacity>           
                 </View>
-                <View style={{ height: Math.floor(windowHeightSize/10), width: '100%', alignItems: 'center' }}>
+                <View style={{ height: Math.floor(GLOBALS.windowHeightSize/10), width: '100%', alignItems: 'center' }}>
                     <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#03F1E1', borderRadius: 25 }} 
                                         onPress={() => { 
                                             console.log('this.state.showTeamsConstraints before: ' + this.state.showTeamsConstraints);
                                             this.setState({ showTeamsConstraints: !this.state.showTeamsConstraints });
                                             }}>
-                            <Text style={{ font: 80, textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
+                            <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
                     </TouchableOpacity> 
                 </View>
-                {(this.state.showTeamsConstraints && this.state.isScheduleSet === 'set')? 
+                {(this.state.showTeamsConstraints)? 
                     <ScrollView style={styles.AllTeamsContainer}>
                         {this.createTeamsConstraintsView()}
                     </ScrollView> 
@@ -831,7 +837,7 @@ const styles = StyleSheet.create({
         //flex: 1,
         flexDirection: 'row',
         backgroundColor: '#EE2515',
-        height: Math.floor(windowHeightSize/10),
+        height: Math.floor(GLOBALS.windowHeightSize/10),
         width: '100%', 
     },
     gameDetailsContainer: {
@@ -845,7 +851,7 @@ const styles = StyleSheet.create({
     weekTitle: {
         //flex: 1,
         backgroundColor: '#9B09F3',
-        height: Math.floor(windowHeightSize/10),
+        height: Math.floor(GLOBALS.windowHeightSize/10),
     },
     gameLineText: {
         color: '#F8F9FB',

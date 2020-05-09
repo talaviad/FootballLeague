@@ -71,7 +71,7 @@ export default class Constraints extends React.Component {
     console.log('sssssssss');
     try {
       let response = fetch(
-          'http://' + this.props.navigation.getParam('IP') + ':3000/',
+          'http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') +'/',
           {
             method: 'POST',
             headers: {
@@ -128,10 +128,11 @@ export default class Constraints extends React.Component {
   }
 
   async getConstraints(token) {
+    console.log('In Constraints.js, getConstraints()..');
     let response;
 
     try {
-      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=GetConstraints', {
+      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') + '/?data=GetConstraints', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +142,7 @@ export default class Constraints extends React.Component {
       });
       const json = await response.json();
       if (json.success) {
-        this.setState({ data: json.weeklyConstraints, specificConstraints: json.specificConstraints });
+        this.setState({ data: json.weeklyConstraints? json.weeklyConstraints : this.state.data, specificConstraints: json.specificConstraints });
       }
       else 
         console.log(json.error.msg);

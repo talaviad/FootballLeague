@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 export default class AddClub extends React.Component {
@@ -47,76 +48,103 @@ export default class AddClub extends React.Component {
 
   async addClub() {
     this.setState({isLoading: true});
-    let response = fetch(
-      'http://' +
-        this.props.navigation.getParam('IP') +
-        ':' +
-        this.props.navigation.getParam('port') +
-        '/',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Football-Request': 'addNewClub',
+    let randomstring = Math.random()
+    .toString(36)
+    .slice(-6);
+    this.state.password = randomstring;
+    try {
+      let response = fetch(
+        'http://' +
+          this.props.navigation.getParam('IP') +
+          ':' +
+          this.props.navigation.getParam('PORT') +
+          '/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'AddNewClub',
+            Authorization: await AsyncStorage.getItem('token'),
+          },
+          body: JSON.stringify({
+            clubName: this.state.clubName,
+            user: this.state.captainUsername,
+            pass: this.state.password,
+            email: this.state.captainUsername + '@gmail.com',
+            requestedRole: 'captain',
+          }),
         },
-        body: JSON.stringify({
-          clubName: this.state.clubName,
-        }),
-      },
-    )
-      .then(response => response.json())
-      .then(async resJson => {
-        if (resJson.success) {
-          this.addCaptainUser();
-        } else {
+      )
+        .then(response => response.json())
+        .then(async resJson => {
+          if (resJson.success) {
+            //this.addCaptainUser();
+            if (resJson.success) {
+              this.setState({isLoading: false, successAlertFromServer: true});
+            } else {
+              alert(resJson.error.msg);
+            }
+          } else {
+            this.setState({isLoading: false});
+            console.log('error: ' +resJson.error.msg);
+          }
+        })
+        .catch(err => {
           this.setState({isLoading: false});
-          alert(resJson.error.msg);
-        }
-      })
-      .catch(err => {
-        this.setState({isLoading: false});
-        alert(err);
-      });
+          alert(err);
+        });
+    }
+    catch (err) {
+      console.log('error: ' + err);
+      alert('error: ' + err);
+    }
   }
 
   async addCaptainUser() {
-    var randomstring = Math.random()
-      .toString(36)
-      .slice(-6);
-    this.state.password = randomstring;
-    let response = fetch(
-      'http://' +
-        this.props.navigation.getParam('IP') +
-        ':' +
-        this.props.navigation.getParam('port') +
-        '/',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Football-Request': 'register',
+    try {
+      var randomstring = Math.random()
+        .toString(36)
+        .slice(-6);
+      this.state.password = randomstring;
+      let response = fetch(
+        'http://' +
+          this.props.navigation.getParam('IP') +
+          ':' +
+          this.props.navigation.getParam('port') +
+          '/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'register',
+            Authorization: await AsyncStorage.getItem('token'),
+          },
+          body: JSON.stringify({
+            user: this.state.captainUsername,
+            pass: this.state.password,
+            email: this.state.captainUsername + '@gmail.com',
+            requestedRole: 'captain',
+          }),
         },
-        body: JSON.stringify({
-          user: this.state.captainUsername,
-          pass: this.state.password,
-          email: this.state.captainUsername + '@gmail.com',
-          requestedRole: 'captain',
-        }),
-      },
-    )
-      .then(response => response.json())
-      .then(async resJson => {
-        this.setState({isLoading: false});
-        if (resJson.success) {
-          this.setState({successAlertFromServer: true});
-        } else {
-          alert(resJson.error.msg);
-        }
-      })
-      .catch(err => {
-        this.setState({isLoading: false});
-        alert(err);
-      });
+      )
+        .then(response => response.json())
+        .then(async resJson => {
+          this.setState({isLoading: false});
+          if (resJson.success) {
+            this.setState({successAlertFromServer: true});
+          } else {
+            alert(resJson.error.msg);
+          }
+        })
+        .catch(err => {
+          this.setState({isLoading: false});
+          alert(err);
+        });
+    }
+    catch (err) {
+      console.log('error: ' + err);
+      alert('error: ' + err);
+    }
   }
   render() {
     return (

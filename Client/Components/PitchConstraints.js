@@ -59,31 +59,36 @@ export default class PitchConstraints extends React.Component {
   }
 
   submitConstraints = async () => {
-    let response = fetch(
-        'http://' + this.props.navigation.getParam('IP') + ':3000/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Football-Request': 'PitchConstraints',
-            'Authorization': await AsyncStorage.getItem('token')
+    try {
+      let response = fetch(
+          'http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') + '/',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Football-Request': 'PitchConstraints',
+              'Authorization': await AsyncStorage.getItem('token')
+            },
+            body: JSON.stringify({
+              pitchConstraints: this.state.data,
+            }),
           },
-          body: JSON.stringify({
-            pitchConstraints: this.state.data,
-          }),
-        },
-      )
-        .then(response => response.json())
-        .then(async resJson => {
-          if (resJson.success) {
-            console.log('submitConstraints(): in success scenario'); 
-            alert('Your constraints have been set'); 
-            this.props.navigation.navigate('Home');
-          } else {
-            console.log('submitConstraints(): in fail scenario'); 
-            alert(resJson.error.msg);
-          }
-        })
+        )
+          .then(response => response.json())
+          .then(async resJson => {
+            if (resJson.success) {
+              console.log('submitConstraints(): in success scenario'); 
+              alert('Your constraints have been set'); 
+              this.props.navigation.navigate('Home');
+            } else {
+              console.log('submitConstraints(): in fail scenario'); 
+              alert(resJson.error.msg);
+            }
+          })
+      }
+      catch (err) {
+        alert(err);
+      }
   }
 
   componentDidMount() {
@@ -112,9 +117,8 @@ export default class PitchConstraints extends React.Component {
 
   async getConstraints(token) {
     let response;
-
     try {
-      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':3000/?data=GetPitchConstraints', {
+      response = await fetch('http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') +'/?data=GetPitchConstraints', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +134,7 @@ export default class PitchConstraints extends React.Component {
         console.log(json.error.msg);
 
     } catch (err) {
-      console.error(err);
+      console.error('error: ' + err);
     }
   }
 

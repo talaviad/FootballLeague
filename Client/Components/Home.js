@@ -6,17 +6,14 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Colors, DebugInstructions, ReloadInstructions, } from 'react-native/Libraries/NewAppScreen';
-import LeagueTable from './LeagueTable';
-import GamesResults from './GamesResults';
-import AddReferee from './AddReferee';
-import AddClub from './AddClub';
-import ChangePassword from './ChangePassword';
-import GameMode from './GameMode';
-import Register from './Register';
+import { Header } from 'react-navigation-stack';
+import GLOBALS from '../Globals';
 
 
 var IP = '10.0.0.33'; 
@@ -98,6 +95,12 @@ export default class Home extends React.Component {
           case 'insertGameResult':
             this.props.navigation.navigate('Home');
             break;
+          case 'GetConstraints':
+            this.props.navigation.navigate('Constraints',{
+              IP: IP,
+              PORT: PORT,
+            });
+            break;
           default:
             break;
         }
@@ -141,158 +144,216 @@ export default class Home extends React.Component {
   }
 
   async load() {
+    console.log('this.state.isLoggedIn: ' + this.state.isLoggedIn);
     let token;
     let currRole;
+    let inbox = {
+      messages: [],
+      newMessages: 0,
+    };
 
     try {
       token = await AsyncStorage.getItem('token');
       currRole = await AsyncStorage.getItem('role');
-      username = await AsyncStorage.getItem('username');
+      console.log('load(): currRole - '+currRole);
+      console.log('load(): token - '+token);
+      // If connected, bring new messages
+      if (token !== 'none') {
+        let response = await fetch('http://' + IP + ':' + PORT + '/?data=GetInbox', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'GetInbox',
+            Authorization: token,
+          },
+        });
+        let json = await response.json();
+        console.log('In Home.js, load() - json.success: ' + json.success);
+        if (json.success) {
+          console.log('json.inbox: ' + json.inbox);
+          inbox = json.inbox;
+          let newMessages = 0;
+          for (let i=0; i<json.inbox.messages.length; i++) {
+            if (!json.inbox.messages[i].read)
+              newMessages++;
+          }
+          inbox.newMessages = newMessages;
+        }
+        else
+          console.log('Error message: ' + json.error.msg);
+      }
     } catch (err) {
+      console.log('in catch, err: ' + err);
       throw err;
     }
 
-    this.setState({
-      isLoggedIn: token !== 'none',
-      token: token,
-      role: currRole,
-      username: username,
-    });
+    console.log('isLoggedIn in end of load(): ' + token !== 'none');
+    this.setState({isLoggedIn: token !== 'none', token: token, role: currRole, inbox: inbox});
   }
 
   render() {
     return (
-      <View style={styles.body}>
-        <View style={styles.sectionTwoBtnContainer}>
-          {!this.state.isLoggedIn ? (
+      <View style={{height: '100%'}}>
+        <ScrollView style={styles.body}>
+          <View style={styles.sectionTwoBtnContainer}>
+            {!this.state.isLoggedIn ? (
+              <TouchableOpacity
+                style={styles.divided}
+                onPress={() =>
+                  this.props.navigation.navigate('Register', {IP: IP, PORT: PORT})
+                }>
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               style={styles.divided}
               onPress={() =>
-                this.props.navigation.navigate('Register', {IP: IP, PORT: PORT})
+                this.props.navigation.navigate('Login', {IP: IP, PORT: PORT})
               }>
-              <Text style={styles.buttonText}>Register</Text>
+              <Text style={styles.buttonText}>
+                {this.state.isLoggedIn ? 'Logout' : 'Login'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {this.state.isLoggedIn ?
+                  <TouchableOpacity
+                  style={styles.touchAble}
+                  onPress={() =>
+                    this.props.navigation.navigate('Inbox', {
+                      inbox: this.state.inbox,
+                      IP: IP,
+                      PORT: PORT,
+                    })
+                  }>
+                  {console.log('this.state.inbox.messages.length: ' + this.state.inbox.messages.length)}
+                  <Text style={{ fontSize: 20, fontWeight: '500', color: (this.state.inbox.newMessages !== 0)? '#BD1128' : '#AED6F1', textAlign: 'center',}}>
+                      Inbox - {(this.state.inbox.newMessages !== 0)? '' +this.state.inbox.newMessages+ ' new messages' : 'no new messages'}
+                  </Text>
+                </TouchableOpacity> : null
+          }
+          <TouchableOpacity
+            style={styles.touchAble}
+            onPress={() => this.handleSendRequestToServer('leagueTable')}>
+            <Text style={styles.buttonText}>League Table</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.touchAble}
+            onPress={() =>
+              this.props.navigation.navigate('GamesResults', {IP: IP, PORT: PORT})
+            }>
+            <Text style={styles.buttonText}>Games Results</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.touchAble}
+            onPress={() => {
+              this.handleSendRequestToServer('scorerTable');
+            }}>
+            <Text style={styles.buttonText}>Scorer Table</Text>
+          </TouchableOpacity>
+          {this.state.isLoggedIn &&
+          (this.state.role === 'referee' || this.state.role === 'manager') ? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() =>
+                this.props.navigation.navigate('InsertGame', {
+                  IP: IP,
+                  PORT: PORT,
+                  teamList: this.state.teamsNames,
+                })
+              }>
+              <Text style={styles.buttonText}>Insert a game result</Text>
             </TouchableOpacity>
           ) : null}
+          {this.state.isLoggedIn &&
+          (this.state.role === 'referee' || this.state.role === 'manager') ? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() =>
+                this.props.navigation.navigate('GameMode', {
+                  IP: IP,
+                  PORT: PORT,
+                  teamList: this.state.teamsNames,
+                })
+              }>
+              <Text style={styles.buttonText}>Enter game mode</Text>
+            </TouchableOpacity>
+          ) : null}
+          {(this.state.isLoggedIn && this.state.role === 'captain')? (
           <TouchableOpacity
-            style={styles.divided}
-            onPress={() =>
-              this.props.navigation.navigate('Login', {IP: IP, PORT: PORT})
-            }>
-            <Text style={styles.buttonText}>
-              {this.state.isLoggedIn ? 'Logout' : 'Login'}
-            </Text>
+            style={styles.touchAble}
+            onPress={() => this.handleSendRequestToServer('GetConstraints')}>
+            <Text style={styles.buttonText}>Constraints</Text>
           </TouchableOpacity>
+          ) : null}
+          {(this.state.isLoggedIn && this.state.role === 'manager')? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() => this.props.navigation.navigate('Scheduling', {IP: IP, PORT: PORT})}>
+              <Text style={styles.buttonText}>Scheduling</Text>
+            </TouchableOpacity>
+          ) : null}
+          {(this.state.isLoggedIn && this.state.role === 'manager')? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() => this.props.navigation.navigate('PitchConstraints', {IP: IP, PORT: PORT})}>
+              <Text style={styles.buttonText}>Set Pitch Constraints</Text>
+            </TouchableOpacity>
+          ) : null}
+          <View style={styles.loadingStyle}>
+            {this.state.isLoading && (
+              <ActivityIndicator color={'#fff'} size={80} />
+            )}
+          </View>
+        </ScrollView>
+        <View style={{height: GLOBALS.windowHeightSize/10 }}>
+        {this.state.role === 'manager' && (  
+              <ButtonsRow>
+                  <RoundButton
+                    title="Add New Referee"
+                    color="#5f9ea0"
+                    background="#3D3D3D"
+                    onPress={() => {
+                      this.props.navigation.navigate('AddReferee', {
+                        IP: IP,
+                        PORT: PORT,
+                      });
+                    }}
+                  />
+                  <RoundButton
+                    title="Add New Club"
+                    color="#5f9ea0"
+                    background="#3D3D3D"
+                    onPress={() => {
+                      this.props.navigation.navigate('AddClub', {
+                        IP: IP,
+                        PORT: PORT,
+                      });
+                    }}
+                  />
+                  <RoundButton
+                    title="Change Password"
+                    color="#5f9ea0"
+                    background="#3D3D3D"
+                    onPress={() => {
+                      this.props.navigation.navigate('ChangePassword', {
+                        IP: IP,
+                        PORT: PORT,
+                        username: this.state.username,
+                      });
+                    }}
+                  />
+              </ButtonsRow>)}
+          </View>
         </View>
-        <TouchableOpacity
-          style={styles.touchAble}
-          onPress={() => this.handleSendRequestToServer('leagueTable')}>
-          <Text style={styles.buttonText}>League Table</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.touchAble}
-          onPress={() =>
-            this.props.navigation.navigate('GamesResults', {IP: IP, PORT: PORT})
-          }>
-          <Text style={styles.buttonText}>Games Results</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.touchAble}
-          onPress={() => {
-            this.handleSendRequestToServer('scorerTable');
-          }}>
-          <Text style={styles.buttonText}>Scorer Table</Text>
-        </TouchableOpacity>
-        {this.state.isLoggedIn &&
-        (this.state.role === 'referee' || this.state.role === 'manager') ? (
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() =>
-              this.props.navigation.navigate('InsertGame', {
-                IP: IP,
-                PORT: PORT,
-                teamList: this.state.teamsNames,
-              })
-            }>
-            <Text style={styles.buttonText}>Insert a game resultt</Text>
-          </TouchableOpacity>
-        ) : null}
-        {this.state.isLoggedIn &&
-        (this.state.role === 'referee' || this.state.role === 'manager') ? (
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() =>
-              this.props.navigation.navigate('GameMode', {
-                IP: IP,
-                PORT: PORT,
-                teamList: this.state.teamsNames,
-              })
-            }>
-            <Text style={styles.buttonText}>Enter game mode</Text>
-          </TouchableOpacity>
-        ) : null}
-        {/* {this.state.role === 'referee' && (
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() =>
-              this.props.navigation.navigate('ManagementOptions', {
-                IP: IP,
-                PORT: PORT,
-              })
-            }>
-            <Text style={styles.buttonText}>Management Options</Text>
-          </TouchableOpacity>
-        )} */}
-        <ButtonsRow>
-          <RoundButton
-            title="Add New Referee"
-            color="#5f9ea0"
-            background="#3D3D3D"
-            onPress={() => {
-              this.props.navigation.navigate('AddReferee', {
-                IP: IP,
-                PORT: PORT,
-              });
-            }}
-          />
-          <RoundButton
-            title="Add New Club"
-            color="#5f9ea0"
-            background="#3D3D3D"
-            onPress={() => {
-              this.props.navigation.navigate('AddClub', {
-                IP: IP,
-                PORT: PORT,
-              });
-            }}
-          />
-          <RoundButton
-            title="Change Password"
-            color="#5f9ea0"
-            background="#3D3D3D"
-            onPress={() => {
-              this.props.navigation.navigate('ChangePassword', {
-                IP: IP,
-                PORT: PORT,
-                username: this.state.username,
-              });
-            }}
-          />
-        </ButtonsRow>
-        <View style={styles.loadingStyle}>
-          {this.state.isLoading && (
-            <ActivityIndicator color={'#fff'} size={80} />
-          )}
-        </View>
-      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   body: {
-    height: '100%',
+    height: GLOBALS.windowHeightSize*(6/10),
     backgroundColor: '#5499C7',
   },
   sectionTwoBtnContainer: {

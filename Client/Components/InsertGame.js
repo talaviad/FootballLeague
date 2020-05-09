@@ -194,7 +194,7 @@ export default class InsertGame extends React.Component {
         'http://' +
           this.props.navigation.getParam('IP') +
           ':' +
-          this.props.navigation.getParam('port') +
+          this.props.navigation.getParam('PORT') +
           '/',
         {
           method: 'POST',
@@ -247,7 +247,7 @@ export default class InsertGame extends React.Component {
       'http://' +
         this.props.navigation.getParam('IP') +
         ':' +
-        this.props.navigation.getParam('port') +
+        this.props.navigation.getParam('PORT') +
         '/',
       {
         method: 'POST',

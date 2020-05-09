@@ -164,7 +164,7 @@ handleChangePasswordRequest = async (username, oldPassword, newPassword) => {
   }*/
 };
 
-handleRegisterRequest = async (user, pass, requestedRole, email) => {
+handleRegisterRequest = async (user, pass, requestedRole, email, team) => {
   if (
     requestedRole !== "referee" &&
     requestedRole !== "captain" &&
@@ -177,7 +177,7 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
         msg: "the role you asked does not exist",
       },
     };
-    return JSON.stringify(registerError);
+    return registerError;
   }
   try {
     let hashPassword = await bcrypt.hash(pass, config.BCRYPT_SALT_ROUNDS);
@@ -185,25 +185,20 @@ handleRegisterRequest = async (user, pass, requestedRole, email) => {
       user,
       hashPassword,
       email,
-      requestedRole
+      requestedRole,
+      team,
     );
     console.log("DBResponse: " + DBResponse);
     console.log("DBResponse.success: " + DBResponse.success);
-    if (DBResponse.success) {
-      return JSON.stringify({
-        success: true,
-      });
-    } else {
-      return JSON.stringify(DBResponse);
-    }
+    return DBResponse;
   } catch (err) {
     console.error(err);
-    return JSON.stringify({
+    return {
       success: false,
       error: {
         msg: "some error occured while trying to register the user",
       },
-    });
+    };
   }
 };
 
@@ -230,13 +225,31 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
   }
 };
 
-handleAddNewClubRequest = async (clubName) => {
+handleAddNewClubRequest = async (clubName, user) => {
+  console.log('handleAddNewClubRequest() - in beginning');
   try {
     let DBResponse = await database.addNewClub(clubName);
     if (DBResponse.success) {
-      return JSON.stringify({
-        success: true,
-      });
+      // Creating new weekly constraints
+      let weeklyConstraints = [];
+      let hour = 16;
+      let nextHour = 17;
+      let numOfDays = 6;
+      let numOfHours = 8;
+
+      for (let i=0; i<numOfHours; i++) {
+        weeklyConstraints[i] = [];
+        for (let j=0; j<numOfDays; j++) {
+          weeklyConstraints[i][j] = (j==0)? ''+hour+':00 - '+nextHour+':00' : 1; 
+        }
+        hour++;
+        nextHour++;
+      }      
+      console.log('weeklyConstraints: ' + weeklyConstraints);
+
+      DBResponse = await database.insertOrUpdateConstraints(user, weeklyConstraints, null);
+      console.log('handleAddNewClubRequest() - DBResponse,success: ' + DBResponse.success);
+      return JSON.stringify(DBResponse);
     } else {
       return JSON.stringify(DBResponse);
     }
@@ -259,6 +272,7 @@ app.post("/", function (req, res) {
       );
       break;
     case "register":
+    console.log('taking post action, case "register"....')
       handleRegisterRequest(
         req.body.user,
         req.body.pass,
@@ -273,8 +287,31 @@ app.post("/", function (req, res) {
         req.body.requestedRole
       ).then((ans) => res.send(ans));
       break;
-    case "addNewClub":
-      handleAddNewClubRequest(req.body.clubName).then((ans) => res.send(ans));
+    case "AddReferee":
+      handleRegisterRequest(
+        req.body.user,
+        req.body.pass,
+        req.body.requestedRole,
+        req.body.email
+      ).then((ans) => res.send(JSON.stringify(ans)));
+      break;
+    case "AddNewClub":
+      console.log('taking post action, case "AddNewClub"....')
+      handleRegisterRequest(
+        req.body.user,
+        req.body.pass,
+        req.body.requestedRole,
+        req.body.email,
+        req.body.clubName,
+      ).then((ans) => {
+        console.log('!ans.success: ' + !ans.success);
+
+        if (!ans.success) {
+          res.send(JSON.stringify(ans));
+          return;
+        }
+        handleAddNewClubRequest(req.body.clubName, req.body.user).then((ans) => res.send(ans));
+      });
       break;
     case "Result":
       database

@@ -45,7 +45,7 @@ export default class GamesResults extends React.Component {
         'http://' +
           this.props.navigation.getParam('IP') +
           ':' +
-          this.props.navigation.getParam('port') +
+          this.props.navigation.getParam('PORT') +
           '/?data=' +
           monthName,
         {
