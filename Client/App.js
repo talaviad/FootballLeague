@@ -8,7 +8,6 @@ import ScorerTable from './Components/ScorerTable';
 import Register from './Components/Register';
 import InsertGame from './Components/InsertGame';
 import Login from './Components/Login';
-import Home from './Components/Home';
 import GameMode from './Components/GameMode';
 import AddReferee from './Components/AddReferee';
 import AddClub from './Components/AddClub';
@@ -16,7 +15,6 @@ import Constraints from './Components/Constraints';
 import Scheduling from './Components/Scheduling';
 import PitchConstraints from './Components/PitchConstraints';
 import Inbox from './Components/Inbox';
-
 import ChangePassword from './Components/ChangePassword';
 
 const AppNavigator = createStackNavigator(

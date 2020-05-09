@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { Table, Row, Rows } from 'react-native-table-component';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Colors, DebugInstructions, ReloadInstructions, } from 'react-native/Libraries/NewAppScreen';
 import LeagueTable from './LeagueTable';
@@ -16,15 +17,7 @@ import AddClub from './AddClub';
 import ChangePassword from './ChangePassword';
 import GameMode from './GameMode';
 import Register from './Register';
-import { Table, Row, Rows } from 'react-native-table-component';
-import {
-  StyleSheet,
-  View,
-  Button,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+
 
 var IP = '10.0.0.33'; 
 var PORT = '3000';

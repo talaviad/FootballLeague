@@ -5,7 +5,6 @@ var permission = {
   REFEREE: "referee",
   MANAGER: "manager",
 };
-
 var possibleRequests = [
   "register",
   "login",
@@ -33,7 +32,6 @@ var possibleRequests = [
   'GetInbox',
   'UpdateInbox',
 ];
-
 var needAuthorization = {
   'insertGameResult': { 'permissions': [permission.REFEREE, permission.MANAGER] },
   'CaptainConstraints': { 'permissions': [permission.CAPTAIN] },
@@ -48,7 +46,9 @@ var needAuthorization = {
   'GetManagerSchedule': { 'permissions': [permission.MANAGER] },
   'GetInbox': { 'permissions': [permission.MANAGER, permission.CAPTAIN] },
   'UpdateInbox': { 'permissions': [permission.MANAGER, permission.CAPTAIN] },
+  'addNewClub': { 'permissions': [permission.MANAGER] },
 };
+
 module.exports = function (req, res, next) {
   //let data = req.query.data;
   let footballRequest = req.get("Football-Request");
@@ -85,7 +85,7 @@ module.exports = function (req, res, next) {
   if (req.method === "PUT")
     return next();
 
-isAuthorized = (footballRequest, req, res, next) => {
+  isAuthorized = (footballRequest, req, res, next) => {
     // checking authorization
     console.log(JSON.stringify(req.headers));
     console.log("req.headers.Authorization: " + req.get("authorization"));
@@ -130,4 +130,5 @@ isAuthorized = (footballRequest, req, res, next) => {
       });
     }
     //return next();
-}
+  }
+};
