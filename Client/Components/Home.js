@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  Dimensions,
 } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
 import AsyncStorage from '@react-native-community/async-storage';

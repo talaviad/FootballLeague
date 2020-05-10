@@ -1,18 +1,19 @@
 import React from 'react';
-import {
-  Table,
-  Row,
-  Rows,
-  Col,
-  TableWrapper,
-} from 'react-native-table-component';
-import { View, StyleSheet, ScrollView, Button, Text, TouchableOpacity, TextInput, Dimensions, Modal } from 'react-native';
+import { 
+    View, 
+    ScrollView, 
+    Text, 
+    TouchableOpacity, 
+    Dimensions, 
+    Modal,
+}  from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import DatePicker from 'react-native-datepicker'; // tal's old state
+import DatePicker from 'react-native-datepicker';
+import GLOBALS from '../Globals';
+
 
 export default class Inbox extends React.Component {
   constructor(props) {
-    console.log('In Inbox.js constructor111111');
     super(props);
     const {navigation} = this.props;
 
@@ -26,40 +27,11 @@ export default class Inbox extends React.Component {
     this.createMsgModal = this.createMsgModal.bind(this);
   }
 
-  componentDidMount() {
-    console.log('In componentDidMount22222')
-    this.load();
-    this.focusListener = this.props.navigation.addListener(
-      'didFocus',
-      this.load,
-    );
-  }
-
-  componentWillUnmount() {
-    console.log('In componentWillUnmount33333')
-    this.focusListener.remove();
-    //this.updateServer();
-  }
-
-  async load() {
-    // let token;
-
-    // try {
-    //   token = await AsyncStorage.getItem('token');
-    // } catch (err) {
-    //   throw err;
-    // }
-
-    // this.getConstraints(token);
-  }
-
   async updateServer(msgNum) {
     let inbox = this.state.inbox;
     inbox.messages[msgNum].read = true;
     this.setState({inbox: inbox, msgIsShown: true, currMsg: inbox.messages[msgNum].msg});
 
-    console.log('In Inbox.js - updateServer()');
-    console.log('this.props.navigation.getParam(IP): ' + this.props.navigation.getParam('IP'));
     try {
         let response = await fetch('http://' + this.props.navigation.getParam('IP') + ':' + this.props.navigation.getParam('PORT') +'/', {
             method: 'POST',
@@ -93,11 +65,11 @@ export default class Inbox extends React.Component {
             Alert.alert("Modal has been closed.");
             }}
             >
-                <View style={{ alignItems: 'center', flexDirection:'column', height: '60%', width: '90%', backgroundColor: '#14B1F8', margin: 20}}>
-                    <Text style={{flex: 8, width: '100%'}}> 
+                <View style={{ alignItems: 'center', flexDirection:'column', height: '60%', width: '100%', backgroundColor: GLOBALS.colors.ModalBackGround }}>
+                    <Text style={{ fontSize: 20, flex: 9, width: '90%' }}> 
                         {this.state.currMsg}
                     </Text>
-                    <TouchableOpacity style={{ justifyContent: 'center', flex:2, width: '50%', backgroundColor: '#D91D1D', borderRadius: 25, height: '20%' }} onPress={() =>this.setState({msgIsShown: false})}>
+                    <TouchableOpacity style={{ justifyContent: 'center', flex: 1, width: '50%', backgroundColor: GLOBALS.colors.Negative, borderRadius: 25, height: '20%' }} onPress={() =>this.setState({msgIsShown: false})}>
                         <Text style={{fontSize: 18, width: '100%', textAlign: 'center', color: '#FCFAFA'}}>Close</Text>
                     </TouchableOpacity>
                 </View>
@@ -106,24 +78,19 @@ export default class Inbox extends React.Component {
   }
 
   render() {
-    console.log('In render44444');
     const messagesToRender = [];
     let messages = this.state.inbox.messages;
     for (let msgNum=0; msgNum<messages.length; msgNum++) {
         console.log('messages[msgNum]: ' + messages[msgNum]);
         messagesToRender.push(
             <TouchableOpacity
-              style={{height: (Dimensions.get('window').height/10), backgroundColor: '#1AACBC', borderWidth: 1}}
+              key={msgNum}
+              style={{height: (Dimensions.get('window').height/10), backgroundColor: GLOBALS.colors.BackGround, borderBottomWidth: 2}}
               onPress={() => {
                 this.updateServer(msgNum);
               }}>
                 <Text style={{fontWeight: (messages[msgNum].read)? 'normal' : 'bold'}}> {messages[msgNum].msg} </Text>
             </TouchableOpacity>
-
-
-            // <View style={{height: (Dimensions.get('window').height/10), backgroundColor: '#1AACBC', borderWidth: 1}}>
-            //     <Text style={{fontWeight: (messages[msgNum].read)? 'normal' : 'bold'}}> {messages[msgNum].msg} </Text>
-            // </View>
         )
     }
 

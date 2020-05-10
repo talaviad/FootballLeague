@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, View, Picker, ScrollView} from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 import {Table, Row} from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Picker } from '@react-native-community/picker';
 import GLOBALS from '../Globals';
 
 export default class GamesResults extends React.Component {

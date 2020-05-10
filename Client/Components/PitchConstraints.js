@@ -1,14 +1,10 @@
 import React from 'react';
-import {
-  Table,
-  Row,
-  Rows,
-  Col,
-  TableWrapper,
-} from 'react-native-table-component';
+import { Table, Row } from 'react-native-table-component';
 import { View, StyleSheet, ScrollView, Button, Text, TouchableOpacity, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import DatePicker from 'react-native-datepicker'; // tal's old state
+import DatePicker from 'react-native-datepicker';
+import GLOBALS from '../Globals';
+
 
 export default class PitchConstraints extends React.Component {
   constructor(props) {
@@ -26,8 +22,8 @@ export default class PitchConstraints extends React.Component {
 
     // Initialize state
     this.state = {
-      canPlayColor: '#2FAD86',
-      canNotPlayColor: '#AD2F35',
+      canPlayColor: GLOBALS.colors.Positive,
+      canNotPlayColor: GLOBALS.colors.Negative,
       canPlayText: 'ABLE',
       canNotPlayText: 'NOT ABLE',
       numOfDays: numOfDays,
@@ -144,7 +140,7 @@ export default class PitchConstraints extends React.Component {
     const pitchConstraints = [];
     for (let i=0; i<this.state.numOfHours; i++) {
         pitchConstraints.push(
-                    <View style={styles.ViewContainer}>
+                    <View key={'constraint_' + i} style={styles.ViewContainer}>
                         <View style={styles.Tytle}>
                             <Text style={{color: '#AED6F1', height: '100%', width: '100%', textAlign: 'center'}}>{this.state.data[i][0]}</Text>
                         </View>
@@ -178,26 +174,28 @@ export default class PitchConstraints extends React.Component {
     }
 
     return (
-      <ScrollView style={styles.container}>
-          <View style={{ padding: 10 }}>
-              <Text style={styles.submitText}>Pitch Constraints</Text>
-          </View>
-          <Table borderStyle={{borderWidth: 1}} style={{ paddingTop: 10 }}>
-              <Row
-                data={state.tableHead}
-                flexArr={[30, 30, 30, 30, 30, 30]}
-                style={styles.head}
-                textStyle={styles.textHead}
-              />
-          </Table>
-          {/*Rendering weekly constraints */}
-          {pitchConstraints}
-          <View style={{alignItems: 'center'}}>
-              <TouchableOpacity style={styles.submitButton} onPress={this.submitConstraints}>
-                  <Text style={styles.submitText}>Submit Pitch Constraints</Text>
-              </TouchableOpacity>
-          </View>
-      </ScrollView>
+      <View style={{ alignItems: 'center', width: '100%', height: GLOBALS.windowHeightSize, backgroundColor: GLOBALS.colors.BackGround }}>
+        <View style={{ justifyContent: 'center', backgroundColor: GLOBALS.colors.BackGround, width: '80%', height: GLOBALS.windowHeightSize/10, alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: '500', textAlign: 'center' }}>Set Pitch Constraints</Text>
+        </View>
+        <ScrollView style={styles.container}>
+            <Table borderStyle={{borderWidth: 1}} style={{ flex: 1 }}>
+                <Row
+                  data={state.tableHead}
+                  flexArr={[30, 30, 30, 30, 30, 30]}
+                  style={styles.head}
+                  textStyle={styles.textHead}
+                />
+            </Table>
+            {/*Rendering weekly constraints */}
+            {pitchConstraints}
+        </ScrollView>
+        <View style={{ backgroundColor: GLOBALS.colors.BackGround, width: '80%', height: GLOBALS.windowHeightSize/10, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity style={styles.submitButton} onPress={this.submitConstraints}>
+                    <Text style={styles.submitText}>Submit</Text>
+            </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 }
@@ -210,10 +208,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#5499C7',
+    backgroundColor: GLOBALS.colors.BackGround,
+    height: GLOBALS.windowHeightSize*(9/10),
+    width: '80%',
   },
   ViewContainer: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -243,17 +243,14 @@ const styles = StyleSheet.create({
     color: '#AED6F1',
   },
   submitButton: {
-    width: '80%',
+    width: '60%',
     backgroundColor: '#2C3E50',
     borderRadius: 25,
-    marginVertical: 10,
-    paddingVertical: 13,
-    marginTop: 60,
   },
   submitText: {
     fontSize: 20,
     fontWeight: '500',
-    color: '#AED6F1',
     textAlign: 'center',
+    color: GLOBALS.colors.ButtonTextColor,
   },
 });

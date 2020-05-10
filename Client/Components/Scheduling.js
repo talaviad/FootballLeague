@@ -7,7 +7,6 @@ import {
     ScrollView,
     TextInput,
     TouchableOpacity,
-    Picker,
     Modal,
     Dimensions, 
 } from 'react-native';
@@ -17,6 +16,7 @@ import {
     Rows,
     Col,
 } from 'react-native-table-component';
+import { Picker } from '@react-native-community/picker';
 import { Header } from 'react-navigation-stack';
 import AsyncStorage from '@react-native-community/async-storage';
 import GLOBALS from '../Globals';
@@ -46,7 +46,7 @@ export default class Scheduling extends React.Component {
             hourToBeChanged: 1,
             gamesToBeCompleted: [],
             gameToBeAdded: new Array(2).fill(0),
-            isScheduleSet: 'notSet', // 'notSet/inProcess/set
+            isScheduleSet: 'notSet', // Can be - 'notSet/inProcess/set
             hours: this.initializeHoursData(numOfDays, numOfHours, hour, nextHour),
             showTeamsConstraints: false,
         };
@@ -91,7 +91,7 @@ export default class Scheduling extends React.Component {
             const json = await response.json();
             console.log('json.success: ' + json.success);
             if (json.success) {
-              if (this.state.isScheduleSet === 'notSet') {
+              if (!json.schedule) {
                 this.setState({ teamsConstraints: json.teamsConstraints });
                 return;
               }
@@ -118,9 +118,7 @@ export default class Scheduling extends React.Component {
                 'Authorization': await AsyncStorage.getItem('token'),
               },
             });
-            console.log('ppppppp');
             const json = await response.json();
-            console.log('json.success: ' + json.success);
             if (json.success) {
               await AsyncStorage.setItem('isSchedule', 'true');
               this.setState({ data: json.pitchConstraints, isScheduleSet: 'set', schedule: json.schedule, teamsNumbers: json.teamsNumbers, teamsConstraints: json.teamsConstraints });
@@ -178,9 +176,10 @@ export default class Scheduling extends React.Component {
 
             this.state.gamesToBeCompleted.push(this.state.teamVsTeamId);
             console.log('this.state.gamesToBeCompleted: ' + this.state.gamesToBeCompleted);
+            // Updating the server
+            this.sendChangeToServer(this.state.schedule, changeDetails);
         }
-        // Updating the server
-        this.sendChangeToServer(this.state.schedule, changeDetails);
+
         this.setState({ isDeleteModalVisible: false });
     }
 
@@ -263,12 +262,12 @@ export default class Scheduling extends React.Component {
                     Alert.alert("Modal has been closed.");
                     }}
             >
-                    <View style={{ height: '40%', width: '100%', backgroundColor: '#14B1F8', margin: 20}}>
-                        <Text>Are you sure you want to delete that game?</Text>
-                        <TouchableOpacity style={{ backgroundColor: '#1BA446', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelDelete(1)}>
+                    <View style={{ alignItems: 'center', height: '40%', width: '100%', backgroundColor: '#14B1F8' }}>
+                        <Text style={{ height: '60%', fontSize: 20 }}>Are you sure you want to delete that game?</Text>
+                        <TouchableOpacity style={{ backgroundColor: '#1BA446', borderRadius: 25, height: '20%', width: '60%' }} onPress={() =>this.confirmOrCancelDelete(1)}>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Yes</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelDelete(2)}>
+                        <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, height: '20%', width: '60%'  }} onPress={() =>this.confirmOrCancelDelete(2)}>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}>No</Text>
                         </TouchableOpacity>
                     </View>
@@ -281,7 +280,7 @@ export default class Scheduling extends React.Component {
         for (let i=0; i<this.state.setOfDays.days.length; i++) {
             let day = '' + this.state.setOfDays.days[i][1];
             daysPickers.push(
-                <Picker.Item label={day} value={day} />
+                <Picker.Item key={'add_picker_change_day_' + i} label={day} value={day} />
             )
         }
 
@@ -289,7 +288,7 @@ export default class Scheduling extends React.Component {
         for (let i=0; i<this.state.setOfHours.hours.length; i++) {
             let hour = '' + this.state.setOfHours.hours[i][1];
             hoursPickers.push(
-                <Picker.Item label={hour} value={hour} />
+                <Picker.Item key={'add_picker_change_hour_' + i} label={hour} value={hour} />
             )
         }
 
@@ -306,43 +305,48 @@ export default class Scheduling extends React.Component {
                     {console.log('this.state.setOfDays.selected[1]: ' + this.state.setOfDays.selected[1])}
                     {console.log('this.state.setOfHours.selected[0]: ' + this.state.setOfHours.selected[0])}
                     {console.log('this.state.setOfHours.selected[1]: ' + this.state.setOfHours.selected[1])}
-
-                    <View style={{ height: '40%', width: '100%', backgroundColor: '#14B1F8', margin: 20}}>
-                        <Text>Pick day </Text>
-                        <Picker
-                            selectedValue={'' + this.state.setOfDays.selected[1]}
-                            style={{ width: '50%' }}
-                            onValueChange={(itemValue, itemIndex) => { 
-                                let setOfDays = { days: this.state.setOfDays.days, selected: [itemIndex+1, itemValue]};
-                                this.setState({setOfDays: setOfDays })}}
-                        >
-                            {daysPickers}
-                        </Picker>
-                        <Text>Pick hour </Text>
-                        <Picker
-                            selectedValue={'' + this.state.setOfHours.selected[1]}
-                            style={{ width: '50%' }}
-                            onValueChange={(itemValue, itemIndex) => { 
-                            let setOfHours = { hours: this.state.setOfHours.hours, selected: [itemIndex+1, itemValue]};
-                            this.setState({setOfHours: setOfHours })}}
-                        >
-                            {hoursPickers}
-                        </Picker>
-                        { (!this.state.isChangeIsOn)? 
-                                <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, }} onPress={() =>this.confirmOrCancelChange(0)}>
-                                        <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Change</Text>
-                                </TouchableOpacity> :
-                                <View>
-                                    <Text style={{color: '#F81422'}}> Warning: There are already teams which play at that time, are you sure you want to change?</Text>
-                                    <TouchableOpacity style={{ backgroundColor: '#1BA446', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelChange(1)}>
-                                            <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Yes</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelChange(2)}>
-                                            <Text style={{textAlign: 'center', color: '#FCFAFA'}}>No</Text>
-                                    </TouchableOpacity>
-                                </View>
-                        }
+                    { (!this.state.isChangeIsOn)?
+                    <View style={{ alignItems: 'center', marginLeft: 0, height: '40%', width: '100%', backgroundColor: GLOBALS.colors.ModalBackGround }}> 
+                        <View style={{ width: '60%', alignItems: 'center', borderBottomWidth: 2 }}>
+                            <Text> Pick day </Text>
+                            <Picker
+                                selectedValue={'' + this.state.setOfDays.selected[1]}
+                                style={{ width: '100%' }}
+                                onValueChange={(itemValue, itemIndex) => { 
+                                    let setOfDays = { days: this.state.setOfDays.days, selected: [itemIndex+1, itemValue]};
+                                    this.setState({setOfDays: setOfDays })}}
+                            >
+                                {daysPickers}
+                            </Picker>
+                        </View>
+                        <View style={{ width: '60%', alignItems: 'center' }}>
+                            <Text> Pick hour </Text>
+                            <Picker
+                                selectedValue={'' + this.state.setOfHours.selected[1]}
+                                style={{ width: '100%' }}
+                                onValueChange={(itemValue, itemIndex) => { 
+                                let setOfHours = { hours: this.state.setOfHours.hours, selected: [itemIndex+1, itemValue]};
+                                this.setState({setOfHours: setOfHours })}}
+                            >
+                                {hoursPickers}
+                            </Picker>
+                        </View>         
+                        <TouchableOpacity style={{ justifyContent: 'center', backgroundColor: '#D91D1D', borderRadius: 25, height: '20%', width: '60%' }} onPress={() =>this.confirmOrCancelChange(0)}>
+                                <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Change</Text>
+                        </TouchableOpacity> 
                     </View>
+                        :
+                    <View style={{ alignItems: 'center', marginLeft: 0, height: '40%', width: '100%', backgroundColor: GLOBALS.colors.ModalBackGround }}> 
+                        <Text style={{ color: '#F81422', fontSize: 20, height: '60%' }}>
+                        Warning: There are already teams which play at that time, are you sure you want to change?</Text>
+                        <TouchableOpacity style={{ backgroundColor: '#1BA446', borderRadius: 25, height: '20%', width: '60%' }} onPress={() =>this.confirmOrCancelChange(1)}>
+                                <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Yes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, height: '20%', width: '60%' }} onPress={() =>this.confirmOrCancelChange(2)}>
+                                <Text style={{textAlign: 'center', color: '#FCFAFA'}}>No</Text>
+                        </TouchableOpacity>
+                    </View>
+                    }
             </Modal>
         )
     }
@@ -359,7 +363,7 @@ export default class Scheduling extends React.Component {
         console.log('week: ' + week);
         let games = [];
         games.push(
-            <View>
+            <View key={'create_modals'}>
                 {this.createDayHourModal()}
                 {this.createDeleteModal()}
                 {this.createAddModal()}
@@ -385,18 +389,10 @@ export default class Scheduling extends React.Component {
                     let hourIndex = ((temp === 0)? this.state.setOfHours.hours[this.state.teamsConstraints[1].constraints.length-1][0] : this.state.setOfHours.hours[temp-1][0]);
 
                     games.push(
-                        <View style={styles.gameContainer}>
+                        <View key={'week_' + i + '_game_' + j} style={styles.gameContainer}>
                             <View style={styles.gameDetailsContainer}>
-                                <View style={{flexDirection: 'column', flex: 4}}>
-                                    <View style={{  }}>
-                                        <Text style={styles.gameLineText}>{'' + teamA}</Text>
-                                    </View>
-                                    <View style={{  }}>
-                                        <Text style={styles.gameLineText}>vs</Text>
-                                    </View>
-                                    <View style={{  }}>
-                                        <Text style={styles.gameLineText}>{'' + teamB}</Text>
-                                    </View>
+                                <View style={styles.gameLine}>
+                                    <Text style={styles.gameLineText}>{teamA + ' vs ' + teamB}</Text>
                                 </View>
                                 <View style={styles.gameLine}>
                                     <Text style={styles.gameLineText}>{day}</Text>
@@ -404,11 +400,13 @@ export default class Scheduling extends React.Component {
                                 <View style={styles.gameLine}>
                                     <Text style={styles.gameLineText}>{hour}</Text>
                                 </View>
-                                <TouchableOpacity style={{ backgroundColor: '#E39515', borderRadius: 25, }} onPress={() => this.changeDayOrHour(week[i][1], dayIndex, hourIndex)}>
-                                    <Text style={{textAlign: 'center', color: '#FCFAFA'}}> Change Day/Hour </Text>
+                            </View>
+                            <View style={{ width: '100%', flex: 1, flexDirection: 'row', justifyContent: 'center', backgroundColor: GLOBALS.colors.BackGround }}>
+                                <TouchableOpacity style={{ justifyContent: 'center', backgroundColor: GLOBALS.colors.Neutral, borderRadius: 25, width: '30%'}} onPress={() => this.changeDayOrHour(week[i][1], dayIndex, hourIndex)}>
+                                        <Text style={{textAlign: 'center', color: '#FCFAFA'}}> Change </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, }} onPress={() => this.deleteGame(week[i][j], dayIndex, hourIndex)}>
-                                    <Text style={{textAlign: 'center', color: '#FCFAFA'}}> Delete </Text>
+                                <TouchableOpacity style={{ justifyContent: 'center', backgroundColor: GLOBALS.colors.Negative, borderRadius: 25, width: '30%'}} onPress={() => this.deleteGame(week[i][j], dayIndex, hourIndex)}>
+                                        <Text style={{textAlign: 'center', color: '#FCFAFA'}}> Delete </Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -429,16 +427,12 @@ export default class Scheduling extends React.Component {
         let newHour = this.state.setOfHours.selected[0];
         let newTime = ((newDay-1)*this.state.teamsConstraints[1].constraints.length)+(newHour-1);
 
-        console.log('addddddddddddddddddddddddddddd');
-
         console.log('newDay: ' + newDay);
         console.log('newHour: ' + newHour);
         console.log('newTime: ' + newTime);
-
         console.log('newDay: ' + this.state.setOfDays.selected[1]);
         console.log('newHour: ' + this.state.setOfHours.selected[1]);
 
-        console.log('ppppppppppp1');
         if (mode === 1) {
             // Do some add work here
             let matchToAdd = (this.state.gameToBeAdded === '')? this.state.gamesToBeCompleted[0] : this.state.gameToBeAdded[1];
@@ -525,7 +519,7 @@ export default class Scheduling extends React.Component {
             let teamBNumber = this.state.teamsNumbers[this.state.gamesToBeCompleted[i]][1];
             let currGame = '' + this.state.teamsConstraints[teamANumber].teamName + ' vs ' + this.state.teamsConstraints[teamBNumber].teamName;
             games.push(
-                <Picker.Item label={currGame} value={currGame} />
+                <Picker.Item key={'add_picker_game_' + i} label={currGame} value={currGame} />
             )
         }
         console.log('ooooooo123');
@@ -534,7 +528,7 @@ export default class Scheduling extends React.Component {
         for (let i=0; i<this.state.setOfDays.days.length; i++) {
             let day = '' + this.state.setOfDays.days[i][1];
             daysPickers.push(
-                <Picker.Item label={day} value={day} />
+                <Picker.Item key={'add_picker_day_' + i} label={day} value={day} />
             )
         }
 
@@ -542,7 +536,7 @@ export default class Scheduling extends React.Component {
         for (let i=0; i<this.state.setOfHours.hours.length; i++) {
             let hour = '' + this.state.setOfHours.hours[i][1];
             hoursPickers.push(
-                <Picker.Item label={hour} value={hour} />
+                <Picker.Item key={'add_picker_hour_' + i} label={hour} value={hour} />
             )
         }
 
@@ -570,44 +564,51 @@ export default class Scheduling extends React.Component {
             Alert.alert("Modal has been closed.");
             }}
             >
-                <View style={{ height: '50%', width: '100%', backgroundColor: '#14B1F8', margin: 20}}>
+                <View style={{ height: '50%', width: '100%', backgroundColor: '#14B1F8' }}>
                     { (!this.state.isChangeIsOn)? 
                         (this.state.gamesToBeCompleted.length !== 0)? 
-                        <View style={{ flexDirection: 'column', height: '100%', width: '100%' }}>
-                            <Text style={{ flex: 1 }}>Pick game</Text>
-                            <Picker
-                                selectedValue={gameToBeAdded[0]}
-                                style={{ width: '50%' }}
-                                onValueChange={(itemValue, itemIndex) => { 
-                                    this.setState({gameToBeAdded: [itemValue, this.state.gamesToBeCompleted[itemIndex]] })}}
-                                style={{ flex: 1, width: '50%'}}
-                            >
-                                {games}
-                            </Picker>
-                            <Text style={{ flex: 1 }}>Pick day</Text>
-                            <Picker
-                                selectedValue={'' + this.state.setOfDays.selected[1]}
-                                onValueChange={(itemValue, itemIndex) => { 
-                                    let setOfDays = { days: this.state.setOfDays.days, selected: [itemIndex+1, itemValue]};
-                                    this.setState({setOfDays: setOfDays })}}
-                                style={{ flex: 1, width: '50%'}}
-                            >
-                                {daysPickers}
-                            </Picker>
-                            <Text style={{ flex: 1 }}>Pick hour</Text>
-                            <Picker
-                                selectedValue={hourSelectedValue}
-                                onValueChange={(itemValue, itemIndex) => { 
-                                    let setOfHours = { hours: this.state.setOfHours.hours, selected: [itemIndex+1, itemValue]};
-                                    this.setState({setOfHours: setOfHours })}}
-                                style={{ flex: 1, width: '50%' }}
-                            >
-                                {hoursPickers}
-                            </Picker>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#11B23C', borderRadius: 25}} onPress={() =>this.confirmOrCancelAdd(1)}>
+                        <View style={{ flexDirection: 'column', height: '100%', width: '100%', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center', flex: 2, width: '60%', borderBottomWidth: 2, borderBottomColor: '#000000' }}>
+                                <Text style={{ flex: 1 }}>Pick game</Text>
+                                <Picker
+                                    selectedValue={gameToBeAdded[0]}
+                                    style={{ width: '100%' }}
+                                    onValueChange={(itemValue, itemIndex) => { 
+                                        this.setState({gameToBeAdded: [itemValue, this.state.gamesToBeCompleted[itemIndex]] })}}
+                                    style={{ flex: 1, width: '100%'}}
+                                >
+                                    {games}
+                                </Picker>
+                            </View>
+                            <View style={{ alignItems: 'center', flex: 2, width: '60%', borderBottomWidth: 2, borderBottomColor: '#000000' }}>
+                                <Text style={{ flex: 1 }}>Pick day</Text>
+                                <Picker
+                                    selectedValue={'' + this.state.setOfDays.selected[1]}
+                                    onValueChange={(itemValue, itemIndex) => { 
+                                        let setOfDays = { days: this.state.setOfDays.days, selected: [itemIndex+1, itemValue]};
+                                        this.setState({setOfDays: setOfDays })}}
+                                    style={{ flex: 1, width: '100%'}}
+                                >
+                                    {daysPickers}
+                                </Picker>
+                            </View>
+                            <View style={{ alignItems: 'center', flex: 2, width: '60%', borderBottomWidth: 2, borderBottomColor: '#000000' }}>
+                                <Text style={{ flex: 1 }}>Pick hour</Text>
+                                <Picker
+                                    selectedValue={hourSelectedValue}
+                                    onValueChange={(itemValue, itemIndex) => { 
+                                        let setOfHours = { hours: this.state.setOfHours.hours, selected: [itemIndex+1, itemValue]};
+                                        this.setState({setOfHours: setOfHours })}}
+                                    style={{ flex: 1, width: '100%' }}
+                                >
+                                    {hoursPickers}
+                                </Picker>
+                            </View>
+                            <View style={{ flex: 2 }}></View>
+                            <TouchableOpacity style={{ justifyContent: 'center', flex: 1, width: '60%', flex: 1, backgroundColor: '#11B23C', borderRadius: 25}} onPress={() =>this.confirmOrCancelAdd(1)}>
                                     <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Add</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#D91D1D', borderRadius: 25}} onPress={() =>this.confirmOrCancelAdd(2)}>
+                            <TouchableOpacity style={{ justifyContent: 'center', flex: 1, width: '60%', flex: 1, backgroundColor: '#D91D1D', borderRadius: 25}} onPress={() =>this.confirmOrCancelAdd(2)}>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Close</Text>
                             </TouchableOpacity>
 
@@ -621,12 +622,12 @@ export default class Scheduling extends React.Component {
                         </View>
 
                         :
-                    <View>
-                        <Text style={{color: '#F81422'}}> Warning: There are already teams which play at that time, are you sure you want to change?</Text>
-                        <TouchableOpacity style={{ backgroundColor: '#1BA446', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelAdd(3)}>
+                    <View style={{ width: '100%', alignItems: 'center' }}>
+                        <Text style={{ color: '#F81422', fontSize: 20, height: '70%' }}>Warning: There are already teams which play at that time, are you sure you want to change?</Text>
+                        <TouchableOpacity style={{ justifyContent: 'center', backgroundColor: '#1BA446', borderRadius: 25, height: '15%', width: '60%' }} onPress={() =>this.confirmOrCancelAdd(3)}>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}>Yes</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ backgroundColor: '#D91D1D', borderRadius: 25, height: '20%' }} onPress={() =>this.confirmOrCancelAdd(4)}>
+                        <TouchableOpacity style={{ justifyContent: 'center', backgroundColor: '#D91D1D', borderRadius: 25, height: '15%', width: '60%' }} onPress={() =>this.confirmOrCancelAdd(4)}>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}>No</Text>
                         </TouchableOpacity>
                     </View>
@@ -641,7 +642,7 @@ export default class Scheduling extends React.Component {
         for (let i=0; i<this.state.schedule.length; i++) {
             let week = 'Week ' + (i+1);
             weeksPickers.push(
-                <Picker.Item label={week} value={week} />
+                <Picker.Item key={'add_picker_week_' + i}label={week} value={week} />
             )
         }
         let selectedValue = 'Week ' + this.state.currWeek; 
@@ -665,11 +666,11 @@ export default class Scheduling extends React.Component {
             let teamView = [];
             let teamName = this.state.teamsConstraints[teamNum].teamName;
             teamView.push(
-                <View style={{flex: 1, flexDirection: 'column', backgroundColor: '#5499C7'}}>
+                <View key={teamNum + '_tableTitle'} style={{ width: '100%', flex: 1, flexDirection: 'column', backgroundColor: GLOBALS.colors.BackGround, alignItems: 'center'}}>
                     <View style={{flex: 1, width: '100%'}}>
                         <Text style={{color: '#AED6F1', height: '100%', width: '100%', textAlign: 'center'}}>{teamName}</Text>
                     </View>
-                    <Table borderStyle={{borderWidth: 1}} style={{ paddingTop: 10, flex: 1 }}>
+                    <Table borderStyle={{borderWidth: 1}} style={{ width: '100%', paddingTop: 10, flex: 1 }}>
                         <Row
                         data={this.state.tableHead}
                         flexArr={[30, 30, 30, 30, 30, 30]}
@@ -682,31 +683,31 @@ export default class Scheduling extends React.Component {
             for (let j=0; j<this.state.hours.length; j++) {
                 console.log('this.state.hours['+j+'][0]: ' + this.state.hours[j][0]);
                 teamView.push(
-                    <View style={styles.TeamViewContainer}>
+                    <View key={j + '_hour'} style={styles.TeamViewContainer}>
                         <View style={styles.TeamsTytle}>
                             <Text style={{color: '#AED6F1', height: '100%', width: '100%', textAlign: 'center'}}>{this.state.hours[j][0]}</Text>
                         </View>
-                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][0]? '#54F309' : '#CF1C34'}}>
+                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][0]? GLOBALS.colors.Positive : GLOBALS.colors.Negative }}>
                             <TouchableOpacity>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}></Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][1]? '#54F309' : '#CF1C34'}}>
+                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][1]? GLOBALS.colors.Positive : GLOBALS.colors.Negative }}>
                             <TouchableOpacity>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}></Text>
                             </TouchableOpacity>                      
                         </View>
-                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][2]? '#54F309' : '#CF1C34'}}>
+                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][2]? GLOBALS.colors.Positive: GLOBALS.colors.Negative }}>
                             <TouchableOpacity>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}></Text>
                             </TouchableOpacity>                     
                         </View>
-                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][3]? '#54F309' : '#CF1C34'}}>
+                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][3]? GLOBALS.colors.Positive : GLOBALS.colors.Negative }}>
                             <TouchableOpacity>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}></Text>
                             </TouchableOpacity>
                        </View>
-                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][4]? '#54F309' : '#CF1C34'}}>
+                        <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', backgroundColor: teamsConstraints[teamNum].constraints[j][4]? GLOBALS.colors.Positive : GLOBALS.colors.Negative }}>
                             <TouchableOpacity>
                                 <Text style={{textAlign: 'center', color: '#FCFAFA'}}></Text>
                             </TouchableOpacity>
@@ -722,29 +723,26 @@ export default class Scheduling extends React.Component {
     }
 
     render() {
+        console.log('GLOBALS.windowHeightSize: ' + GLOBALS.windowHeightSize);
         if (this.state.isScheduleSet === 'notSet') {
             return (
-                <View style={{ backgroundColor: '#C7CF1C', height: '100%', width: '100%', justifyContent: 'space-around' }}>
-                    <View style={{ height: '5%', width: '100%', alignItems: 'center' }}>
-                        <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#11B23C', borderRadius: 25, width: '50%' }} 
+                <View style={{ backgroundColor: GLOBALS.colors.BackGround, height: GLOBALS.windowHeightSize, width: '100%', alignItems: 'center', justifyContent: 'center' }}> 
+                    <TouchableOpacity style={ GLOBALS.styles.touchAble } 
+                                    onPress={() => { 
+                                        alert('The server is now processing and computing the schedule, its might take a while...');
+                                        this.scheduling()
+                                        this.setState({isScheduleSet: 'inProcess'});
+                                        }}>
+                        <Text style={{ textAlign: 'center', color: GLOBALS.colors.ButtonText }}> Start Scheduling </Text>
+                    </TouchableOpacity>           
+                    <TouchableOpacity style={ GLOBALS.styles.touchAble }
                                         onPress={() => { 
-                                            alert('The server is now processing and computing the schedule, its might take a while...');
-                                            this.scheduling()
-                                            this.setState({isScheduleSet: 'inProcess'});
+                                            console.log('this.state.showTeamsConstraints before: ' + this.state.showTeamsConstraints);
+                                            this.setState({ showTeamsConstraints: !this.state.showTeamsConstraints });
                                             }}>
-                            <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> Start Scheduling </Text>
-                        </TouchableOpacity>           
-                    </View>
-                    <View style={{ height: '5%', width: '100%', alignItems: 'center' }}>
-                        <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#03F1E1', borderRadius: 25 }} 
-                                          onPress={() => { 
-                                                console.log('this.state.showTeamsConstraints before: ' + this.state.showTeamsConstraints);
-                                                this.setState({ showTeamsConstraints: !this.state.showTeamsConstraints });
-                                                }}>
-                                <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
-                        </TouchableOpacity> 
-                    </View>
-                    <ScrollView style={styles.AllTeamsContainer}>
+                            <Text style={{ textAlign: 'center', color: GLOBALS.colors.ButtonText }}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
+                    </TouchableOpacity> 
+                    <ScrollView style={{ width: '80%', height: ((this.state.showTeamsConstraints)? GLOBALS.windowHeightSize*(4/10) : 0) ,flexDirection: 'column' }}>
                         {(this.state.showTeamsConstraints)? this.createTeamsConstraintsView() : null}
                     </ScrollView>
                 </View>
@@ -770,38 +768,47 @@ export default class Scheduling extends React.Component {
                     {weekTitles}
                 </View>
                 <View style={styles.gameTitlesContainer}>
-                    <View style={{ flex: 2 }}>
-                        <Text style={styles.gameLineText}>Game:</Text>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.gameLineText}>Game</Text>
                     </View>
                     <View style={styles.gameLine}>
-                        <Text style={styles.gameLineText}>Day:</Text>
+                        <Text style={styles.gameLineText}>Day</Text>
                     </View>
                     <View style={styles.gameLine}>
-                        <Text style={styles.gameLineText}>Hour:</Text>
+                        <Text style={styles.gameLineText}>Hour</Text>
                     </View>
-                    <View style={{ flex: 4}}>
+                    {/* <View style={{ flex: 4}}>
                         <Text></Text>
-                    </View>
+                    </View> */}
                 </View>
                 <ScrollView style={{ height: Math.floor(GLOBALS.windowHeightSize*(6/10)), flexDirection: 'column' }}>
                     {weekGames}
                 </ScrollView>
                 <View style={{ height: Math.floor(GLOBALS.windowHeightSize/10), width: '100%', alignItems: 'center',  }}>
-                    <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#11B23C', borderRadius: 25, width: '50%', height: '100%' }} onPress={() => this.addGame()}>
-                        <Text style={{ marginTop: '10%', textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> Add Game </Text>
+                    <TouchableOpacity style={{ 
+                        justifyContent: 'center', 
+                        borderRadius: 25, 
+                        height: '90%',
+                        width: '40%',
+                        backgroundColor: GLOBALS.colors.Positive }} onPress={() => this.addGame()}>
+                        <Text style={{ textAlign: 'center', color: '#FFFFFF' }}> Add Game </Text>
                     </TouchableOpacity>           
                 </View>
                 <View style={{ height: Math.floor(GLOBALS.windowHeightSize/10), width: '100%', alignItems: 'center' }}>
-                    <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#03F1E1', borderRadius: 25 }} 
-                                        onPress={() => { 
+                    <TouchableOpacity style={{ 
+                        justifyContent: 'center', 
+                        backgroundColor: '#2C3E50', 
+                        borderRadius: 25, 
+                        height: '90%',
+                        paddingVertical: 5 }} onPress={() => { 
                                             console.log('this.state.showTeamsConstraints before: ' + this.state.showTeamsConstraints);
                                             this.setState({ showTeamsConstraints: !this.state.showTeamsConstraints });
                                             }}>
-                            <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: '#EEB315'}}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
+                            <Text style={{ textAlign: 'center', color: '#FCFAFA', backgroundColor: GLOBALS.ButtonTextColor }}> {this.state.showTeamsConstraints? 'Hide' : 'Show'} teams constraints </Text>
                     </TouchableOpacity> 
                 </View>
                 {(this.state.showTeamsConstraints)? 
-                    <ScrollView style={styles.AllTeamsContainer}>
+                    <ScrollView style={{ marginLeft: GLOBALS.windowWidthSize/10, backgroundColor: '#000000', width: '80%', height: ((this.state.showTeamsConstraints)? GLOBALS.windowHeightSize*(4/10) : 0) ,flexDirection: 'column' }}>
                         {this.createTeamsConstraintsView()}
                     </ScrollView> 
                     : 
@@ -813,16 +820,12 @@ export default class Scheduling extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    AllTeamsContainer: {
-        backgroundColor: '#C7CF1C',
-        flexDirection: 'column',
-        width: '100%',
-    },
     TeamViewContainer: {
         flex: 9,
         flexDirection: 'row',
         width: '100%',
         borderColor: '#000000',
+        //alignItems: 'center',
     },
     TeamsTytle: {
         flex: 1,
@@ -836,43 +839,44 @@ const styles = StyleSheet.create({
     gameTitlesContainer: {
         //flex: 1,
         flexDirection: 'row',
-        backgroundColor: '#EE2515',
+        backgroundColor: GLOBALS.colors.BackGround,
         height: Math.floor(GLOBALS.windowHeightSize/10),
         width: '100%', 
+        borderBottomWidth: 2,
+        borderColor: '#000000',
     },
     gameDetailsContainer: {
-        flex: 1,
+        flex: 2,
         flexDirection: 'row',
-        backgroundColor: '#5499C7',
+        backgroundColor: GLOBALS.colors.BackGround,
         width: '100%', 
-        borderColor: '#030003',
-        borderTopWidth: 2,
     },
     weekTitle: {
-        //flex: 1,
-        backgroundColor: '#9B09F3',
+        backgroundColor: GLOBALS.colors.BackGround,
         height: Math.floor(GLOBALS.windowHeightSize/10),
     },
     gameLineText: {
-        color: '#F8F9FB',
+        color: '#000000',
         textAlign: 'center',
     },
     gameContainer: {
         flex: 1,
-        flexDirection: 'row',
-        height: '10%',
+        flexDirection: 'column',
+        height: Math.floor(GLOBALS.windowHeightSize/7),
         width: '100%',
+        borderColor: '#000000',
+        borderBottomWidth: 2,
+        borderLeftWidth: 2,
+        borderRightWidth: 2,
+        //justifyContent: 'space-between',
     },
     gameLine: {
         flex: 1,
-        backgroundColor: '#5499C7',
-        borderColor: '#030003',
     },
     container: {
-        //flexDirection: 'column',
-        backgroundColor: '#5499C7',
+        backgroundColor: GLOBALS.colors.BackGround,
         height: '100%',
-        width: '100%', //100*vw,
+        width: '100%',
     },
     textHead: {
         textAlign: 'center',
