@@ -220,7 +220,7 @@ export default class Home extends React.Component {
                 teamList: this.state.teamsNames,
               })
             }>
-            <Text style={styles.buttonText}>Insert a game resultt</Text>
+            <Text style={styles.buttonText}>Insert a game result</Text>
           </TouchableOpacity>
         ) : null}
         {this.state.isLoggedIn &&
