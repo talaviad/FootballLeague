@@ -11,7 +11,6 @@ import {
 
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
-
 import TeamSelector from './TeamSelector';
 
 export default class InsertGame extends React.Component {
@@ -66,7 +65,7 @@ export default class InsertGame extends React.Component {
           />
           <View style={{flexDirection: 'row', width: 200}}>
             <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>Team1</Text>
+              <Text style={styles.textStyle}>Team1</Text>
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
@@ -80,7 +79,7 @@ export default class InsertGame extends React.Component {
               />
             </View>
             <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>score:</Text>
+              <Text style={styles.textStyle}>score:</Text>
               <TextInput
                 style={[
                   styles.scoreTextInput,
@@ -116,7 +115,7 @@ export default class InsertGame extends React.Component {
           </View>
           <View style={{flexDirection: 'row', width: 200}}>
             <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>Team2</Text>
+              <Text style={styles.textStyle}>Team2</Text>
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
@@ -130,7 +129,7 @@ export default class InsertGame extends React.Component {
               />
             </View>
             <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>score:</Text>
+              <Text style={styles.textStyle}>score:</Text>
               <TextInput
                 style={[
                   styles.scoreTextInput,
@@ -417,7 +416,7 @@ export default class InsertGame extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    backgroundColor: '#007577',
     paddingTop: 30,
     paddingHorizontal: 30,
   },
@@ -468,6 +467,12 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 10,
     textAlign: 'center',
+  },
+  textStyle: {
+    alignSelf: 'flex-start',
+    color: '#0155B9',
+    fontFamily: 'sans-serif-medium',
+    fontSize: 16,
   },
   errorMsg: {
     color: 'red',
