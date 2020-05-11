@@ -167,6 +167,7 @@ export default class Home extends React.Component {
 
   render() {
     return (
+      <View style={styles.body}>
         <View style={styles.sectionTwoBtnContainer}>
           {!this.state.isLoggedIn ? (
             <TouchableOpacity
