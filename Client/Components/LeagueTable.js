@@ -6,7 +6,13 @@ import {
   Col,
   TableWrapper,
 } from 'react-native-table-component';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  ScrollView,
+} from 'react-native';
 
 export default class LeagueTable extends React.Component {
   constructor(props) {
