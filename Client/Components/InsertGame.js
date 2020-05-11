@@ -416,7 +416,7 @@ export default class InsertGame extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#007577',
+    backgroundColor: '#5499C7',
     paddingTop: 30,
     paddingHorizontal: 30,
   },
