@@ -4,7 +4,6 @@ import {
     ScrollView, 
     Text, 
     TouchableOpacity, 
-    Dimensions, 
     Modal,
 }  from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -85,7 +84,7 @@ export default class Inbox extends React.Component {
         messagesToRender.push(
             <TouchableOpacity
               key={msgNum}
-              style={{height: (Dimensions.get('window').height/10), backgroundColor: GLOBALS.colors.BackGround, borderBottomWidth: 2}}
+              style={{height: GLOBALS.windowHeightSize/10, backgroundColor: GLOBALS.colors.BackGround, borderBottomWidth: 2}}
               onPress={() => {
                 this.updateServer(msgNum);
               }}>

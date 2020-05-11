@@ -77,6 +77,16 @@ module.exports = class DataBase {
       return registerError;
     }
 
+    if (requestedRole === 'referee') {
+      result = await this.client
+      .db("FootballLeague")
+      .collection("RefereesGames")
+      .insertOne({
+        user: user,
+        games: {},
+      });
+    }
+
     return { success: true };
   }
 
@@ -595,12 +605,12 @@ module.exports = class DataBase {
     }
   }
 
-  async insertOrUpdateConstraints(user, weeklyConstraints, specificConstraints) {
+  async insertOrUpdateConstraints(user, weeklyConstraints, specificConstraints, collection) {
     let result = await this.getUser(user);
     if (result.success) {
       result = await this.client
         .db("FootballLeague")
-        .collection("CaptainConstraints")
+        .collection(collection)
         .find({ user: user });
       result = await result.toArray();
       console.log('result: ' + result);
@@ -609,7 +619,7 @@ module.exports = class DataBase {
           let teamName = result[0].teamName;
           result = this.client
           .db("FootballLeague")
-          .collection("CaptainConstraints")
+          .collection(collection)
           .replaceOne({ user: user }, { teamName: teamName, user: user, weeklyConstraints: weeklyConstraints, specificConstraints: specificConstraints });
           return { 
             success: true,
@@ -626,7 +636,7 @@ module.exports = class DataBase {
         console.log('The team is: ' + team);
         result = await this.client
         .db("FootballLeague")
-        .collection("CaptainConstraints")
+        .collection(collection)
         .insertOne({
           user: user,
           teamName: team,
@@ -735,12 +745,42 @@ module.exports = class DataBase {
     }
   }
 
-  async getConstraints(user) {
+  async getLeagueSchedule() {
+    console.log('In Database.js - getLeagueSchedule() - at beginning.....')
+    let result = await this.client
+    .db("FootballLeague")
+    .collection('Schedule')
+    .find({});
+    result = await result.toArray();
+    if (result.length === 0)
+      return {
+        success: false,
+        error: {
+          msg: 'there is no schedule set by league manager yet'
+        }
+      }
+
+     let schedule = result[0].schedule;
+     let teamsNumbers = result[0].teamsNumbers;
+     let refereesSchedule = result[0].refereesSchedule;
+     let teamsConstraints = result[0].teamsConstraints;
+
+     console.log('In Database.js - getLeagueSchedule() - returning.....')
+     return {
+       success: true,
+       schedule: schedule,
+       teamsNumbers: teamsNumbers,
+       refereesSchedule: refereesSchedule,
+       teamsConstraints: teamsConstraints,
+     }
+  }
+
+  async getConstraints(user, collection) {
     let result = await this.getUser(user);
     if (result.success) { 
       result = await this.client
         .db("FootballLeague")
-        .collection("CaptainConstraints")
+        .collection(collection)
         .find({ user: user });
       result = await result.toArray();
       console.log('result: ' + result);
@@ -776,12 +816,25 @@ module.exports = class DataBase {
     console.log('result: ' + result);
     result = await result.toArray();
     if (result.length !== 0) {
+      let refereesResult = await this.client
+      .db("FootballLeague")
+      .collection("RefereeConstraints")
+      .find({});
+      console.log('result: ' + refereesResult);
+      refereesResult = await refereesResult.toArray();
+      let refereesConstraints = [];
+      for (let i=0; i<refereesResult.length; i++) {
+        refereesConstraints.push({ user: refereesResult[i].user, constraints: refereesResult[i].weeklyConstraints });
+      }
+
       return {
         success: true,
         schedule: result[0].schedule,
+        refereesSchedule: result[0].refereesSchedule,
         gamesToBeCompleted: result[0].gamesToBeCompleted,
         teamsNumbers: result[0].teamsNumbers,
         teamsConstraints: result[0].teamsConstraints,
+        refereesConstraints: refereesConstraints,
       }
     }
     else {
@@ -795,11 +848,72 @@ module.exports = class DataBase {
         }
       }
 
-      return result;
+      return {
+        success: true,
+        teamsConstraints: result.teamsConstraints,
+        refereesConstraints: [],
+      };
     }
   }
 
-  async updateSchedule(schedule, gamesToBeCompleted, teamsNumbers, teamsConstraints, gamesIdsToUsers, changeDetails) {
+  async deleteGameFromReferee(changeDetails) {
+    console.log('In Database.js - deleteGameFromReferee()');
+    let referee = changeDetails.referee;
+    let matchId = changeDetails.matchId;
+    let result = await this.client
+    .db("FootballLeague")
+    .collection("RefereesGames")
+    .find({ user: referee });
+    
+    result = await result.toArray();
+    if (result.length === 0)
+      return {
+        success: false,
+        error: {
+          msg: 'no such referee games for: ' + referee,
+        }
+      }
+    
+    let games = result[0].games;
+    let day = games[matchId].day;
+    let hour = games[matchId].hour;
+    let teamA = games[matchId].teamA;
+    let teamB = games[matchId].teamB;
+
+    delete games[matchId];
+    result = await this.client
+    .db("FootballLeague")
+    .collection("RefereesGames")
+    .updateOne({ user: referee }, { $set: {"games": games} });
+
+    // Send the referee a message to let him know
+    result = await this.client
+    .db("FootballLeague")
+    .collection("Users")
+    .find({ username: referee });
+    result = await result.toArray();
+    if (result.length === 0)
+      return {
+        success: false,
+        error: {
+          msg: 'no such user: ' + referee,
+        }
+      }
+
+      let inbox = result[0].inbox;
+      let game = teamA + ' - ' + teamB + ', on day: ' + day + ', at ' + hour + 'o`clock';
+      inbox.messages.push({ msg: 'The league manager has removed you from game: ' + game });
+      result = await this.client
+      .db("FootballLeague")
+      .collection("Users")
+      .updateOne({ username: referee }, { $set: {"inbox": inbox} });
+
+    return {
+      success: true
+    }
+  }
+
+  async updateSchedule(schedule, gamesToBeCompleted, teamsNumbers, teamsConstraints, gamesIdsToUsers, changeDetails, refereesConstraints, refereesSchedule) {
     let result = await this.client
     .db("FootballLeague")
     .collection("Schedule")
@@ -814,7 +928,14 @@ module.exports = class DataBase {
       result = this.client
       .db("FootballLeague")
       .collection("Schedule")
-      .replaceOne({}, { schedule: schedule, gamesToBeCompleted: gamesToBeCompleted, teamsNumbers: teamsNumbers, teamsConstraints: teamsConstraints, gamesIdsToUsers: result[0].gamesIdsToUsers });
+      .replaceOne({}, { schedule: schedule,
+                        gamesToBeCompleted: gamesToBeCompleted,
+                        teamsNumbers: teamsNumbers,
+                        teamsConstraints: teamsConstraints,
+                        gamesIdsToUsers: result[0].gamesIdsToUsers,
+                        refereesConstraints: refereesConstraints,
+                        refereesSchedule: refereesSchedule,
+           });
 
       let userA = gamesIdsToUsers[changeDetails.matchId][0].user;
       let teamA = gamesIdsToUsers[changeDetails.matchId][0].teamName;
@@ -854,6 +975,10 @@ module.exports = class DataBase {
         else { // Not implemented yet
 
         }
+
+        if (changeDetails.referee !== undefined)
+          await this.deleteGameFromReferee(changeDetails);
+
         result = this.client
           .db("FootballLeague")
           .collection("Users")
@@ -868,15 +993,29 @@ module.exports = class DataBase {
         }
 
     } else {
+      let refereesResult = await this.client
+      .db("FootballLeague")
+      .collection("RefereeConstraints")
+      .find({});
+      refereesResult = await refereesResult.toArray();
+      let refereesConstraints = [];
+      for (let i=0; i<refereesResult.length; i++) {
+        refereesConstraints.push({ user: refereesResult[i].user, constraints: refereesResult[i].weeklyConstraints });
+      }
+
       console.log('Inserting new schedule');
+      console.log('JSON.parse(JSON.stringify(schedule)): ' + JSON.parse(JSON.stringify(schedule)));
       result = await this.client
       .db("FootballLeague")
       .collection("Schedule")
       .insertOne({ 
         schedule: schedule, 
+        refereesSchedule: refereesSchedule,
         gamesToBeCompleted: gamesToBeCompleted, 
-        teamsNumbers, teamsConstraints,
+        teamsNumbers: teamsNumbers,
+        teamsConstraints: teamsConstraints,
         gamesIdsToUsers: gamesIdsToUsers,
+        refereesConstraints: refereesConstraints,
       });
 
       // Updating all the users about the schedule
@@ -899,10 +1038,37 @@ module.exports = class DataBase {
       return {
         success: true,
         schedule: schedule,
+        refereesSchedule: refereesSchedule,
         teamsNumbers: teamsNumbers,
         gamesToBeCompleted: gamesToBeCompleted,
         teamsConstraints: teamsConstraints,
+        refereesConstraints: refereesConstraints,
       }
+    }
+  }
+
+  async getRefereesGames() {
+    let result = this.client
+    .db("FootballLeague")
+    .collection("RefereesGames")
+    .find({});
+    result = await result.toArray();
+    if (result.length === 0)
+      return {
+        success: false,
+        error: {
+          msg: 'no referees are found in the league',
+        }
+      }
+
+    let refereesGames = [];
+    for (let i=0; i<result.length; i++) {
+      refereesGames.push(result[i]);
+    }
+    
+    return {
+      success: true,
+      refereesGames: refereesGames,
     }
   }
 
@@ -919,6 +1085,99 @@ module.exports = class DataBase {
     }
   }
 
+  async addGameToReferee(changeDetails) {
+    console.log('In Database.js - addGameToReferee()');
+    let referee = changeDetails.referee
+    let matchId = changeDetails.matchId
+    let result = await this.client
+    .db("FootballLeague")
+    .collection("RefereesGames")
+    .find({ user: referee });
+    
+    result = await result.toArray();
+    if (result.length === 0)
+      return {
+        success: false,
+        error: {
+          msg: 'no such referee games for: ' + referee,
+        }
+      }
+    
+    let games = result[0].games;
+    games[changeDetails.matchId] = { 
+      day: changeDetails.day, 
+      hour: changeDetails.hour,
+      teamA: changeDetails.teamA,
+      teamB: changeDetails.teamB,
+    }
+
+    result = await this.client
+    .db("FootballLeague")
+    .collection("RefereesGames")
+    .updateOne({ user: referee }, { $set: {"games": games} });
+
+    // Send the referee a message to let him know
+    result = await this.client
+    .db("FootballLeague")
+    .collection("Users")
+    .find({ username: referee });
+    result = await result.toArray();
+    if (result.length === 0)
+      return {
+        success: false,
+        error: {
+          msg: 'no such user: ' + referee,
+        }
+      }
+
+      let inbox = result[0].inbox;
+      let game = changeDetails.teamA + ' - ' + changeDetails.teamB + ', on day: ' + changeDetails.day + ', at ' + changeDetails.hour + 'o`clock';
+      inbox.messages.push({ msg: 'The league manager has added you to judge the game: ' + game });
+      result = await this.client
+      .db("FootballLeague")
+      .collection("Users")
+      .updateOne({ username: referee }, { $set: {"inbox": inbox} });
+
+    return {
+      success: true
+    }
+  }
+
+  async updateRefereesSchedule(refereesSchedule, changeDetails) {
+    console.log('In Database.js - updateRefereesSchedule()');
+    let result = await this.getUser(changeDetails.referee);
+    if (!result.success) 
+      return result;
+    
+    switch (changeDetails.change) {
+      case "AddRefereeToGame":
+        result = await this.addGameToReferee(changeDetails)
+        break;
+      case "ChangeReferees":
+        result = await this.addGameToReferee(changeDetails);
+        changeDetails.referee = changeDetails.exReferee;
+        result = await this.deleteGameFromReferee(changeDetails)
+        // if (refereeGames[changeDetails.matchId])
+        //   refereeGames[changeDetails.matchId] = null;
+        break;   
+      default:
+        break;
+    }
+
+    if (!result.success) 
+      return result;
+    
+    // Updating the referees schedule
+    result = await this.client
+    .db("FootballLeague")
+    .collection("Schedule")
+    .updateOne({}, { $set: {"refereesSchedule": refereesSchedule} });
+
+    return {
+      success: true,
+    }
+  }
+
   async updateInbox(inbox, user) {
     console.log('inbox: ' + inbox);
     console.log('user: ' + user);
@@ -929,10 +1188,12 @@ module.exports = class DataBase {
     if (!result.success)
       return result;
     
-    result = this.client
+    result = await this.client
     .db("FootballLeague")
     .collection("Users")
     .updateOne({ username: user }, { $set: {"inbox": inbox} });
+
+    console.log('returning trueeee');
     return { 
       success: true,
     }

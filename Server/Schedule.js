@@ -131,8 +131,15 @@ module.exports = class Schedule { // tal's old state
         console.log('in checking we found true');
         console.log('scheduleeeeeeeeeeeeeeee: ' + ans.schedule);
         if (ans.success) {
-          // Adding to database
-          let result = await this.database.updateSchedule(ans.schedule, [], teamsNumbers, teamsConstraints, gamesIdsToUsers, null);
+          // Adding to database and making referess schedule
+          let refereesSchedule = JSON.parse(JSON.stringify(ans.schedule));
+          for (let i=0; i<refereesSchedule.length; i++) {
+              for (let j=0; j<refereesSchedule[0].length; j++) {
+                refereesSchedule[i][j] = {};
+              }
+              console.log('refereesSchedule[' + i + ']: ' + refereesSchedule[i]);
+          }
+          let result = await this.database.updateSchedule(ans.schedule, [], teamsNumbers, teamsConstraints, gamesIdsToUsers, null, null, refereesSchedule);
           return result;
         } else {
           return {

@@ -12,7 +12,8 @@ import GameMode from './Components/GameMode';
 import AddReferee from './Components/AddReferee';
 import AddClub from './Components/AddClub';
 import Constraints from './Components/Constraints';
-import Scheduling from './Components/Scheduling';
+import ManageSchedule from './Components/ManageSchedule'; 
+import LeagueSchedule from './Components/LeagueSchedule'; 
 import PitchConstraints from './Components/PitchConstraints';
 import Inbox from './Components/Inbox';
 import ChangePassword from './Components/ChangePassword';
@@ -30,10 +31,11 @@ const AppNavigator = createStackNavigator(
     AddReferee: AddReferee,
     AddClub: AddClub,
     Constraints: Constraints,
-    Scheduling: Scheduling,
+    ManageSchedule: ManageSchedule,
     PitchConstraints: PitchConstraints,
     Inbox: Inbox,
     ChangePassword: ChangePassword,
+    LeagueSchedule: LeagueSchedule,
   },
   {
     initialRouteName: 'Home',

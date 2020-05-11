@@ -279,18 +279,25 @@ export default class Home extends React.Component {
               <Text style={styles.buttonText}>Enter game mode</Text>
             </TouchableOpacity>
           ) : null}
-          {(this.state.isLoggedIn && this.state.role === 'captain')? (
+          {(this.state.isLoggedIn && (this.state.role === 'captain') || (this.state.role === 'referee'))? (
           <TouchableOpacity
             style={styles.touchAble}
             onPress={() => this.handleSendRequestToServer('GetConstraints')}>
-            <Text style={styles.buttonText}>Constraints</Text>
+            <Text style={styles.buttonText}>{(this.state.role === 'captain')? 'My Team Constraints' : 'My Referee Constraints'}</Text>
           </TouchableOpacity>
           ) : null}
           {(this.state.isLoggedIn && this.state.role === 'manager')? (
             <TouchableOpacity
               style={styles.touchAble}
-              onPress={() => this.props.navigation.navigate('Scheduling', {IP: IP, PORT: PORT})}>
-              <Text style={styles.buttonText}>Scheduling</Text>
+              onPress={() => this.props.navigation.navigate('ManageSchedule', {IP: IP, PORT: PORT})}>
+              <Text style={styles.buttonText}>Manage Schedule</Text>
+            </TouchableOpacity>
+          ) : null}
+          {(this.state.isLoggedIn && (this.state.role === 'captain' || this.state.role === 'referee'))? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() => this.props.navigation.navigate('LeagueSchedule', {IP: IP, PORT: PORT})}>
+              <Text style={styles.buttonText}>League Schedule</Text>
             </TouchableOpacity>
           ) : null}
           {(this.state.isLoggedIn && this.state.role === 'manager')? (

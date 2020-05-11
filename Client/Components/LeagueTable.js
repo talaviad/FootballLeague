@@ -1,12 +1,8 @@
 import React from 'react';
-import {
-  Table,
-  Row,
-  Rows,
-  Col,
-  TableWrapper,
-} from 'react-native-table-component';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import { Table, Row, Rows, TableWrapper } from 'react-native-table-component';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import GLOBALS from '../Globals';
+
 
 export default class LeagueTable extends React.Component {
   constructor(props) {
@@ -69,7 +65,7 @@ export default class LeagueTable extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    backgroundColor: GLOBALS.colors.BackGround,
   },
   head: {
     height: 28,
@@ -85,7 +81,6 @@ const styles = StyleSheet.create({
   row: {
     height: 55,
   },
-
   textHead: {
     textAlign: 'center',
     fontFamily: 'Times',
@@ -103,7 +98,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   declerationLine: {
-    //flexDirection: 'row',
     justifyContent: 'space-around',
   },
 });

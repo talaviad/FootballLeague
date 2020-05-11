@@ -76,7 +76,7 @@ export default class Constraints extends React.Component {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Football-Request': 'CaptainConstraints',
+              'Football-Request': 'SubmitConstraints',
               'Authorization': await AsyncStorage.getItem('token')
             },
             body: JSON.stringify({
@@ -189,7 +189,7 @@ export default class Constraints extends React.Component {
     const weeklyConstraints = [];
     for (let i=0; i<this.state.numOfHours; i++) {
       weeklyConstraints.push(
-                    <View style={styles.ViewContainer}>
+                    <View key={'week_hour_' + i} style={styles.ViewContainer}>
                         <View style={styles.weeklyTitle}>
                             <Text style={{color: '#AED6F1', height: '100%', width: '100%', textAlign: 'center'}}>{this.state.data[i][0]}</Text>
                         </View>
@@ -225,7 +225,7 @@ export default class Constraints extends React.Component {
     const specificConstraints = [];
     for (let i=0; i<this.state.specificConstraints.constraints.length; i++) {
         specificConstraints.push(
-        <View style={styles.specificConstraints}>
+        <View key={'specific_constraint_' + i} style={styles.specificConstraints}>
             <DatePicker
                 // style={{width: 200, paddingVertical: 20}}
                 style={{ backgroundColor: '#8DC825', flex: 2 }}

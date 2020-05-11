@@ -20,7 +20,7 @@ var possibleRequests = [
   "changePassword",
   "AddNewClub",
   "AddReferee",
-  "CaptainConstraints",
+  "SubmitConstraints",
   "GetConstraints",
   'GetTeamsConstraints',
   'GetPitchConstraints',
@@ -32,12 +32,14 @@ var possibleRequests = [
   'GetManagerSchedule',
   'GetInbox',
   'UpdateInbox',
+  'RefereesSchedule',
+  'GetLeagueSchedule',
 ];
 var needAuthorization = {
   // 'register': { 'permissions': [permission.REFEREE, permission.MANAGER] },
   'insertGameResult': { 'permissions': [permission.REFEREE, permission.MANAGER] },
-  'CaptainConstraints': { 'permissions': [permission.CAPTAIN] },
-  'GetConstraints': { 'permissions': [permission.CAPTAIN] },
+  'SubmitConstraints': { 'permissions': [permission.REFEREE, permission.CAPTAIN] },
+  'GetConstraints': { 'permissions': [permission.REFEREE, permission.CAPTAIN] },
   'GetTeamsConstraints': { 'permissions': [permission.MANAGER] },
   'GetPitchConstraints': { 'permissions': [permission.MANAGER] }, 
   'PitchConstraints': { 'permissions': [permission.MANAGER] },
@@ -50,6 +52,8 @@ var needAuthorization = {
   'UpdateInbox': { 'permissions': [permission.MANAGER, permission.REFEREE, permission.CAPTAIN] },
   'AddNewClub': { 'permissions': [permission.MANAGER] },
   'AddReferee': { 'permissions': [permission.MANAGER] },
+  'RefereesSchedule': { 'permissions': [permission.MANAGER] },
+  'GetLeagueSchedule': { 'permissions': [permission.REFEREE, permission.CAPTAIN] },
 };
 
 module.exports = function (req, res, next) {

@@ -22,6 +22,10 @@ app.get("/", function (req, res) {
       console.log("results:" + DBResponse);
       res.send(JSON.stringify(DBResponse));
     });
+  } else if (data === 'GetLeagueSchedule') {
+      console.log('taking get action, case "GetLeagueSchedule"....')
+      database.getLeagueSchedule()
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
   } else if (data === 'GetInbox') {
       console.log('taking get action, case "GetInbox"....')
       database.getMessages(req.user.username)
@@ -40,7 +44,7 @@ app.get("/", function (req, res) {
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
   } else if (data === "GetConstraints") {
       console.log('taking get action, case "GetConstraints"....')
-      database.getConstraints(req.user.username)
+      database.getConstraints(req.user.username, (req.user.role === 'captain')? 'CaptainConstraints' : 'RefereeConstraints')
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
   } else if (data == "GetTeamsConstraints") {
       database.getTeamsConstraints(data).then((DBResponse) => {
@@ -225,29 +229,34 @@ handleScorerTableRequest = async (dicTeam1, dicTeam2) => {
   }
 };
 
+createWeekConstraints = () => {
+  let weeklyConstraints = [];
+  let hour = 16;
+  let nextHour = 17;
+  let numOfDays = 6;
+  let numOfHours = 8;
+
+  for (let i=0; i<numOfHours; i++) {
+    weeklyConstraints[i] = [];
+    for (let j=0; j<numOfDays; j++) {
+      weeklyConstraints[i][j] = (j==0)? ''+hour+':00 - '+nextHour+':00' : 1; 
+    }
+    hour++;
+    nextHour++;
+  }     
+
+  return weeklyConstraints;
+}
+
 handleAddNewClubRequest = async (clubName, user) => {
   console.log('handleAddNewClubRequest() - in beginning');
   try {
     let DBResponse = await database.addNewClub(clubName);
     if (DBResponse.success) {
       // Creating new weekly constraints
-      let weeklyConstraints = [];
-      let hour = 16;
-      let nextHour = 17;
-      let numOfDays = 6;
-      let numOfHours = 8;
-
-      for (let i=0; i<numOfHours; i++) {
-        weeklyConstraints[i] = [];
-        for (let j=0; j<numOfDays; j++) {
-          weeklyConstraints[i][j] = (j==0)? ''+hour+':00 - '+nextHour+':00' : 1; 
-        }
-        hour++;
-        nextHour++;
-      }      
+      let weeklyConstraints = createWeekConstraints();
       console.log('weeklyConstraints: ' + weeklyConstraints);
-
-      DBResponse = await database.insertOrUpdateConstraints(user, weeklyConstraints, null);
+      DBResponse = await database.insertOrUpdateConstraints(user, weeklyConstraints, null, 'CaptainConstraints');
       console.log('handleAddNewClubRequest() - DBResponse,success: ' + DBResponse.success);
       return JSON.stringify(DBResponse);
     } else {
@@ -293,7 +302,19 @@ app.post("/", function (req, res) {
         req.body.pass,
         req.body.requestedRole,
         req.body.email
-      ).then((ans) => res.send(JSON.stringify(ans)));
+      ).then((ans) => {
+          if (!ans.success) {
+            res.send(JSON.stringify(ans));
+            return;
+          } 
+          let weeklyConstraints = createWeekConstraints();
+          console.log('weeklyConstraints: ' + weeklyConstraints);
+          database.insertOrUpdateConstraints(req.body.user, weeklyConstraints, null, 'RefereeConstraints').
+            then((ans) => {
+              console.log('handleAddNewClubRequest() - ans,success: ' + ans.success);
+              res.send(JSON.stringify(ans));
+            })
+        });
       break;
     case "AddNewClub":
       console.log('taking post action, case "AddNewClub"....')
@@ -328,9 +349,9 @@ app.post("/", function (req, res) {
           res.send(DBResponse);
         });
       break;
-    case "CaptainConstraints":
-      console.log('taking post action, case "CaptainConstraints"....')
-      database.insertOrUpdateConstraints(req.user.username, req.body.weeklyConstraints, req.body.specificConstraints)
+    case "SubmitConstraints":
+      console.log('taking post action, case "SubmitConstraints"....')
+      database.insertOrUpdateConstraints(req.user.username, req.body.weeklyConstraints, req.body.specificConstraints, (req.user.role === 'captain')? 'CaptainConstraints' : 'RefereeConstraints')
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
       break;
     case "PitchConstraints":
@@ -341,12 +362,17 @@ app.post("/", function (req, res) {
     case "AddGame": 
     case "DeleteGame":
     case "ChangeGame":
-      database.updateSchedule(req.body.schedule, req.body.gamesToBeCompleted, req.body.teamsNumbers, req.body.teamsConstraints, null, req.body.changeDetails)
+      database.updateSchedule(req.body.schedule, req.body.gamesToBeCompleted, req.body.teamsNumbers, req.body.teamsConstraints, null, req.body.changeDetails, req.body.refereesConstraints, req.body.refereesSchedule)
       .then((DBResponse) => res.send(JSON.stringify(DBResponse)));  
       break;
     case "UpdateInbox":
       console.log('taking post action, case "UpdateInbox"....')
       database.updateInbox(req.body.inbox, req.user.username)
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+      break;
+    case "RefereesSchedule":
+      console.log('taking post action, case "RefereesSchedule"....')
+      database.updateRefereesSchedule(req.body.refereesSchedule, req.body.changeDetails)
       .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
       break;
     default:
