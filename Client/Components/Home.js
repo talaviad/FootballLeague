@@ -157,6 +157,7 @@ export default class Home extends React.Component {
     try {
       token = await AsyncStorage.getItem('token');
       currRole = await AsyncStorage.getItem('role');
+      username = await AsyncStorage.getItem('username');
       console.log('load(): currRole - ' + currRole);
       console.log('load(): token - ' + token);
       // If connected, bring new messages
@@ -195,6 +196,7 @@ export default class Home extends React.Component {
       token: token,
       role: currRole,
       inbox: inbox,
+      username: username,
     });
   }
 
