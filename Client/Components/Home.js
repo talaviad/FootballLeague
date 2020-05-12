@@ -8,15 +8,18 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
+import {Table, Row, Rows} from 'react-native-table-component';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Colors, DebugInstructions, ReloadInstructions, } from 'react-native/Libraries/NewAppScreen';
-import { Header } from 'react-navigation-stack';
+import {
+  Colors,
+  DebugInstructions,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
+import {Header} from 'react-navigation-stack';
 import GLOBALS from '../Globals';
 
-
-var IP = '10.0.0.33'; 
-var PORT = '3000';
+var IP = '132.72.23.63';
+var PORT = '3079';
 
 function RoundButton({title, color, background, onPress, disabled}) {
   return (
@@ -56,7 +59,7 @@ export default class Home extends React.Component {
   handleSendRequestToServer = async param => {
     let token = await AsyncStorage.getItem('token');
     this.setState({isLoading: true});
-    let response = fetch('http://' + IP + ':' +PORT +'/?data=' + param, {
+    let response = fetch('http://' + IP + ':' + PORT + '/?data=' + param, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -95,7 +98,7 @@ export default class Home extends React.Component {
             this.props.navigation.navigate('Home');
             break;
           case 'GetConstraints':
-            this.props.navigation.navigate('Constraints',{
+            this.props.navigation.navigate('Constraints', {
               IP: IP,
               PORT: PORT,
             });
@@ -154,32 +157,32 @@ export default class Home extends React.Component {
     try {
       token = await AsyncStorage.getItem('token');
       currRole = await AsyncStorage.getItem('role');
-      console.log('load(): currRole - '+currRole);
-      console.log('load(): token - '+token);
+      console.log('load(): currRole - ' + currRole);
+      console.log('load(): token - ' + token);
       // If connected, bring new messages
       if (token !== 'none') {
-        let response = await fetch('http://' + IP + ':' + PORT + '/?data=GetInbox', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Football-Request': 'GetInbox',
-            Authorization: token,
+        let response = await fetch(
+          'http://' + IP + ':' + PORT + '/?data=GetInbox',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Football-Request': 'GetInbox',
+              Authorization: token,
+            },
           },
-        });
+        );
         let json = await response.json();
         console.log('In Home.js, load() - json.success: ' + json.success);
         if (json.success) {
           console.log('json.inbox: ' + json.inbox);
           inbox = json.inbox;
           let newMessages = 0;
-          for (let i=0; i<json.inbox.messages.length; i++) {
-            if (!json.inbox.messages[i].read)
-              newMessages++;
+          for (let i = 0; i < json.inbox.messages.length; i++) {
+            if (!json.inbox.messages[i].read) newMessages++;
           }
           inbox.newMessages = newMessages;
-        }
-        else
-          console.log('Error message: ' + json.error.msg);
+        } else console.log('Error message: ' + json.error.msg);
       }
     } catch (err) {
       console.log('in catch, err: ' + err);
@@ -187,7 +190,12 @@ export default class Home extends React.Component {
     }
 
     console.log('isLoggedIn in end of load(): ' + token !== 'none');
-    this.setState({isLoggedIn: token !== 'none', token: token, role: currRole, inbox: inbox});
+    this.setState({
+      isLoggedIn: token !== 'none',
+      token: token,
+      role: currRole,
+      inbox: inbox,
+    });
   }
 
   render() {
@@ -199,7 +207,10 @@ export default class Home extends React.Component {
               <TouchableOpacity
                 style={styles.divided}
                 onPress={() =>
-                  this.props.navigation.navigate('Register', {IP: IP, PORT: PORT})
+                  this.props.navigation.navigate('Register', {
+                    IP: IP,
+                    PORT: PORT,
+                  })
                 }>
                 <Text style={styles.buttonText}>Register</Text>
               </TouchableOpacity>
@@ -214,22 +225,35 @@ export default class Home extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
-          {this.state.isLoggedIn ?
-                  <TouchableOpacity
-                  style={styles.touchAble}
-                  onPress={() =>
-                    this.props.navigation.navigate('Inbox', {
-                      inbox: this.state.inbox,
-                      IP: IP,
-                      PORT: PORT,
-                    })
-                  }>
-                  {console.log('this.state.inbox.messages.length: ' + this.state.inbox.messages.length)}
-                  <Text style={{ fontSize: 20, fontWeight: '500', color: (this.state.inbox.newMessages !== 0)? '#BD1128' : '#AED6F1', textAlign: 'center',}}>
-                      Inbox - {(this.state.inbox.newMessages !== 0)? '' +this.state.inbox.newMessages+ ' new messages' : 'no new messages'}
-                  </Text>
-                </TouchableOpacity> : null
-          }
+          {this.state.isLoggedIn ? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() =>
+                this.props.navigation.navigate('Inbox', {
+                  inbox: this.state.inbox,
+                  IP: IP,
+                  PORT: PORT,
+                })
+              }>
+              {console.log(
+                'this.state.inbox.messages.length: ' +
+                  this.state.inbox.messages.length,
+              )}
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: '500',
+                  color:
+                    this.state.inbox.newMessages !== 0 ? '#BD1128' : '#AED6F1',
+                  textAlign: 'center',
+                }}>
+                Inbox -{' '}
+                {this.state.inbox.newMessages !== 0
+                  ? '' + this.state.inbox.newMessages + ' new messages'
+                  : 'no new messages'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={styles.touchAble}
             onPress={() => this.handleSendRequestToServer('leagueTable')}>
@@ -239,7 +263,10 @@ export default class Home extends React.Component {
           <TouchableOpacity
             style={styles.touchAble}
             onPress={() =>
-              this.props.navigation.navigate('GamesResults', {IP: IP, PORT: PORT})
+              this.props.navigation.navigate('GamesResults', {
+                IP: IP,
+                PORT: PORT,
+              })
             }>
             <Text style={styles.buttonText}>Games Results</Text>
           </TouchableOpacity>
@@ -279,31 +306,52 @@ export default class Home extends React.Component {
               <Text style={styles.buttonText}>Enter game mode</Text>
             </TouchableOpacity>
           ) : null}
-          {(this.state.isLoggedIn && (this.state.role === 'captain') || (this.state.role === 'referee'))? (
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() => this.handleSendRequestToServer('GetConstraints')}>
-            <Text style={styles.buttonText}>{(this.state.role === 'captain')? 'My Team Constraints' : 'My Referee Constraints'}</Text>
-          </TouchableOpacity>
-          ) : null}
-          {(this.state.isLoggedIn && this.state.role === 'manager')? (
+          {(this.state.isLoggedIn && this.state.role === 'captain') ||
+          this.state.role === 'referee' ? (
             <TouchableOpacity
               style={styles.touchAble}
-              onPress={() => this.props.navigation.navigate('ManageSchedule', {IP: IP, PORT: PORT})}>
+              onPress={() => this.handleSendRequestToServer('GetConstraints')}>
+              <Text style={styles.buttonText}>
+                {this.state.role === 'captain'
+                  ? 'My Team Constraints'
+                  : 'My Referee Constraints'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {this.state.isLoggedIn && this.state.role === 'manager' ? (
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={() =>
+                this.props.navigation.navigate('ManageSchedule', {
+                  IP: IP,
+                  PORT: PORT,
+                })
+              }>
               <Text style={styles.buttonText}>Manage Schedule</Text>
             </TouchableOpacity>
           ) : null}
-          {(this.state.isLoggedIn && (this.state.role === 'captain' || this.state.role === 'referee'))? (
+          {this.state.isLoggedIn &&
+          (this.state.role === 'captain' || this.state.role === 'referee') ? (
             <TouchableOpacity
               style={styles.touchAble}
-              onPress={() => this.props.navigation.navigate('LeagueSchedule', {IP: IP, PORT: PORT})}>
+              onPress={() =>
+                this.props.navigation.navigate('LeagueSchedule', {
+                  IP: IP,
+                  PORT: PORT,
+                })
+              }>
               <Text style={styles.buttonText}>League Schedule</Text>
             </TouchableOpacity>
           ) : null}
-          {(this.state.isLoggedIn && this.state.role === 'manager')? (
+          {this.state.isLoggedIn && this.state.role === 'manager' ? (
             <TouchableOpacity
               style={styles.touchAble}
-              onPress={() => this.props.navigation.navigate('PitchConstraints', {IP: IP, PORT: PORT})}>
+              onPress={() =>
+                this.props.navigation.navigate('PitchConstraints', {
+                  IP: IP,
+                  PORT: PORT,
+                })
+              }>
               <Text style={styles.buttonText}>Set Pitch Constraints</Text>
             </TouchableOpacity>
           ) : null}
@@ -313,53 +361,72 @@ export default class Home extends React.Component {
             )}
           </View>
         </ScrollView>
-        <View style={{height: GLOBALS.windowHeightSize/10 }}>
-        {this.state.role === 'manager' && (  
-              <ButtonsRow>
-                  <RoundButton
-                    title="Add New Referee"
-                    color="#5f9ea0"
-                    background="#3D3D3D"
-                    onPress={() => {
-                      this.props.navigation.navigate('AddReferee', {
-                        IP: IP,
-                        PORT: PORT,
-                      });
-                    }}
-                  />
-                  <RoundButton
-                    title="Add New Club"
-                    color="#5f9ea0"
-                    background="#3D3D3D"
-                    onPress={() => {
-                      this.props.navigation.navigate('AddClub', {
-                        IP: IP,
-                        PORT: PORT,
-                      });
-                    }}
-                  />
-                  <RoundButton
-                    title="Change Password"
-                    color="#5f9ea0"
-                    background="#3D3D3D"
-                    onPress={() => {
-                      this.props.navigation.navigate('ChangePassword', {
-                        IP: IP,
-                        PORT: PORT,
-                        username: this.state.username,
-                      });
-                    }}
-                  />
-              </ButtonsRow>)}
-          </View>
+        <View style={{height: GLOBALS.windowHeightSize / 10}}>
+          {this.state.role === 'manager' && (
+            <ButtonsRow>
+              <RoundButton
+                title="Add New Referee"
+                color="#5f9ea0"
+                background="#3D3D3D"
+                onPress={() => {
+                  this.props.navigation.navigate('AddReferee', {
+                    IP: IP,
+                    PORT: PORT,
+                  });
+                }}
+              />
+              <RoundButton
+                title="Add New Club"
+                color="#5f9ea0"
+                background="#3D3D3D"
+                onPress={() => {
+                  this.props.navigation.navigate('AddClub', {
+                    IP: IP,
+                    PORT: PORT,
+                  });
+                }}
+              />
+              <RoundButton
+                title="Change Password"
+                color="#5f9ea0"
+                background="#3D3D3D"
+                onPress={() => {
+                  this.props.navigation.navigate('ChangePassword', {
+                    IP: IP,
+                    PORT: PORT,
+                    username: this.state.username,
+                  });
+                }}
+              />
+            </ButtonsRow>
+          )}
         </View>
+        <View style={{height: GLOBALS.windowHeightSize / 10}}>
+          {this.state.role === 'referee' && (
+            <ButtonsRow>
+              <RoundButton
+                title="Change Password"
+                color="#5f9ea0"
+                background="#3D3D3D"
+                onPress={() => {
+                  this.props.navigation.navigate('ChangePassword', {
+                    IP: IP,
+                    PORT: PORT,
+                    username: this.state.username,
+                  });
+                }}
+              />
+            </ButtonsRow>
+          )}
+        </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   body: {
-    height: GLOBALS.windowHeightSize*(6/10),
+    height: GLOBALS.windowHeightSize * (6 / 10),
     backgroundColor: '#5499C7',
   },
   sectionTwoBtnContainer: {
