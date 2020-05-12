@@ -419,6 +419,24 @@ export default class Home extends React.Component {
             </ButtonsRow>
           )}
         </View>
+        <View style={{height: GLOBALS.windowHeightSize / 10}}>
+          {this.state.role === 'capatin' && (
+            <ButtonsRow>
+              <RoundButton
+                title="Change Password"
+                color="#5f9ea0"
+                background="#3D3D3D"
+                onPress={() => {
+                  this.props.navigation.navigate('ChangePassword', {
+                    IP: IP,
+                    PORT: PORT,
+                    username: this.state.username,
+                  });
+                }}
+              />
+            </ButtonsRow>
+          )}
+        </View>
       </View>
     );
   }
