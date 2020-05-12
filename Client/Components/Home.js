@@ -420,7 +420,7 @@ export default class Home extends React.Component {
           )}
         </View>
         <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'capatin' && (
+          {this.state.role === 'captain' && (
             <ButtonsRow>
               <RoundButton
                 title="Change Password"
