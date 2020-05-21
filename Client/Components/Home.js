@@ -91,6 +91,12 @@ export default class Home extends React.Component {
               tableData: resJson.tableData,
             });
             break;
+          case 'squads':
+            this.props.navigation.navigate('Squads', {
+              tableData: resJson.tableData,
+              teamList: this.state.teamsNames,
+            });
+            break;
           case 'register':
             this.props.navigation.navigate('Register');
             break;
@@ -279,6 +285,13 @@ export default class Home extends React.Component {
               this.handleSendRequestToServer('scorerTable');
             }}>
             <Text style={styles.buttonText}>Scorer Table</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.touchAble}
+            onPress={() => {
+              this.handleSendRequestToServer('squads');
+            }}>
+            <Text style={styles.buttonText}>Squads</Text>
           </TouchableOpacity>
           {this.state.isLoggedIn &&
           (this.state.role === 'referee' || this.state.role === 'manager') ? (

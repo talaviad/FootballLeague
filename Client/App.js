@@ -5,6 +5,7 @@ import Home from './Components/Home';
 import LeagueTable from './Components/LeagueTable';
 import GamesResults from './Components/GamesResults';
 import ScorerTable from './Components/ScorerTable';
+import Squads from './Components/Squads';
 import Register from './Components/Register';
 import InsertGame from './Components/InsertGame';
 import Login from './Components/Login';
@@ -12,8 +13,8 @@ import GameMode from './Components/GameMode';
 import AddReferee from './Components/AddReferee';
 import AddClub from './Components/AddClub';
 import Constraints from './Components/Constraints';
-import ManageSchedule from './Components/ManageSchedule'; 
-import LeagueSchedule from './Components/LeagueSchedule'; 
+import ManageSchedule from './Components/ManageSchedule';
+import LeagueSchedule from './Components/LeagueSchedule';
 import PitchConstraints from './Components/PitchConstraints';
 import Inbox from './Components/Inbox';
 import ChangePassword from './Components/ChangePassword';
@@ -24,6 +25,8 @@ const AppNavigator = createStackNavigator(
     LeagueTable: LeagueTable,
     GamesResults: GamesResults,
     ScorerTable: ScorerTable,
+    Squads: Squads,
+
     Register: Register,
     InsertGame: InsertGame,
     Login: Login,

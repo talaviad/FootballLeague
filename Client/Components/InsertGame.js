@@ -11,6 +11,7 @@ import {
 
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
+import {CustomPicker} from 'react-native-custom-picker';
 
 import TeamSelector from './TeamSelector';
 
@@ -21,8 +22,8 @@ export default class InsertGame extends React.Component {
 
     this.state = {
       date: '',
-      team1Name: '',
-      team2Name: '',
+      team1Name: null,
+      team2Name: null,
       team1Goals: '',
       team2Goals: '',
       team1ScorrersDic: [],
@@ -32,6 +33,8 @@ export default class InsertGame extends React.Component {
       score1Legal: true,
       score2Legal: true,
       isLoading: false,
+      playersTeam1: [],
+      playersTeam2: [],
     };
   }
 
@@ -70,12 +73,22 @@ export default class InsertGame extends React.Component {
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
-                  this.setState({
-                    team1Name: text,
-                    team1Goals: '',
-                    team1ScorrersDic: [],
-                    selectedTeam1: true,
-                  });
+                  if (text !== null) {
+                    this.setState({
+                      team1Name: text,
+                      team1Goals: '',
+                      team1ScorrersDic: [],
+                      selectedTeam1: true,
+                    });
+                    this.getPlayersList(1, text);
+                  } else {
+                    this.setState({
+                      team1Name: text,
+                      team1Goals: '',
+                      team1ScorrersDic: [],
+                      selectedTeam1: false,
+                    });
+                  }
                 }}
               />
             </View>
@@ -95,21 +108,22 @@ export default class InsertGame extends React.Component {
                 editable={this.state.selectedTeam1}
                 onChangeText={text => {
                   if (!this.isNumericAndLegal(text)) {
+                    this.setState({team1Goals: text});
                     this.setState({score1Legal: false});
                   } else {
                     this.setState({score1Legal: true});
+                    this.setState({team1Goals: text});
+                    var arr = [];
+                    for (var i = 0; i < text; i++) {
+                      arr.push({
+                        Name: '',
+                        Team: this.state.team1Name,
+                        Number: '',
+                        Goals: 0,
+                      });
+                    }
+                    this.setState({team1ScorrersDic: arr});
                   }
-                  this.setState({team1Goals: text});
-                  var arr = [];
-                  for (var i = 0; i < text; i++) {
-                    arr.push({
-                      Name: [],
-                      Team: this.state.team1Name,
-                      Number: '',
-                      Goals: 0,
-                    });
-                  }
-                  this.setState({team1ScorrersDic: arr});
                 }}
               />
             </View>
@@ -120,12 +134,22 @@ export default class InsertGame extends React.Component {
               <TeamSelector
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
-                  this.setState({
-                    team2Name: text,
-                    team2Goals: '',
-                    team2ScorrersDic: [],
-                    selectedTeam2: true,
-                  });
+                  if (text !== null) {
+                    this.setState({
+                      team2Name: text,
+                      team2Goals: '',
+                      team2ScorrersDic: [],
+                      selectedTeam2: true,
+                    });
+                    this.getPlayersList(2, text);
+                  } else {
+                    this.setState({
+                      team2Name: text,
+                      team2Goals: '',
+                      team2ScorrersDic: [],
+                      selectedTeam2: false,
+                    });
+                  }
                 }}
               />
             </View>
@@ -146,21 +170,22 @@ export default class InsertGame extends React.Component {
                 editable={this.state.selectedTeam2}
                 onChangeText={text => {
                   if (!this.isNumericAndLegal(text)) {
+                    this.setState({team2Goals: text});
                     this.setState({score2Legal: false});
                   } else {
                     this.setState({score2Legal: true});
+                    this.setState({team2Goals: text});
+                    var arr = [];
+                    for (var i = 0; i < text; i++) {
+                      arr.push({
+                        Name: '',
+                        Team: this.state.team2Name,
+                        Number: '',
+                        Goals: 0,
+                      });
+                    }
+                    this.setState({team2ScorrersDic: arr});
                   }
-                  this.setState({team2Goals: text});
-                  var arr = [];
-                  for (var i = 0; i < text; i++) {
-                    arr.push({
-                      Name: [],
-                      Team: this.state.team2Name,
-                      Number: '',
-                      Goals: 0,
-                    });
-                  }
-                  this.setState({team2ScorrersDic: arr});
                 }}
               />
             </View>
@@ -186,6 +211,57 @@ export default class InsertGame extends React.Component {
       </View>
     );
   }
+
+  async getPlayersList(clubIndex, clubName) {
+    try {
+      let response = fetch(
+        'http://' +
+          this.props.navigation.getParam('IP') +
+          ':' +
+          this.props.navigation.getParam('PORT') +
+          '/?data=' +
+          clubName,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'PlayersList',
+          },
+        },
+      )
+        .then(response => response.json())
+        .then(async resJson => {
+          if (resJson.success) {
+            this.arrangePlayersList(clubIndex, resJson.players);
+          } else {
+            alert('Error');
+          }
+        })
+        .catch(err => alert(err));
+    } catch (err) {
+      alert('catch');
+      alert(err);
+    }
+  }
+
+  arrangePlayersList = (clubIndex, playersList) => {
+    var newPlayersList = playersList.map(
+      dic =>
+        '#' +
+        dic.jerseyNumber.toString() +
+        ' ' +
+        dic.firstName.toString() +
+        ' ' +
+        dic.lastName.toString(),
+    );
+    clubIndex === 1
+      ? this.setState({
+          playersTeam1: newPlayersList,
+        })
+      : this.setState({
+          playersTeam2: newPlayersList,
+        });
+  };
 
   async sendResultToServer() {
     try {
@@ -229,8 +305,8 @@ export default class InsertGame extends React.Component {
   initalizeState = () => {
     this.setState({
       date: '',
-      team1Name: '',
-      team2Name: '',
+      team1Name: null,
+      team2Name: null,
       team1Goals: '',
       team2Goals: '',
       team1ScorrersDic: [],
@@ -278,7 +354,7 @@ export default class InsertGame extends React.Component {
       alert('Please Select The Date');
       return;
     }
-    if (this.state.team1Name === '' || this.state.team2Name === '') {
+    if (this.state.team1Name === null || this.state.team2Name === null) {
       alert('Please Select The Teams');
       return;
     }
@@ -298,34 +374,18 @@ export default class InsertGame extends React.Component {
     for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
       if (
         this.state.team1ScorrersDic[i].Number === '' ||
-        this.state.team1ScorrersDic[i].Name.length === 0
+        this.state.team1ScorrersDic[i].Name === ''
       ) {
         alert('Please Fill All The Scorers Details');
-        return;
-      }
-      if (!this.isNumeric(this.state.team1ScorrersDic[i].Number)) {
-        alert('Illegal scorer jersy number details');
-        return;
-      }
-      if (!this.isLegalName(this.state.team1ScorrersDic[i].Name[0])) {
-        alert('Illegal scorer name details');
         return;
       }
     }
     for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
       if (
         this.state.team2ScorrersDic[i].Number === '' ||
-        this.state.team2ScorrersDic[i].Name.length === 0
+        this.state.team2ScorrersDic[i].Name === ''
       ) {
         alert('Please Fill All The Scorers Details');
-        return;
-      }
-      if (!this.isNumeric(this.state.team2ScorrersDic[i].Number)) {
-        alert('Illegal scorer jersy number details');
-        return;
-      }
-      if (!this.isLegalName(this.state.team2ScorrersDic[i].Name[0])) {
-        alert('Illegal scorer name details');
         return;
       }
     }
@@ -350,45 +410,36 @@ export default class InsertGame extends React.Component {
               borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
               {i + 1 + '. '}
             </Text>
-
-            <TextInput
-              style={{backgroundColor: 'white', borderWidth: 0.6}}
-              keyboardType="numeric"
-              placeholder="#Shirt"
-              onChangeText={text => {
+            <CustomPicker
+              options={
+                teamNum === 1
+                  ? this.state.playersTeam1
+                  : this.state.playersTeam2
+              }
+              onValueChange={value => {
                 switch (teamNum) {
                   case 1: {
-                    this.state.team1ScorrersDic[i].Number = text;
-                    this.state.team1ScorrersDic[i].Goals = +1;
-
+                    if (value === null) {
+                      this.state.team1ScorrersDic[i].Number = '';
+                      this.state.team1ScorrersDic[i].Name = '';
+                      return;
+                    }
+                    var arr = value.split(' ');
+                    this.state.team1ScorrersDic[i].Number = arr[0].substring(1);
+                    this.state.team1ScorrersDic[i].Name = arr[1] + ' ' + arr[2];
+                    this.state.team1ScorrersDic[i].Goals = 1;
                     break;
                   }
                   case 2: {
-                    this.state.team2ScorrersDic[i].Number = text;
-                    this.state.team2ScorrersDic[i].Goals = +1;
-                    break;
-                  }
-                }
-              }}
-            />
-            <TextInput
-              style={{
-                backgroundColor: 'white',
-                borderWidth: 0.6,
-                width: 100,
-                marginLeft: 10,
-              }}
-              placeholder="Name"
-              onChangeText={text => {
-                //To convert the first letter of the name to Capital letter
-                var name = text.replace(/\b\w/g, l => l.toUpperCase());
-                switch (teamNum) {
-                  case 1: {
-                    this.state.team1ScorrersDic[i].Name[0] = name;
-                    break;
-                  }
-                  case 2: {
-                    this.state.team2ScorrersDic[i].Name[0] = name;
+                    if (value === null) {
+                      this.state.team2ScorrersDic[i].Number = '';
+                      this.state.team2ScorrersDic[i].Name = '';
+                      return;
+                    }
+                    var arr = vallue.split(' ');
+                    this.state.team2ScorrersDic[i].Number = arr[0].subString(1);
+                    this.state.team2ScorrersDic[i].Name = arr[1] + arr[2];
+                    this.state.team2ScorrersDic[i].Goals = 1;
                     break;
                   }
                 }

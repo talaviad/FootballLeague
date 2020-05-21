@@ -16,7 +16,7 @@ export default {
       'November',
       'December',
     ],
-    windowHeightSize: (Dimensions.get('window').height)-(Header.HEIGHT),
+    windowHeightSize: (Dimensions.get('window').height)/*-(Header.HEIGHT)*/,
     windowWidthSize: Dimensions.get('window').width,
     styles: {
       touchAble: {

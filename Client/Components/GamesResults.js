@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import {Table, Row} from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Picker } from '@react-native-community/picker';
+import {Picker} from '@react-native-community/picker';
 import GLOBALS from '../Globals';
 
 export default class GamesResults extends React.Component {
@@ -388,11 +388,11 @@ export default class GamesResults extends React.Component {
   buildScorresData = (arr, team1Dic, team2Dic, team1Name, team2Name) => {
     var strTeam1 = '\n' + team1Name + ':\n';
     team1Dic.map(x => {
-      strTeam1 = strTeam1 + '#' + x.Number + ' ' + x.Name[0] + '\n';
+      strTeam1 = strTeam1 + '#' + x.Number + ' ' + x.Name + '\n';
     });
     var strTeam2 = '\n' + team2Name + ':\n';
     team2Dic.map(x => {
-      strTeam2 = strTeam2 + '#' + x.Number + ' ' + x.Name[0] + '\n';
+      strTeam2 = strTeam2 + '#' + x.Number + ' ' + x.Name + '\n';
     });
     arr.push([strTeam1, strTeam2]);
   };

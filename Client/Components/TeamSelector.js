@@ -30,8 +30,13 @@ export default class TeamSelector extends Component {
           title="Select Team"
           data={this.teamsData}
           onSelect={data => {
-            this.setState({data});
-            this.props.onSelect(this.teamsData[data - 1].name);
+            //this.setState({data});
+
+            if (data.length === 0) {
+              this.props.onSelect(null);
+            } else {
+              this.props.onSelect(this.teamsData[data - 1].name);
+            }
           }}
           onRemoveItem={data => {
             this.setState({data});
