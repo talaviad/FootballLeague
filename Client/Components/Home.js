@@ -83,9 +83,6 @@ export default class Home extends React.Component {
               tableData: resJson.tableData,
             });
             break;
-          case 'GamesWeek1':
-            return resJson.tableData;
-            break;
           case 'scorerTable':
             this.props.navigation.navigate('ScorerTable', {
               tableData: resJson.tableData,
