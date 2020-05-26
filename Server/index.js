@@ -73,8 +73,8 @@ app.get("/", function (req, res) {
     database.getScorerTable().then((DBResponse) => {
       res.send(JSON.stringify(DBResponse));
     });
-  } else if (data === "squads") {
-    database.getSquads().then((DBResponse) => {
+  } else if (data === "clubs") {
+    database.getClubs().then((DBResponse) => {
       res.send(JSON.stringify(DBResponse));
     });
   } else if (data === "TeamsNames") {

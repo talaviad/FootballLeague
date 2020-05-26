@@ -194,6 +194,7 @@ export default class AddClubStep2 extends React.Component {
                       jerseyNumber: '',
                       firstName: '',
                       lastName: '',
+                      goals: 0,
                     });
                   }
                 }

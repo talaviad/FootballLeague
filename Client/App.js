@@ -5,7 +5,7 @@ import Home from './Components/Home';
 import LeagueTable from './Components/LeagueTable';
 import GamesResults from './Components/GamesResults';
 import ScorerTable from './Components/ScorerTable';
-import Squads from './Components/Squads';
+import Clubs from './Components/Clubs';
 import Register from './Components/Register';
 import InsertGame from './Components/InsertGame';
 import Login from './Components/Login';
@@ -25,7 +25,7 @@ const AppNavigator = createStackNavigator(
     LeagueTable: LeagueTable,
     GamesResults: GamesResults,
     ScorerTable: ScorerTable,
-    Squads: Squads,
+    Clubs: Clubs,
 
     Register: Register,
     InsertGame: InsertGame,

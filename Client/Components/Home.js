@@ -21,6 +21,9 @@ import GLOBALS from '../Globals';
 var IP = '132.72.23.63';
 var PORT = '3079';
 
+// var IP = '192.168.1.124';
+// var PORT = '3000';
+
 function RoundButton({title, color, background, onPress, disabled}) {
   return (
     <TouchableOpacity
@@ -88,8 +91,8 @@ export default class Home extends React.Component {
               tableData: resJson.tableData,
             });
             break;
-          case 'squads':
-            this.props.navigation.navigate('Squads', {
+          case 'clubs':
+            this.props.navigation.navigate('Clubs', {
               tableData: resJson.tableData,
               teamList: this.state.teamsNames,
             });
@@ -286,9 +289,9 @@ export default class Home extends React.Component {
           <TouchableOpacity
             style={styles.touchAble}
             onPress={() => {
-              this.handleSendRequestToServer('squads');
+              this.handleSendRequestToServer('clubs');
             }}>
-            <Text style={styles.buttonText}>Squads</Text>
+            <Text style={styles.buttonText}>Clubs</Text>
           </TouchableOpacity>
           {this.state.isLoggedIn &&
           (this.state.role === 'referee' || this.state.role === 'manager') ? (

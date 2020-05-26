@@ -105,7 +105,26 @@ module.exports = class DataBase {
       console.log("hey you111: " + combine_dict[i]);
       console.log("hey you222: " + JSON.stringify(combine_dict[i]));
 
-      console.log("hey you333: " + combine_dict[i].Name.length);
+      //for the Clubs page - players stats of team1
+      let result1 = await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .find({
+          clubName: combine_dict[i].Team,
+        });
+
+      result1 = await result1.toArray();
+      for (var j = 0; j < result1[0].players.length; j++) {
+        if (result1[0].players[j].jerseyNumber === combine_dict[i].Number) {
+          result1[0].players[j].goals = +1;
+          break;
+        }
+      }
+      let result2 = this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .replaceOne({ clubName: result1[0].clubName }, result1[0]);
+
       let result = await this.client
         .db("FootballLeague")
         .collection("ScorerTable")
@@ -212,6 +231,7 @@ module.exports = class DataBase {
         clubName: clubName,
         players: players,
         color: color,
+        results: [],
       });
       console.log(
         "In DataBase, addNewClub()- succeed to insert a squad of a club - " +
@@ -352,7 +372,7 @@ module.exports = class DataBase {
     }
   }
 
-  async getSquads() {
+  async getClubs() {
     try {
       let result = await this.client
         .db("FootballLeague")
@@ -547,6 +567,23 @@ module.exports = class DataBase {
           team1ScorrersDic: team1ScorrersDic,
           team2ScorrersDic: team2ScorrersDic,
         });
+      //for the Clubs page - team stats
+      result = this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .update(
+          { $or: [{ clubName: selectedTeam1 }, { clubName: selectedTeam2 }] },
+          {
+            $push: {
+              results: {
+                team1: selectedTeam1,
+                result: scoreTeam1 + " - " + scoreTeam2,
+                team2: selectedTeam2,
+                date: date,
+              },
+            },
+          }
+        );
 
       let resultsToTheServer = {
         success: true,
