@@ -12,7 +12,7 @@ export default class GamesResults extends React.Component {
 
     var TodayDate = new Date();
     var month = GLOBALS.monthList[TodayDate.getMonth()];
-    month = 'June';
+    month = 'June'; //delete this line!
     this.fetchData(month);
     this.state = {
       tableHead: ['Team1', 'Result', 'Team2', 'Date'],
@@ -87,10 +87,16 @@ export default class GamesResults extends React.Component {
         <View
           style={{
             borderColor: 'black',
-            backgroundColor: '#5499C7',
+            backgroundColor: '#86B3D1',
             borderWidth: 0.8,
+            // flex: 1,
           }}>
           <Picker
+            style={{
+              marginLeft: '40%',
+              textAlign: 'left',
+            }}
+            mode="dropdown"
             selectedValue={this.state.selectedMonth}
             onValueChange={(itemValue, itemIndex) => {
               this.state.firstTableData = [];
@@ -124,12 +130,12 @@ export default class GamesResults extends React.Component {
                 style={styles.headDate}
                 textStyle={styles.textHeadDate}
               />
-              <Row
+              {/* <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
                 flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
-              />
+              /> */}
               <Table style={{borderColor: '#C1C0B9'}}>
                 {this.state.isLoading ? null : this.state.firstTableData
                     .length === 0 ? (
@@ -157,7 +163,7 @@ export default class GamesResults extends React.Component {
                         style={[
                           styles.row,
                           {
-                            backgroundColor: '#b0c4de',
+                            backgroundColor: '#B4DFE5',
                             alignSelf: 'flex-start',
                             height:
                               40 +
@@ -185,12 +191,12 @@ export default class GamesResults extends React.Component {
                 textStyle={styles.textHeadDate}
               />
 
-              <Row
+              {/* <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
                 flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
-              />
+              /> */}
               <Table style={{borderColor: '#C1C0B9'}}>
                 {this.state.isLoading ? null : this.state.secondTableData
                     .length === 0 ? (
@@ -218,7 +224,7 @@ export default class GamesResults extends React.Component {
                         style={[
                           styles.row,
                           {
-                            backgroundColor: '#b0c4de',
+                            backgroundColor: '#B4DFE5',
                             alignSelf: 'flex-start',
                             height:
                               40 +
@@ -245,12 +251,12 @@ export default class GamesResults extends React.Component {
                 textStyle={styles.textHeadDate}
               />
 
-              <Row
+              {/* <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
                 flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
-              />
+              /> */}
               <Table style={{borderColor: '#C1C0B9'}}>
                 {this.state.isLoading ? null : this.state.thirdTableData
                     .length === 0 ? (
@@ -278,7 +284,7 @@ export default class GamesResults extends React.Component {
                         style={[
                           styles.row,
                           {
-                            backgroundColor: '#b0c4de',
+                            backgroundColor: '#B4DFE5',
                             alignSelf: 'flex-start',
                             height:
                               40 +
@@ -305,12 +311,12 @@ export default class GamesResults extends React.Component {
                 textStyle={styles.textHeadDate}
               />
 
-              <Row
+              {/* <Row
                 data={['Team1', 'Result', 'Team2', 'Date', '']}
                 flexArr={[60, 30, 60, 40, 22]}
                 style={styles.head}
                 textStyle={styles.textHead}
-              />
+              /> */}
               <Table style={{borderColor: '#C1C0B9'}}>
                 {this.state.isLoading ? null : this.state.fourthTableData
                     .length === 0 ? (
@@ -338,7 +344,7 @@ export default class GamesResults extends React.Component {
                         style={[
                           styles.row,
                           {
-                            backgroundColor: '#b0c4de',
+                            backgroundColor: '#B4DFE5',
                             alignSelf: 'flex-start',
                             height:
                               40 +
@@ -365,7 +371,7 @@ export default class GamesResults extends React.Component {
   createButton = (index, arr) => (
     <Icon.Button
       name={arr.includes(index) ? 'angle-up' : 'angle-down'}
-      style={{backgroundColor: '#5499C7'}}
+      style={{backgroundColor: '#DEF2F1'}}
       color={'black'}
       size={22}
       onPress={() => {
@@ -461,7 +467,7 @@ export default class GamesResults extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    backgroundColor: '#DEF2F1',
   },
   picker: {
     height: '10%',
@@ -470,36 +476,40 @@ const styles = StyleSheet.create({
   },
   head: {
     height: 28,
-    backgroundColor: '#5D6D7E',
+    backgroundColor: '#29648A',
     borderWidth: 1,
   },
   headDate: {
     height: 18,
-    backgroundColor: '#4682b4',
+    backgroundColor: '#86B3D1',
   },
   wrapper: {
     flexDirection: 'row',
   },
   textHead: {
     textAlign: 'center',
-    fontFamily: 'Times',
-    color: '#AED6F1',
+    fontFamily: 'sans-serif',
+    fontSize: 17,
+    color: 'white',
   },
   textHeadDate: {
     textAlign: 'center',
-    fontFamily: 'Times',
+    fontFamily: 'sans-serif',
+    fontSize: 17,
     color: 'black',
   },
   textLines: {
     textAlign: 'center',
-    fontFamily: 'Times',
-    color: '#2C3E50',
+    fontFamily: 'sans-serif-condensed',
+    fontSize: 15,
+    color: 'black',
   },
   textLinesScorers: {
     textAlign: 'center',
-    fontFamily: 'Times',
-    color: '#2C3E50',
-    fontWeight: 'bold',
+    fontFamily: 'sans-serif-medium',
+    fontSize: 16,
+    color: 'black',
+    // fontWeight: 'bold',
   },
   text: {
     textAlign: 'center',

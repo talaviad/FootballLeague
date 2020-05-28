@@ -45,7 +45,7 @@ export default class Clubs extends React.Component {
           <ListItem
             // containerStyle={{backgroundColor: '#EDF5E1'}} //this was the other color I've tried
             containerStyle={{backgroundColor: '#DEF2F1'}}
-            key={i}
+            // key={i}
             leftIcon={
               <Text style={{fontSize: 20, fontFamily: 'serif'}}>
                 {'#' + l.jerseyNumber}
@@ -113,7 +113,6 @@ export default class Clubs extends React.Component {
           }}>
           Goals
         </Text>
-
         <TableWrapper
           style={{
             borderWidth: 0.5,

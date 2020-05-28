@@ -21,8 +21,7 @@ export default class ScorerTable extends React.Component {
     });
 
     this.state = {
-      tableHead: ['Name', 'Team', 'Number', 'Goals'],
-      tableTitle: ['a', 'a', 'a', 'a'],
+      tableHead: ['Name', 'Jersey Number', 'Team', 'Goals'],
       tableData: sortedTableData,
       search: '',
       found: false,
@@ -65,23 +64,22 @@ export default class ScorerTable extends React.Component {
     return (
       <ScrollView style={styles.container}>
         <SearchBar
-          placeholder="Type Here..."
+          placeholder="Player Name"
           onChangeText={this.updateSearch}
           value={this.state.search}
         />
 
-        {/* {this.state.found && this.getFoundList()} */}
-        <Table borderStyle={{borderWidth: 1}}>
+        <Table>
           <Row
             data={state.tableHead}
-            flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+            flexArr={[40, 20, 40, 20]}
             style={styles.head}
             textStyle={styles.textHead}
           />
           <TableWrapper style={styles.wrapper}>
             <Rows
               data={this.state.found ? this.state.foundList : state.tableData}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+              flexArr={[40, 20, 40, 20]}
               style={styles.row}
               textStyle={styles.textLines}
             />
@@ -95,30 +93,30 @@ export default class ScorerTable extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    backgroundColor: '#DEF2F1',
   },
   head: {
-    height: 28,
-    backgroundColor: '#5D6D7E',
+    height: 32,
+    backgroundColor: '#123c69',
   },
   wrapper: {
     flexDirection: 'row',
-  },
-  title: {
-    flex: 1,
-    backgroundColor: '#F8F9F9',
+    borderWidth: 1,
   },
   row: {
     height: 55,
+    borderBottomWidth: 0.5,
+    borderTopWidth: 0.5,
   },
   textHead: {
     textAlign: 'center',
-    fontFamily: 'Times',
-    color: '#AED6F1',
+    fontFamily: 'sans-serif-medium',
+    color: 'white',
   },
   textLines: {
     textAlign: 'center',
-    fontFamily: 'Times',
+    fontFamily: 'sans-serif-condensed',
     color: '#2C3E50',
+    fontSize: 16,
   },
 });

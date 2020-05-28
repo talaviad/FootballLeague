@@ -351,8 +351,8 @@ module.exports = class DataBase {
         console.log(JSON.stringify(JSON.stringify(scorer)));
         return [
           scorer.Name.toString(),
-          scorer.Team.toString(),
           scorer.Number.toString(),
+          scorer.Team.toString(),
           scorer.Goals.toString(),
         ];
       });
