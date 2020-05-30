@@ -40,7 +40,6 @@ function RoundButton({title, color, background, onPress, disabled}) {
 function ButtonsRow({children}) {
   return <View style={styles.buttonsRow}>{children}</View>;
 }
-
 export default class Home extends React.Component {
   constructor(props) {
     super(props);

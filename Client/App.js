@@ -18,10 +18,11 @@ import LeagueSchedule from './Components/LeagueSchedule';
 import PitchConstraints from './Components/PitchConstraints';
 import Inbox from './Components/Inbox';
 import ChangePassword from './Components/ChangePassword';
-
+import {Text, Image, View} from 'react-native';
 const AppNavigator = createStackNavigator(
   {
     Home: Home,
+
     LeagueTable: LeagueTable,
     GamesResults: GamesResults,
     ScorerTable: ScorerTable,
@@ -40,13 +41,40 @@ const AppNavigator = createStackNavigator(
     ChangePassword: ChangePassword,
     LeagueSchedule: LeagueSchedule,
   },
+
   {
     initialRouteName: 'Home',
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: '#659DBD', //#3B8EBE
+      },
+      headerTintColor: '#black',
+      headerTitleStyle: {
+        fontFamily: 'sans-serif-medium',
+      },
+    },
   },
 );
 
 const AppContainer = createAppContainer(AppNavigator);
 
+//Styling for specific for the Home Page
+Home.navigationOptions = {
+  headerStyle: {},
+  headerLeft: (
+    <Image
+      source={require('./Images/aguda.jpeg')}
+      style={{width: 50, height: 50, marginLeft: 10}}
+      resizeMode={'cover'} // cover or contain its upto you view look
+    />
+  ),
+};
+
+GameMode.navigationOptions = {
+  headerStyle: {
+    backgroundColor: '#687864', //#3B8EBE
+  },
+};
 export default class App extends React.Component {
   render() {
     return <AppContainer />;

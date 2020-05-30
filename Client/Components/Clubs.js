@@ -213,7 +213,7 @@ export default class Clubs extends React.Component {
           style={{
             flexDirection: 'row',
             flex: 0.2,
-            backgroundColor: '#31708e',
+            backgroundColor: '#3B8EBE',
             width: '100%',
             height: '10%',
           }}>
@@ -227,6 +227,7 @@ export default class Clubs extends React.Component {
                 fontSize: 30,
                 paddingLeft: 5,
                 marginLeft: -5,
+                color: 'red',
               }}
               backdropStyle={{borderWidth: 3}}
               value={this.state.selectedClub}
@@ -271,7 +272,11 @@ export default class Clubs extends React.Component {
           )}
           {selectedItem && (
             <View style={styles.innerContainer}>
-              <Text style={[styles.text, {fontFamily: 'sans-serif-medium'}]}>
+              <Text
+                style={[
+                  styles.text,
+                  {color: '#FEFFFF', fontFamily: 'sans-serif-medium'},
+                ]}>
                 {getLabel(selectedItem)}
               </Text>
               <Icon
@@ -292,7 +297,13 @@ export default class Clubs extends React.Component {
       <View style={styles.optionContainer}>
         <View style={styles.innerContainer}>
           <View style={[styles.box, {backgroundColor: item.color}]} />
-          <Text style={{color: item.color, alignSelf: 'flex-start'}}>
+          <Text
+            style={{
+              fontFamily: 'sans-serif-condensed',
+              fontSize: 17,
+              color: item.color,
+              alignSelf: 'flex-start',
+            }}>
             {getLabel(item)}
           </Text>
         </View>

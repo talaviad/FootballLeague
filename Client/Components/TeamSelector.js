@@ -23,11 +23,20 @@ export default class TeamSelector extends Component {
     return (
       <View>
         <Select2
+          modalStyle={{color: 'red'}}
           isSelectSingle
-          style={{borderRadius: 10}}
+          selectButtonText={'OK'}
+          cancelButtonText={'Cancel'}
+          searchPlaceHolderText={'Search Club Name'}
+          style={{
+            borderRadius: 10,
+            borderWidth: 0.5,
+            borderColor: 'black',
+          }}
           colorTheme={'blue'}
-          popupTitle="Select Team"
-          title="Select Team"
+          popupTitle="Select Club"
+          title="Select Club"
+          selectedTitleStyle={this.props.selectedTitleStyle}
           data={this.teamsData}
           onSelect={data => {
             //this.setState({data});

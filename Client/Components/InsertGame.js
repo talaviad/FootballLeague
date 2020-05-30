@@ -6,12 +6,15 @@ import {
   StyleSheet,
   Text,
   View,
+  ImageBackground,
   ActivityIndicator,
 } from 'react-native';
 
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
 import {CustomPicker} from 'react-native-custom-picker';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import TeamSelector from './TeamSelector';
 
@@ -24,7 +27,7 @@ export default class InsertGame extends React.Component {
       date: '',
       team1Name: null,
       team2Name: null,
-      team1Goals: '',
+      team1Goals: '3',
       team2Goals: '',
       team1ScorrersDic: [],
       team2ScorrersDic: [],
@@ -40,10 +43,17 @@ export default class InsertGame extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        {/* <View style={styles.container}> */}
         <ScrollView>
           <DatePicker
-            style={{width: 200, paddingVertical: 20}}
+            style={{
+              paddingVertical: 20,
+              flex: 1,
+              width: '92%',
+            }}
             date={this.state.date}
             mode="date"
             placeholder="Date Of The Match"
@@ -53,24 +63,54 @@ export default class InsertGame extends React.Component {
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={{
+              dateTouchBody: {borderWidth: 0.65, borderRadius: 7.5},
               dateIcon: {
                 position: 'absolute',
-                left: 0,
+                left: 4,
                 top: 4,
                 marginLeft: 0,
               },
               dateInput: {
                 marginLeft: 36,
+                borderWidth: 0,
+              },
+              // dateInput: {backgroundColor: '#ADADAD'},
+              dateText: {
+                color: 'black',
+                fontSize: 19,
+                fontFamily: 'sans',
+                fontWeight: 'bold',
+              },
+              placeholderText: {
+                color: 'black',
+                fontSize: 19,
+                fontFamily: 'sans-serif-condensed',
+                fontStyle: 'italic',
+                fontWeight: '600',
               },
             }}
             onDateChange={date => {
               this.setState({date: date});
             }}
           />
-          <View style={{flexDirection: 'row', width: 200}}>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>Team1</Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{width: '70%'}}>
+              {/* <Text style={{alignSelf: 'flex-start', fontSize: 16}}>Team1</Text> */}
               <TeamSelector
+                selectedTitleStyle={{
+                  //the style of select team text
+                  color: 'black',
+                  fontSize: 18,
+                  textAlign: 'center',
+                  fontFamily: 'sans-serif-condensed',
+                  fontWeight: '60',
+                }}
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
                   if (text !== null) {
@@ -92,46 +132,66 @@ export default class InsertGame extends React.Component {
                 }}
               />
             </View>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>score:</Text>
-              <TextInput
-                style={[
-                  styles.scoreTextInput,
-                  !this.state.score1Legal
-                    ? {backgroundColor: 'red'}
-                    : this.state.selectedTeam1
-                    ? {backgroundColor: 'white'}
-                    : {backgroundColor: '#c0c0c0'},
-                ]}
-                keyboardType="number-pad"
-                value={this.state.team1Goals}
-                editable={this.state.selectedTeam1}
-                onChangeText={text => {
-                  if (!this.isNumericAndLegal(text)) {
-                    this.setState({team1Goals: text});
-                    this.setState({score1Legal: false});
-                  } else {
-                    this.setState({score1Legal: true});
-                    this.setState({team1Goals: text});
-                    var arr = [];
-                    for (var i = 0; i < text; i++) {
-                      arr.push({
-                        Name: '',
-                        Team: this.state.team1Name,
-                        Number: '',
-                        Goals: 0,
-                      });
-                    }
-                    this.setState({team1ScorrersDic: arr});
+            {/* <View style={{marginRight: 10, width: '20%'}}> */}
+            {/* <Text style={{alignSelf: 'center'}}>score:</Text> */}
+            <TextInput
+              style={[
+                styles.scoreTextInput,
+                !this.state.score1Legal
+                  ? {backgroundColor: 'red'}
+                  : this.state.selectedTeam1
+                  ? {backgroundColor: 'white'}
+                  : {backgroundColor: '#c0c0c0'},
+              ]}
+              keyboardType="number-pad"
+              value={this.state.team1Goals}
+              editable={this.state.selectedTeam1}
+              onChangeText={text => {
+                if (!this.isNumericAndLegal(text)) {
+                  this.setState({team1Goals: text});
+                  this.setState({score1Legal: false});
+                } else {
+                  this.setState({score1Legal: true});
+                  this.setState({team1Goals: text});
+                  var arr = [];
+                  for (var i = 0; i < text; i++) {
+                    arr.push({
+                      Name: '',
+                      Team: this.state.team1Name,
+                      Number: '',
+                      Goals: 0,
+                    });
                   }
-                }}
-              />
-            </View>
+                  this.setState({team1ScorrersDic: arr});
+                }
+              }}
+            />
+            <Icon
+              name="soccer"
+              size={35}
+              style={{
+                marginTop: '1%',
+                width: '12%',
+              }}
+            />
           </View>
-          <View style={{flexDirection: 'row', width: 200}}>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>Team2</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-around',
+              marginTop: '7.5%',
+            }}>
+            <View style={{width: '70%'}}>
               <TeamSelector
+                selectedTitleStyle={{
+                  //the style of select team text
+                  color: 'black',
+                  fontSize: 18,
+                  textAlign: 'center',
+                  fontFamily: 'sans-serif-condensed',
+                  fontWeight: '60',
+                }}
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
                   if (text !== null) {
@@ -153,53 +213,64 @@ export default class InsertGame extends React.Component {
                 }}
               />
             </View>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>score:</Text>
-              <TextInput
-                style={[
-                  styles.scoreTextInput,
-                  ,
-                  !this.state.score2Legal
-                    ? {backgroundColor: 'red'}
-                    : this.state.selectedTeam2
-                    ? {backgroundColor: 'white'}
-                    : {backgroundColor: '#c0c0c0'},
-                ]}
-                keyboardType="numeric"
-                value={this.state.team2Goals}
-                editable={this.state.selectedTeam2}
-                onChangeText={text => {
-                  if (!this.isNumericAndLegal(text)) {
-                    this.setState({team2Goals: text});
-                    this.setState({score2Legal: false});
-                  } else {
-                    this.setState({score2Legal: true});
-                    this.setState({team2Goals: text});
-                    var arr = [];
-                    for (var i = 0; i < text; i++) {
-                      arr.push({
-                        Name: '',
-                        Team: this.state.team2Name,
-                        Number: '',
-                        Goals: 0,
-                      });
-                    }
-                    this.setState({team2ScorrersDic: arr});
+            {/* <View style={{marginRight: 10, width: '20%'}}>
+              <Text style={{alignSelf: 'center'}}>score:</Text> */}
+            <TextInput
+              style={[
+                styles.scoreTextInput,
+                ,
+                !this.state.score2Legal
+                  ? {backgroundColor: 'red'}
+                  : this.state.selectedTeam2
+                  ? {backgroundColor: 'white'}
+                  : {backgroundColor: '#c0c0c0'},
+              ]}
+              keyboardType="numeric"
+              value={this.state.team2Goals}
+              editable={this.state.selectedTeam2}
+              onChangeText={text => {
+                if (!this.isNumericAndLegal(text)) {
+                  this.setState({team2Goals: text});
+                  this.setState({score2Legal: false});
+                } else {
+                  this.setState({score2Legal: true});
+                  this.setState({team2Goals: text});
+                  var arr = [];
+                  for (var i = 0; i < text; i++) {
+                    arr.push({
+                      Name: '',
+                      Team: this.state.team2Name,
+                      Number: '',
+                      Goals: 0,
+                    });
                   }
-                }}
-              />
-            </View>
+                  this.setState({team2ScorrersDic: arr});
+                }
+              }}
+            />
+            <Icon
+              name="soccer"
+              size={35}
+              style={{
+                marginTop: '1%',
+                width: '12%',
+              }}
+            />
           </View>
           {this.state.score1Legal && this.displayScorersFields(1)}
           {this.state.score2Legal && this.displayScorersFields(2)}
           <View style={styles.button}>
-            <Button
+            <AwesomeButtonCartman
               onPress={() => {
                 this.submitGame();
               }}
-              title="Submit"
-              color="#000080"
-            />
+              type="primary"
+              textColor="#FFF"
+              textSize={18}
+              backgroundColor="#0e4f88"
+              raiseLevel={6}>
+              Submit Match
+            </AwesomeButtonCartman>
           </View>
           <View
             style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -208,7 +279,8 @@ export default class InsertGame extends React.Component {
             )}
           </View>
         </ScrollView>
-      </View>
+        {/* </View> */}
+      </ImageBackground>
     );
   }
 
@@ -302,6 +374,28 @@ export default class InsertGame extends React.Component {
       alert(err);
     }
   }
+
+  //part of the picker, the views of the options
+  renderOption(settings) {
+    const {item, getLabel} = settings;
+    return (
+      <View style={styles.optionContainer}>
+        <View style={styles.innerContainer}>
+          <View style={[styles.box, {backgroundColor: item.color}]} />
+          <Text
+            style={{
+              fontFamily: 'sans-serif-condensed',
+              fontSize: 17,
+              color: item.color,
+              alignSelf: 'flex-start',
+            }}>
+            {getLabel(item)}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   initalizeState = () => {
     this.setState({
       date: '',
@@ -399,23 +493,49 @@ export default class InsertGame extends React.Component {
         <View>
           {i === 0 && (
             <Text
-              style={{fontWeight: 'bold', fontSize: 20}}
+              style={{
+                marginTop: '2%',
+                fontWeight: '700',
+                fontSize: 20,
+                fontStyle: 'sans-serif-medium',
+              }}
               borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
               {'Team ' + teamNum + ' Scorers:'}
             </Text>
           )}
           <View style={styles.columns}>
             <Text
-              style={{fontWeight: 'bold', fontSize: 15}}
+              style={{
+                fontStyle: 'sans-serif-medium',
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
               borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
               {i + 1 + '. '}
             </Text>
             <CustomPicker
+              fieldTemplateProps={{
+                defaultText: 'Select The Scorer',
+                textStyle: {
+                  color: 'black',
+                  fontSize: 19,
+                  fontFamily: 'sans',
+                  // fontWeight: 'bold',
+                  opacity: 3,
+                },
+              }}
+              style={{
+                color: 'black',
+                fontSize: 19,
+                fontFamily: 'sans',
+                fontWeight: 'bold',
+              }}
               options={
                 teamNum === 1
                   ? this.state.playersTeam1
                   : this.state.playersTeam2
               }
+              optionTemplate={this.renderOption}
               onValueChange={value => {
                 switch (teamNum) {
                   case 1: {
@@ -468,9 +588,14 @@ export default class InsertGame extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    backgroundColor: '#DEF2F1',
     paddingTop: 30,
     paddingHorizontal: 30,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   row: {
     marginBottom: 20,
@@ -502,8 +627,8 @@ const styles = StyleSheet.create({
     width: 60,
   },
   button: {
-    width: 80,
-    marginTop: 15,
+    alignSelf: 'center',
+    marginTop: '10%',
   },
   error: {
     marginTop: 10,
@@ -515,12 +640,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   scoreTextInput: {
-    borderWidth: 0.6,
-    width: 50,
+    borderWidth: 0.8,
+    borderColor: 'black',
+    width: '15%',
     borderRadius: 10,
     textAlign: 'center',
+    marginLeft: '2%',
   },
   errorMsg: {
     color: 'red',
+  },
+  optionContainer: {
+    padding: 10,
+    borderBottomColor: 'grey',
+  },
+
+  box: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  innerContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
   },
 });

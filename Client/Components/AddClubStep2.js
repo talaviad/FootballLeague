@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {Picker} from '@react-native-community/picker';
+import {CustomPicker} from 'react-native-custom-picker';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default class AddClubStep2 extends React.Component {
   constructor(props) {
@@ -66,6 +69,53 @@ export default class AddClubStep2 extends React.Component {
     var reg = new RegExp('^[a-zA-Z]+$');
     return reg.test(value);
   };
+
+  //part of the picker, the views of the selected field.
+  renderField(settings) {
+    const {selectedItem, defaultText, getLabel, clear} = settings;
+    return (
+      <View style={{borderColor: 'grey', padding: 15}}>
+        <View>
+          {!selectedItem && (
+            <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+              <Text style={[styles.customPickerText, {color: 'black'}]}>
+                {'Number Of Players'}
+              </Text>
+              <Icon name="chevron-down" size={25} style={{marginLeft: '5%'}} />
+            </View>
+          )}
+          {selectedItem && (
+            <View style={styles.innerContainer}>
+              <Text
+                style={[
+                  styles.customPickerText,
+                  {color: '#FEFFFF', fontFamily: 'sans-serif-medium'},
+                ]}>
+                {getLabel(selectedItem)}
+              </Text>
+              <Icon
+                name="chevron-down"
+                size={30}
+                style={{marginLeft: 10, marginTop: 10}}
+              />
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  }
+  //part of the picker, the views of the options
+  renderOption(settings) {
+    const {item, getLabel} = settings;
+    return (
+      <View style={styles.optionContainer}>
+        <View style={styles.innerContainer}>
+          <View style={[styles.box, {backgroundColor: item.color}]} />
+          <Text style={styles.customPickerText}>{getLabel(item)}</Text>
+        </View>
+      </View>
+    );
+  }
 
   async addClub() {
     this.setState({isLoading: true});
@@ -166,103 +216,133 @@ export default class AddClubStep2 extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView>
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+        imageStyle={{opacity: 0.85}}>
+        {/* <View style={styles.container}> */}
+        <ScrollView style={styles.container}>
+          {/* <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}> */}
+          {/* <Text style={styles.text}>Number Of Players:</Text> */}
+          <CustomPicker
+            // selectedItem={this.state.numOfPlayers}
+            style={styles.picker}
+            // backdropStyle={{borderWidth: 3}}
+            // value={this.state.numOfPlayers}
+            options={[5, 6, 7, 8, 9, 10]}
+            fieldTemplate={this.renderField}
+            optionTemplate={this.renderOption}
+            onValueChange={(itemValue, itemIndex) => {
+              if (itemValue < this.state.numOfPlayers) {
+                for (var i = 0; i > itemValue - this.state.numOfPlayers; i--) {
+                  this.state.players.pop();
+                }
+              } else {
+                for (var i = 0; i < itemValue - this.state.numOfPlayers; i++) {
+                  this.state.players.push({
+                    jerseyNumber: '',
+                    firstName: '',
+                    lastName: '',
+                    goals: 0,
+                  });
+                }
+              }
+              this.setState({numOfPlayers: itemValue});
+            }}
+          />
+          {/* <Picker
+                selectedValue={this.state.numOfPlayers}
+                style={styles.picker}
+                onValueChange={(itemValue, itemIndex) => {
+                  if (itemValue < this.state.numOfPlayers) {
+                    this.state.players.splice(
+                      -1,
+                      this.state.numOfPlayers - itemValue,
+                    );
+                  } else {
+                    for (
+                      var i = 0;
+                      i < itemValue - this.state.numOfPlayers;
+                      i++
+                    ) {
+                      this.state.players.push({
+                        jerseyNumber: '',
+                        firstName: '',
+                        lastName: '',
+                        goals: 0,
+                      });
+                    }
+                  }
+                  this.setState({numOfPlayers: itemValue});
+                }}>
+                <Picker.Item label="" value={0} />
+                <Picker.Item label="5" value={5} />
+                <Picker.Item label="6" value={6} />
+                <Picker.Item label="7" value={7} />
+                <Picker.Item label="8" value={8} />
+                <Picker.Item label="9" value={9} />
+                <Picker.Item label="10" value={10} />
+              </Picker> */}
+          {/* </View> */}
+
+          {this.state.players.length > 0 && this.displayPlayers()}
+        </ScrollView>
+
+        {this.state.password !== '' && (
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.passwordText}>
+              The genereated password is: {this.state.password}
+            </Text>
+            <Text style={styles.recommendationText}>
+              {
+                'Give the captain the username and the password\n and ask him to change the password'
+              }
+            </Text>
+          </View>
+        )}
+        {this.state.password === '' && (
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'flex-start',
+              justifyContent: 'space-around',
             }}>
-            <Text>Number Of Players:</Text>
-            <Picker
-              selectedValue={this.state.numOfPlayers}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) => {
-                if (itemValue < this.state.numOfPlayers) {
-                  this.state.players.splice(
-                    -1,
-                    this.state.numOfPlayers - itemValue,
-                  );
-                } else {
-                  for (
-                    var i = 0;
-                    i < itemValue - this.state.numOfPlayers;
-                    i++
-                  ) {
-                    this.state.players.push({
-                      jerseyNumber: '',
-                      firstName: '',
-                      lastName: '',
-                      goals: 0,
-                    });
-                  }
-                }
-                this.setState({numOfPlayers: itemValue});
-              }}>
-              <Picker.Item label="" value={0} />
-              <Picker.Item label="5" value={5} />
-              <Picker.Item label="6" value={6} />
-              <Picker.Item label="7" value={7} />
-              <Picker.Item label="8" value={8} />
-              <Picker.Item label="9" value={9} />
-              <Picker.Item label="10" value={10} />
-            </Picker>
+            <TouchableOpacity style={styles.touchAble} onPress={this.goBack}>
+              <Text style={styles.buttonText}>Back</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.touchAble}
+              onPress={this.onPressButton}>
+              <Text style={styles.buttonText}>Add Club</Text>
+            </TouchableOpacity>
           </View>
-
-          {this.state.players.length > 0 && this.displayPlayers()}
-
-          {this.state.password !== '' && (
-            <View style={{alignItems: 'center'}}>
-              <Text style={styles.passwordText}>
-                The genereated password is: {this.state.password}
-              </Text>
-              <Text style={styles.recommendationText}>
-                {
-                  'Give the captain the username and the password\n and ask him to change the password'
-                }
-              </Text>
-            </View>
+        )}
+        <AwesomeAlert
+          show={this.state.successAlertFromServer}
+          showProgress={false}
+          title="Confirmation"
+          message={'The club and the captain username has been created'}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showConfirmButton={true}
+          confirmText="Yes"
+          confirmText="ok"
+          confirmButtonColor="#8fbc8f"
+          onConfirmPressed={() => {
+            this.setState({successAlertFromServer: false});
+          }}
+        />
+        <View style={styles.loadingStyle}>
+          {this.state.isLoading && (
+            <ActivityIndicator color={'#fff'} size={80} />
           )}
-          {this.state.password === '' && (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-              }}>
-              <TouchableOpacity style={styles.touchAble} onPress={this.goBack}>
-                <Text style={styles.buttonText}>Back</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.touchAble}
-                onPress={this.onPressButton}>
-                <Text style={styles.buttonText}>Add Club</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <AwesomeAlert
-            show={this.state.successAlertFromServer}
-            showProgress={false}
-            title="Confirmation"
-            message={'The club and the captain username has been created'}
-            closeOnTouchOutside={true}
-            closeOnHardwareBackPress={false}
-            showConfirmButton={true}
-            confirmText="Yes"
-            confirmText="ok"
-            confirmButtonColor="#8fbc8f"
-            onConfirmPressed={() => {
-              this.setState({successAlertFromServer: false});
-            }}
-          />
-          <View style={styles.loadingStyle}>
-            {this.state.isLoading && (
-              <ActivityIndicator color={'#fff'} size={80} />
-            )}
-          </View>
-        </ScrollView>
-      </View>
+        </View>
+        {/* </View> */}
+      </ImageBackground>
     );
   }
 }
@@ -270,8 +350,8 @@ export default class AddClubStep2 extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
-    paddingTop: 30,
+    // backgroundColor: '#5499C7',
+    // paddingTop: 30,
     paddingHorizontal: 30,
     // flexGrow: 1,
     // alignItems: 'center',
@@ -322,13 +402,18 @@ const styles = StyleSheet.create({
   },
 
   touchAble: {
-    marginTop: 32,
-    marginHorizontal: 40,
-    paddingHorizontal: 24,
+    marginTop: '10%',
+    // marginHorizontal: 40,
+    paddingHorizontal: '10%',
     backgroundColor: '#2C3E50',
     borderRadius: 25,
     paddingVertical: 5,
   },
+  box: {
+    width: '5%',
+    height: '20%',
+  },
+
   buttonText: {
     fontSize: 20,
     fontWeight: '500',
@@ -344,13 +429,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  innerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  optionContainer: {
+    padding: 10,
+    borderBottomColor: 'grey',
+  },
   picker: {
-    width: '80%',
+    flex: 1,
+    width: '100%',
     borderRadius: 25,
-    paddingHorizontal: 80,
+    // paddingHorizontal: 80,
     fontSize: 20,
     borderColor: '#2C3E50',
-    borderWidth: 10,
+    borderWidth: 2,
     marginTop: 20,
     color: '#F8F9F9',
   },
@@ -358,5 +453,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  text: {
+    fontFamily: 'sans-serif-normal',
+    width: '80%',
+    paddingHorizontal: 16,
+    fontSize: 20,
+    //marginVertical: 10,
+    marginTop: 40,
+    fontWeight: '600',
+  },
+  customPickerText: {
+    color: 'white',
+    fontSize: 23,
+    textAlign: 'center',
+    color: 'grey',
+    fontFamily: 'sans-serif-meduim',
+    fontStyle: 'italic',
   },
 });

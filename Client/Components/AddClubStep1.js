@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -75,112 +76,117 @@ export default class AddClubStep1 extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.guidanceText}>Choose the club name</Text>
-          <TextInput
-            value={this.state.clubName}
-            style={styles.inputBox}
-            placeholder="Club Name"
-            placeholderTextColor="#F8F9F9"
-            underlineColorAndroid="#2C3E50"
-            onChangeText={clubName => this.setState({clubName})}
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+        imageStyle={{opacity: 0.85}}>
+        <View style={styles.container}>
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.guidanceText}>Choose the club name</Text>
+            <TextInput
+              value={this.state.clubName}
+              style={styles.inputBox}
+              placeholder="Club Name"
+              placeholderTextColor="#F8F9F9"
+              underlineColorAndroid="#2C3E50"
+              onChangeText={clubName => this.setState({clubName})}
+            />
+            <Text style={styles.guidanceText}>
+              Choose the username for the club's captain
+            </Text>
+            <Text style={styles.recommendationText}>
+              It is recommended to choose username that related to the captain
+              name
+            </Text>
+            <TextInput
+              style={styles.inputBox}
+              value={this.state.captainUsername}
+              placeholder="Captain Username"
+              placeholderTextColor="#F8F9F9"
+              underlineColorAndroid="#2C3E50"
+              onChangeText={captainUsername => this.setState({captainUsername})}
+            />
+          </View>
+          <Text style={{alignSelf: 'center', fontSize: 18}}>Team's color:</Text>
+          <TriangleColorPicker
+            defaultColor={this.state.teamColor}
+            onColorSelected={teamColor => {
+              this.setState({teamColor});
+            }}
+            style={{flex: 0.7}}
           />
-          <Text style={styles.guidanceText}>
-            Choose the username for the club's captain
-          </Text>
-          <Text style={styles.recommendationText}>
-            It is recommended to choose username that related to the captain
-            name
-          </Text>
-          <TextInput
-            style={styles.inputBox}
-            value={this.state.captainUsername}
-            placeholder="Captain Username"
-            placeholderTextColor="#F8F9F9"
-            underlineColorAndroid="#2C3E50"
-            onChangeText={captainUsername => this.setState({captainUsername})}
+
+          <TouchableOpacity style={styles.touchAble} onPress={this.nextStep}>
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+          <AwesomeAlert
+            show={this.state.IllegalUserName}
+            showProgress={false}
+            title="Error"
+            message={
+              '\t\t\t\t\t\t\t\t\tIllegal Username' +
+              '\n' +
+              '- Should be minimum 4 characters\n- Includes only english letters and digits'
+            }
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="ok"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({IllegalUserName: false});
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.IllegalClubName}
+            showProgress={false}
+            title="Error"
+            message={'You did not fill the club name'}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="ok"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({IllegalClubName: false});
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.IllegalColor}
+            showProgress={false}
+            title="Error"
+            message={
+              'You did not choose color\nThe need to click the long stripe'
+            }
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="ok"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({IllegalColor: false});
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.successAlertFromServer}
+            showProgress={false}
+            title="Confirmation"
+            message={'The club and the captain username has been created'}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="ok"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({successAlertFromServer: false});
+            }}
           />
         </View>
-        <Text style={{alignSelf: 'center', fontSize: 18}}>Team's color:</Text>
-        <TriangleColorPicker
-          defaultColor={this.state.teamColor}
-          onColorSelected={teamColor => {
-            this.setState({teamColor});
-          }}
-          style={{flex: 0.7}}
-        />
-
-        <TouchableOpacity style={styles.touchAble} onPress={this.nextStep}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-        <AwesomeAlert
-          show={this.state.IllegalUserName}
-          showProgress={false}
-          title="Error"
-          message={
-            '\t\t\t\t\t\t\t\t\tIllegal Username' +
-            '\n' +
-            '- Should be minimum 4 characters\n- Includes only english letters and digits'
-          }
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showConfirmButton={true}
-          confirmText="Yes"
-          confirmText="ok"
-          confirmButtonColor="#8fbc8f"
-          onConfirmPressed={() => {
-            this.setState({IllegalUserName: false});
-          }}
-        />
-        <AwesomeAlert
-          show={this.state.IllegalClubName}
-          showProgress={false}
-          title="Error"
-          message={'You did not fill the club name'}
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showConfirmButton={true}
-          confirmText="Yes"
-          confirmText="ok"
-          confirmButtonColor="#8fbc8f"
-          onConfirmPressed={() => {
-            this.setState({IllegalClubName: false});
-          }}
-        />
-        <AwesomeAlert
-          show={this.state.IllegalColor}
-          showProgress={false}
-          title="Error"
-          message={
-            'You did not choose color\nThe need to click the long stripe'
-          }
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showConfirmButton={true}
-          confirmText="Yes"
-          confirmText="ok"
-          confirmButtonColor="#8fbc8f"
-          onConfirmPressed={() => {
-            this.setState({IllegalColor: false});
-          }}
-        />
-        <AwesomeAlert
-          show={this.state.successAlertFromServer}
-          showProgress={false}
-          title="Confirmation"
-          message={'The club and the captain username has been created'}
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showConfirmButton={true}
-          confirmText="Yes"
-          confirmText="ok"
-          confirmButtonColor="#8fbc8f"
-          onConfirmPressed={() => {
-            this.setState({successAlertFromServer: false});
-          }}
-        />
-      </View>
+      </ImageBackground>
     );
   }
 }
@@ -188,7 +194,7 @@ export default class AddClubStep1 extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    // backgroundColor: '#5499C7',
     //paddingTop: 5,
     //paddingHorizontal: 25,
     //alignItems: 'center',
@@ -218,18 +224,20 @@ const styles = StyleSheet.create({
     //marginTop: 20,
   },
   guidanceText: {
+    fontFamily: 'sans-serif-normal',
+    width: '80%',
+    paddingHorizontal: 16,
+    fontSize: 20,
+    //marginVertical: 10,
+    marginTop: 40,
+    fontWeight: '600',
+  },
+  recommendationText: {
+    fontStyle: 'italic',
+    marginTop: '2.5%',
     width: '80%',
     paddingHorizontal: 16,
     fontSize: 18,
-    //marginVertical: 10,
-    marginTop: 40,
-  },
-  recommendationText: {
-    width: '80%',
-    paddingHorizontal: 16,
-    fontSize: 16,
-    //marginVertical: 10,
-    //marginTop: 20,
   },
   passwordText: {
     //width: '80%',

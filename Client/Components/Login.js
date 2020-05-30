@@ -93,7 +93,6 @@ export default class Login extends React.Component {
       })
       .catch(err => alert(err));
   }
-
   render() {
     return (
       <View style={styles.container}>
