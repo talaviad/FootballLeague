@@ -27,7 +27,7 @@ export default class InsertGame extends React.Component {
       date: '',
       team1Name: null,
       team2Name: null,
-      team1Goals: '3',
+      team1Goals: '',
       team2Goals: '',
       team1ScorrersDic: [],
       team2ScorrersDic: [],
@@ -63,7 +63,11 @@ export default class InsertGame extends React.Component {
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={{
-              dateTouchBody: {borderWidth: 0.65, borderRadius: 7.5},
+              dateTouchBody: {
+                borderWidth: 0.65,
+                borderRadius: 7.5,
+                backgroundColor: '#0c4271',
+              },
               dateIcon: {
                 position: 'absolute',
                 left: 4,
@@ -76,13 +80,13 @@ export default class InsertGame extends React.Component {
               },
               // dateInput: {backgroundColor: '#ADADAD'},
               dateText: {
-                color: 'black',
+                color: 'white',
                 fontSize: 19,
                 fontFamily: 'sans',
                 fontWeight: 'bold',
               },
               placeholderText: {
-                color: 'black',
+                color: 'white',
                 fontSize: 19,
                 fontFamily: 'sans-serif-condensed',
                 fontStyle: 'italic',
@@ -105,12 +109,13 @@ export default class InsertGame extends React.Component {
               <TeamSelector
                 selectedTitleStyle={{
                   //the style of select team text
-                  color: 'black',
+                  color: 'white',
                   fontSize: 18,
                   textAlign: 'center',
                   fontFamily: 'sans-serif-condensed',
                   fontWeight: '60',
                 }}
+                style={{backgroundColor: '#0c4271'}}
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
                   if (text !== null) {
@@ -140,8 +145,8 @@ export default class InsertGame extends React.Component {
                 !this.state.score1Legal
                   ? {backgroundColor: 'red'}
                   : this.state.selectedTeam1
-                  ? {backgroundColor: 'white'}
-                  : {backgroundColor: '#c0c0c0'},
+                  ? {backgroundColor: '#0c4271'}
+                  : {backgroundColor: '#a9a9a9'},
               ]}
               keyboardType="number-pad"
               value={this.state.team1Goals}
@@ -186,12 +191,13 @@ export default class InsertGame extends React.Component {
               <TeamSelector
                 selectedTitleStyle={{
                   //the style of select team text
-                  color: 'black',
+                  color: 'white',
                   fontSize: 18,
                   textAlign: 'center',
                   fontFamily: 'sans-serif-condensed',
                   fontWeight: '60',
                 }}
+                style={{backgroundColor: '#0c4271'}}
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
                   if (text !== null) {
@@ -222,8 +228,8 @@ export default class InsertGame extends React.Component {
                 !this.state.score2Legal
                   ? {backgroundColor: 'red'}
                   : this.state.selectedTeam2
-                  ? {backgroundColor: 'white'}
-                  : {backgroundColor: '#c0c0c0'},
+                  ? {backgroundColor: '#0c4271'}
+                  : {backgroundColor: '#a9a9a9'},
               ]}
               keyboardType="numeric"
               value={this.state.team2Goals}
@@ -608,16 +614,7 @@ const styles = StyleSheet.create({
   field: {
     marginRight: 10,
   },
-  fieldNumber: {
-    marginRight: 10,
-    width: 60,
-    height: 40,
-  },
-  fieldName: {
-    marginRight: 10,
-    width: 100,
-    height: 40,
-  },
+
   scorerField: {
     marginRight: 10,
     width: 50,
@@ -633,19 +630,16 @@ const styles = StyleSheet.create({
   error: {
     marginTop: 10,
   },
-  input: {
-    margin: 15,
-    height: 40,
-    borderColor: '#7a42f4',
-    borderWidth: 1,
-  },
+
   scoreTextInput: {
+    height: '90%',
     borderWidth: 0.8,
     borderColor: 'black',
     width: '15%',
     borderRadius: 10,
     textAlign: 'center',
     marginLeft: '2%',
+    color: 'white',
   },
   errorMsg: {
     color: 'red',

@@ -46,11 +46,15 @@ const AppNavigator = createStackNavigator(
     initialRouteName: 'Home',
     defaultNavigationOptions: {
       headerStyle: {
-        backgroundColor: '#659DBD', //#3B8EBE
+        backgroundColor: '#8cb3d9', //#3B8EBE
+        borderBottomWidth: 1,
+        // borderWidth: 3,
+        borderBottomColor: 'black',
       },
       headerTintColor: '#black',
       headerTitleStyle: {
         fontFamily: 'sans-serif-medium',
+        color: 'black',
       },
     },
   },
@@ -61,6 +65,10 @@ const AppContainer = createAppContainer(AppNavigator);
 //Styling for specific for the Home Page
 Home.navigationOptions = {
   headerStyle: {},
+  headerTitleStyle: {
+    fontFamily: 'sans-serif-medium',
+    color: 'black',
+  },
   headerLeft: (
     <Image
       source={require('./Images/aguda.jpeg')}
@@ -73,6 +81,7 @@ Home.navigationOptions = {
 GameMode.navigationOptions = {
   headerStyle: {
     backgroundColor: '#687864', //#3B8EBE
+    opacity: 0.9,
   },
 };
 export default class App extends React.Component {

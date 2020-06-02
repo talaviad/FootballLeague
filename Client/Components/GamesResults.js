@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView} from 'react-native';
+import {StyleSheet, View, ScrollView, ImageBackground} from 'react-native';
 import {Table, Row} from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Picker} from '@react-native-community/picker';
@@ -83,295 +83,300 @@ export default class GamesResults extends React.Component {
   render() {
     const state = this.state;
     return (
-      <View style={styles.container}>
-        <View
-          style={{
-            borderColor: 'black',
-            backgroundColor: '#86B3D1',
-            borderWidth: 0.8,
-            // flex: 1,
-          }}>
-          <Picker
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+        imageStyle={{opacity: 0.8}}>
+        <View style={styles.container}>
+          <View
             style={{
-              marginLeft: '40%',
-              textAlign: 'left',
-            }}
-            mode="dropdown"
-            selectedValue={this.state.selectedMonth}
-            onValueChange={(itemValue, itemIndex) => {
-              this.state.firstTableData = [];
-              this.state.secondTableData = [];
-              this.state.thirdTableData = [];
-              this.state.fourthTableData = [];
-              this.state.firstScorersDictList = []; //each item is an array(of size 2) that includes the string of the scorrers
-              this.state.secondScorersDictList = [];
-              this.state.thirdScorersDictList = [];
-              this.state.fourthScorersDictList = [];
-              this.state.firstTableColorRows = []; //includes all the indexes of the games that their button is pressed
-              this.state.secondTableColorRows = [];
-              this.state.thirdTableColorRows = [];
-              this.state.fourthTableColorRows = [];
-              this.state.firstMaxScorrersOfMatch = []; //each item is the maximum scorers of a match(just for the height of the cell of the scorers)
-              this.state.secondMaxScorrersOfMatch = [];
-              this.state.thirdMaxScorrersOfMatch = [];
-              this.state.fourthMaxScorrersOfMatch = [];
-              this.setState({selectedMonth: itemValue});
-              this.state.isLoading = true;
-              this.fetchData(itemValue);
+              borderColor: 'black',
+              // backgroundColor: '#86B3D1',
+              borderWidth: 0.8,
+              // flex: 1,
             }}>
-            {this.getMonthListInItems()}
-          </Picker>
+            <Picker
+              style={{
+                marginLeft: '40%',
+                textAlign: 'left',
+              }}
+              mode="dropdown"
+              selectedValue={this.state.selectedMonth}
+              onValueChange={(itemValue, itemIndex) => {
+                this.state.firstTableData = [];
+                this.state.secondTableData = [];
+                this.state.thirdTableData = [];
+                this.state.fourthTableData = [];
+                this.state.firstScorersDictList = []; //each item is an array(of size 2) that includes the string of the scorrers
+                this.state.secondScorersDictList = [];
+                this.state.thirdScorersDictList = [];
+                this.state.fourthScorersDictList = [];
+                this.state.firstTableColorRows = []; //includes all the indexes of the games that their button is pressed
+                this.state.secondTableColorRows = [];
+                this.state.thirdTableColorRows = [];
+                this.state.fourthTableColorRows = [];
+                this.state.firstMaxScorrersOfMatch = []; //each item is the maximum scorers of a match(just for the height of the cell of the scorers)
+                this.state.secondMaxScorrersOfMatch = [];
+                this.state.thirdMaxScorrersOfMatch = [];
+                this.state.fourthMaxScorrersOfMatch = [];
+                this.setState({selectedMonth: itemValue});
+                this.state.isLoading = true;
+                this.fetchData(itemValue);
+              }}>
+              {this.getMonthListInItems()}
+            </Picker>
+          </View>
+          <ScrollView>
+            <View style={{paddingTop: 20}}>
+              <Table borderStyle={{borderWidth: 0.5}}>
+                <Row
+                  data={[['1-7 In ' + this.state.selectedMonth]]}
+                  style={styles.headDate}
+                  textStyle={styles.textHeadDate}
+                />
+                {/* <Row
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 22]}
+                style={styles.head}
+                textStyle={styles.textHead}
+              /> */}
+                <Table style={{borderColor: '#C1C0B9'}}>
+                  {this.state.isLoading ? null : this.state.firstTableData
+                      .length === 0 ? (
+                    <Row
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      data={['No Games']}
+                    />
+                  ) : (
+                    this.state.firstTableData.map((dataRow, index) => [
+                      <Row
+                        key={index}
+                        data={dataRow.concat(
+                          this.createButton(
+                            index,
+                            this.state.firstTableColorRows,
+                          ),
+                        )}
+                        style={styles.row}
+                        textStyle={styles.textLines}
+                        flexArr={[60, 30, 60, 40, 22]}
+                      />,
+                      this.state.firstTableColorRows.includes(index) ? (
+                        <Row
+                          style={[
+                            styles.row,
+                            {
+                              // backgroundColor: '#B4DFE5',
+                              alignSelf: 'flex-start',
+                              height:
+                                40 +
+                                12 * this.state.firstMaxScorrersOfMatch[index],
+                            },
+                          ]}
+                          flexArr={[50, 50]}
+                          textStyle={styles.textLinesScorers}
+                          data={this.state.firstScorersDictList[index]}
+                        />
+                      ) : (
+                        <Row />
+                      ),
+                    ])
+                  )}
+                </Table>
+              </Table>
+            </View>
+
+            <View style={{paddingTop: 20}}>
+              <Table borderStyle={{borderWidth: 0.5}}>
+                <Row
+                  data={[['8-14 In ' + this.state.selectedMonth]]}
+                  style={styles.headDate}
+                  textStyle={styles.textHeadDate}
+                />
+
+                {/* <Row
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 22]}
+                style={styles.head}
+                textStyle={styles.textHead}
+              /> */}
+                <Table style={{borderColor: '#C1C0B9'}}>
+                  {this.state.isLoading ? null : this.state.secondTableData
+                      .length === 0 ? (
+                    <Row
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      data={['No Games']}
+                    />
+                  ) : (
+                    this.state.secondTableData.map((dataRow, index) => [
+                      <Row
+                        key={index}
+                        data={dataRow.concat(
+                          this.createButton(
+                            index,
+                            this.state.secondTableColorRows,
+                          ),
+                        )}
+                        style={styles.row}
+                        textStyle={styles.textLines}
+                        flexArr={[60, 30, 60, 40, 22]}
+                      />,
+                      this.state.secondTableColorRows.includes(index) ? (
+                        <Row
+                          style={[
+                            styles.row,
+                            {
+                              // backgroundColor: '#B4DFE5',
+                              alignSelf: 'flex-start',
+                              height:
+                                40 +
+                                12 * this.state.secondMaxScorrersOfMatch[index],
+                            },
+                          ]}
+                          flexArr={[50, 50]}
+                          textStyle={styles.textLinesScorers}
+                          data={this.state.secondScorersDictList[index]}
+                        />
+                      ) : (
+                        <Row />
+                      ),
+                    ])
+                  )}
+                </Table>
+              </Table>
+            </View>
+            <View style={{paddingTop: 20}}>
+              <Table borderStyle={{borderWidth: 0.5}}>
+                <Row
+                  data={[['15-21 In ' + this.state.selectedMonth]]}
+                  style={styles.headDate}
+                  textStyle={styles.textHeadDate}
+                />
+
+                {/* <Row
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 22]}
+                style={styles.head}
+                textStyle={styles.textHead}
+              /> */}
+                <Table style={{borderColor: '#C1C0B9'}}>
+                  {this.state.isLoading ? null : this.state.thirdTableData
+                      .length === 0 ? (
+                    <Row
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      data={['No Games']}
+                    />
+                  ) : (
+                    this.state.thirdTableData.map((dataRow, index) => [
+                      <Row
+                        key={index}
+                        data={dataRow.concat(
+                          this.createButton(
+                            index,
+                            this.state.thirdTableColorRows,
+                          ),
+                        )}
+                        style={styles.row}
+                        textStyle={styles.textLines}
+                        flexArr={[60, 30, 60, 40, 22]}
+                      />,
+                      this.state.thirdTableColorRows.includes(index) ? (
+                        <Row
+                          style={[
+                            styles.row,
+                            {
+                              // backgroundColor: '#B4DFE5',
+                              alignSelf: 'flex-start',
+                              height:
+                                40 +
+                                12 * this.state.thirdMaxScorrersOfMatch[index],
+                            },
+                          ]}
+                          flexArr={[50, 50]}
+                          textStyle={styles.textLinesScorers}
+                          data={this.state.thirdScorersDictList[index]}
+                        />
+                      ) : (
+                        <Row />
+                      ),
+                    ])
+                  )}
+                </Table>
+              </Table>
+            </View>
+            <View style={{paddingTop: 20}}>
+              <Table borderStyle={{borderWidth: 0.5}}>
+                <Row
+                  data={[['22-31 In ' + this.state.selectedMonth]]}
+                  style={styles.headDate}
+                  textStyle={styles.textHeadDate}
+                />
+
+                {/* <Row
+                data={['Team1', 'Result', 'Team2', 'Date', '']}
+                flexArr={[60, 30, 60, 40, 22]}
+                style={styles.head}
+                textStyle={styles.textHead}
+              /> */}
+                <Table style={{borderColor: '#C1C0B9'}}>
+                  {this.state.isLoading ? null : this.state.fourthTableData
+                      .length === 0 ? (
+                    <Row
+                      style={styles.row}
+                      textStyle={styles.textLines}
+                      data={['No Games']}
+                    />
+                  ) : (
+                    this.state.fourthTableData.map((dataRow, index) => [
+                      <Row
+                        key={index}
+                        data={dataRow.concat(
+                          this.createButton(
+                            index,
+                            this.state.fourthTableColorRows,
+                          ),
+                        )}
+                        style={styles.row}
+                        textStyle={styles.textLines}
+                        flexArr={[60, 30, 60, 40, 22]}
+                      />,
+                      this.state.fourthTableColorRows.includes(index) ? (
+                        <Row
+                          style={[
+                            styles.row,
+                            {
+                              // backgroundColor: '#B4DFE5',
+                              alignSelf: 'flex-start',
+                              height:
+                                40 +
+                                12 * this.state.fourthMaxScorrersOfMatch[index],
+                            },
+                          ]}
+                          flexArr={[50, 50]}
+                          textStyle={styles.textLinesScorers}
+                          data={this.state.fourthScorersDictList[index]}
+                        />
+                      ) : (
+                        <Row />
+                      ),
+                    ])
+                  )}
+                </Table>
+              </Table>
+            </View>
+          </ScrollView>
         </View>
-        <ScrollView>
-          <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 0.5}}>
-              <Row
-                data={[['1-7 In ' + this.state.selectedMonth]]}
-                style={styles.headDate}
-                textStyle={styles.textHeadDate}
-              />
-              {/* <Row
-                data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 22]}
-                style={styles.head}
-                textStyle={styles.textHead}
-              /> */}
-              <Table style={{borderColor: '#C1C0B9'}}>
-                {this.state.isLoading ? null : this.state.firstTableData
-                    .length === 0 ? (
-                  <Row
-                    style={styles.row}
-                    textStyle={styles.textLines}
-                    data={['No Games']}
-                  />
-                ) : (
-                  this.state.firstTableData.map((dataRow, index) => [
-                    <Row
-                      key={index}
-                      data={dataRow.concat(
-                        this.createButton(
-                          index,
-                          this.state.firstTableColorRows,
-                        ),
-                      )}
-                      style={styles.row}
-                      textStyle={styles.textLines}
-                      flexArr={[60, 30, 60, 40, 22]}
-                    />,
-                    this.state.firstTableColorRows.includes(index) ? (
-                      <Row
-                        style={[
-                          styles.row,
-                          {
-                            backgroundColor: '#B4DFE5',
-                            alignSelf: 'flex-start',
-                            height:
-                              40 +
-                              12 * this.state.firstMaxScorrersOfMatch[index],
-                          },
-                        ]}
-                        flexArr={[50, 50]}
-                        textStyle={styles.textLinesScorers}
-                        data={this.state.firstScorersDictList[index]}
-                      />
-                    ) : (
-                      <Row />
-                    ),
-                  ])
-                )}
-              </Table>
-            </Table>
-          </View>
-
-          <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 0.5}}>
-              <Row
-                data={[['8-14 In ' + this.state.selectedMonth]]}
-                style={styles.headDate}
-                textStyle={styles.textHeadDate}
-              />
-
-              {/* <Row
-                data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 22]}
-                style={styles.head}
-                textStyle={styles.textHead}
-              /> */}
-              <Table style={{borderColor: '#C1C0B9'}}>
-                {this.state.isLoading ? null : this.state.secondTableData
-                    .length === 0 ? (
-                  <Row
-                    style={styles.row}
-                    textStyle={styles.textLines}
-                    data={['No Games']}
-                  />
-                ) : (
-                  this.state.secondTableData.map((dataRow, index) => [
-                    <Row
-                      key={index}
-                      data={dataRow.concat(
-                        this.createButton(
-                          index,
-                          this.state.secondTableColorRows,
-                        ),
-                      )}
-                      style={styles.row}
-                      textStyle={styles.textLines}
-                      flexArr={[60, 30, 60, 40, 22]}
-                    />,
-                    this.state.secondTableColorRows.includes(index) ? (
-                      <Row
-                        style={[
-                          styles.row,
-                          {
-                            backgroundColor: '#B4DFE5',
-                            alignSelf: 'flex-start',
-                            height:
-                              40 +
-                              12 * this.state.secondMaxScorrersOfMatch[index],
-                          },
-                        ]}
-                        flexArr={[50, 50]}
-                        textStyle={styles.textLinesScorers}
-                        data={this.state.secondScorersDictList[index]}
-                      />
-                    ) : (
-                      <Row />
-                    ),
-                  ])
-                )}
-              </Table>
-            </Table>
-          </View>
-          <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 0.5}}>
-              <Row
-                data={[['15-21 In ' + this.state.selectedMonth]]}
-                style={styles.headDate}
-                textStyle={styles.textHeadDate}
-              />
-
-              {/* <Row
-                data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 22]}
-                style={styles.head}
-                textStyle={styles.textHead}
-              /> */}
-              <Table style={{borderColor: '#C1C0B9'}}>
-                {this.state.isLoading ? null : this.state.thirdTableData
-                    .length === 0 ? (
-                  <Row
-                    style={styles.row}
-                    textStyle={styles.textLines}
-                    data={['No Games']}
-                  />
-                ) : (
-                  this.state.thirdTableData.map((dataRow, index) => [
-                    <Row
-                      key={index}
-                      data={dataRow.concat(
-                        this.createButton(
-                          index,
-                          this.state.thirdTableColorRows,
-                        ),
-                      )}
-                      style={styles.row}
-                      textStyle={styles.textLines}
-                      flexArr={[60, 30, 60, 40, 22]}
-                    />,
-                    this.state.thirdTableColorRows.includes(index) ? (
-                      <Row
-                        style={[
-                          styles.row,
-                          {
-                            backgroundColor: '#B4DFE5',
-                            alignSelf: 'flex-start',
-                            height:
-                              40 +
-                              12 * this.state.thirdMaxScorrersOfMatch[index],
-                          },
-                        ]}
-                        flexArr={[50, 50]}
-                        textStyle={styles.textLinesScorers}
-                        data={this.state.thirdScorersDictList[index]}
-                      />
-                    ) : (
-                      <Row />
-                    ),
-                  ])
-                )}
-              </Table>
-            </Table>
-          </View>
-          <View style={{paddingTop: 20}}>
-            <Table borderStyle={{borderWidth: 0.5}}>
-              <Row
-                data={[['22-31 In ' + this.state.selectedMonth]]}
-                style={styles.headDate}
-                textStyle={styles.textHeadDate}
-              />
-
-              {/* <Row
-                data={['Team1', 'Result', 'Team2', 'Date', '']}
-                flexArr={[60, 30, 60, 40, 22]}
-                style={styles.head}
-                textStyle={styles.textHead}
-              /> */}
-              <Table style={{borderColor: '#C1C0B9'}}>
-                {this.state.isLoading ? null : this.state.fourthTableData
-                    .length === 0 ? (
-                  <Row
-                    style={styles.row}
-                    textStyle={styles.textLines}
-                    data={['No Games']}
-                  />
-                ) : (
-                  this.state.fourthTableData.map((dataRow, index) => [
-                    <Row
-                      key={index}
-                      data={dataRow.concat(
-                        this.createButton(
-                          index,
-                          this.state.fourthTableColorRows,
-                        ),
-                      )}
-                      style={styles.row}
-                      textStyle={styles.textLines}
-                      flexArr={[60, 30, 60, 40, 22]}
-                    />,
-                    this.state.fourthTableColorRows.includes(index) ? (
-                      <Row
-                        style={[
-                          styles.row,
-                          {
-                            backgroundColor: '#B4DFE5',
-                            alignSelf: 'flex-start',
-                            height:
-                              40 +
-                              12 * this.state.fourthMaxScorrersOfMatch[index],
-                          },
-                        ]}
-                        flexArr={[50, 50]}
-                        textStyle={styles.textLinesScorers}
-                        data={this.state.fourthScorersDictList[index]}
-                      />
-                    ) : (
-                      <Row />
-                    ),
-                  ])
-                )}
-              </Table>
-            </Table>
-          </View>
-        </ScrollView>
-      </View>
+      </ImageBackground>
     );
   }
 
   createButton = (index, arr) => (
     <Icon.Button
       name={arr.includes(index) ? 'angle-up' : 'angle-down'}
-      style={{backgroundColor: '#DEF2F1'}}
+      backgroundColor="" //this line is important, it's canceling the deafult color
       color={'black'}
       size={22}
       onPress={() => {
@@ -467,7 +472,7 @@ export default class GamesResults extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DEF2F1',
+    // backgroundColor: '#DEF2F1',
   },
   picker: {
     height: '10%',
@@ -476,32 +481,32 @@ const styles = StyleSheet.create({
   },
   head: {
     height: 28,
-    backgroundColor: '#29648A',
+    // backgroundColor: '#29648A',
     borderWidth: 1,
   },
   headDate: {
     height: 18,
-    backgroundColor: '#86B3D1',
+    backgroundColor: '#123C69',
   },
   wrapper: {
     flexDirection: 'row',
   },
   textHead: {
     textAlign: 'center',
-    fontFamily: 'sans-serif',
+    fontFamily: 'sans-serif-condensed',
     fontSize: 17,
-    color: 'white',
+    color: 'black',
   },
   textHeadDate: {
     textAlign: 'center',
-    fontFamily: 'sans-serif',
+    fontFamily: 'sans-serif-condensed',
     fontSize: 17,
-    color: 'black',
+    color: 'white',
   },
   textLines: {
     textAlign: 'center',
     fontFamily: 'sans-serif-condensed',
-    fontSize: 15,
+    fontSize: 16,
     color: 'black',
   },
   textLinesScorers: {
@@ -514,7 +519,7 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     fontFamily: 'Times',
-    color: '#AED6F1',
+    // color: '#AED6F1',
   },
   row: {
     height: 55,
@@ -522,7 +527,7 @@ const styles = StyleSheet.create({
 
   picker: {
     width: 200,
-    backgroundColor: '#FFF0E0',
+    // backgroundColor: '#FFF0E0',
     borderColor: 'black',
     borderWidth: 5,
   },

@@ -28,11 +28,14 @@ export default class TeamSelector extends Component {
           selectButtonText={'OK'}
           cancelButtonText={'Cancel'}
           searchPlaceHolderText={'Search Club Name'}
-          style={{
-            borderRadius: 10,
-            borderWidth: 0.5,
-            borderColor: 'black',
-          }}
+          style={[
+            {
+              borderRadius: 10,
+              borderWidth: 0.5,
+              borderColor: 'black',
+            },
+            this.props.style,
+          ]}
           colorTheme={'blue'}
           popupTitle="Select Club"
           title="Select Club"

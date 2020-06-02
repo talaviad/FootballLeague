@@ -1,8 +1,13 @@
 import React from 'react';
-import { Table, Row, Rows, TableWrapper } from 'react-native-table-component';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {Table, Row, Rows, TableWrapper} from 'react-native-table-component';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ImageBackground,
+} from 'react-native';
 import GLOBALS from '../Globals';
-
 
 export default class LeagueTable extends React.Component {
   constructor(props) {
@@ -26,38 +31,45 @@ export default class LeagueTable extends React.Component {
   render() {
     const state = this.state;
     return (
-      <ScrollView style={styles.container}>
-        <Table borderStyle={{borderWidth: 1}}>
-          <Row
-            data={state.tableHead}
-            flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-            style={styles.head}
-            textStyle={styles.textHead}
-          />
-          <TableWrapper style={styles.wrapper}>
-            <Rows
-              data={state.tableData}
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+        imageStyle={{opacity: 0.8}}>
+        <ScrollView style={styles.container}>
+          <Table>
+            <Row
+              data={state.tableHead}
               flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.row}
-              textStyle={styles.textLines}
+              style={styles.head}
+              textStyle={styles.textHead}
             />
-          </TableWrapper>
-        </Table>
-        <View style={styles.decleration}>
-          <View style={styles.declerationLine}>
-            <Text style={{alignSelf: 'flex-start'}}>MP - Matches Played</Text>
-            <Text style={{alignSelf: 'flex-start'}}>W - Won</Text>
-            <Text style={{alignSelf: 'flex-start'}}>D - Draw</Text>
-            <Text style={{alignSelf: 'flex-start'}}>L - Loss</Text>
+            <TableWrapper style={styles.wrapper}>
+              <Rows
+                data={state.tableData}
+                flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+                style={styles.row}
+                textStyle={styles.textLines}
+              />
+            </TableWrapper>
+          </Table>
+          <View style={styles.decleration}>
+            <View style={styles.declerationLine}>
+              <Text style={{alignSelf: 'flex-start'}}>MP - Matches Played</Text>
+              <Text style={{alignSelf: 'flex-start'}}>W - Won</Text>
+              <Text style={{alignSelf: 'flex-start'}}>D - Draw</Text>
+              <Text style={{alignSelf: 'flex-start'}}>L - Loss</Text>
+            </View>
+            <View style={styles.declerationLine}>
+              <Text style={{alignSelf: 'flex-start'}}>GS - Goals Scored</Text>
+              <Text style={{alignSelf: 'flex-start'}}>GA - Goals Against</Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                GD - Goal Difference
+              </Text>
+              <Text style={{alignSelf: 'flex-start'}}>Pts - points</Text>
+            </View>
           </View>
-          <View style={styles.declerationLine}>
-            <Text style={{alignSelf: 'flex-start'}}>GS - Goals Scored</Text>
-            <Text style={{alignSelf: 'flex-start'}}>GA - Goals Against</Text>
-            <Text style={{alignSelf: 'flex-start'}}>GD - Goal Difference</Text>
-            <Text style={{alignSelf: 'flex-start'}}>Pts - points</Text>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </ImageBackground>
     );
   }
 }
@@ -65,14 +77,15 @@ export default class LeagueTable extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: GLOBALS.colors.BackGround,
+    // backgroundColor: GLOBALS.colors.BackGround,
   },
   head: {
     height: 28,
-    backgroundColor: '#5D6D7E',
+    backgroundColor: '#123c69',
   },
   wrapper: {
     flexDirection: 'row',
+    borderWidth: 1,
   },
   title: {
     flex: 1,
@@ -80,16 +93,23 @@ const styles = StyleSheet.create({
   },
   row: {
     height: 55,
+    borderBottomWidth: 0.4,
+    borderTopWidth: 0.4,
   },
   textHead: {
     textAlign: 'center',
-    fontFamily: 'Times',
-    color: '#AED6F1',
+    fontFamily: 'sans-serif-condensed',
+    color: 'white',
+    fontSize: 17,
   },
   textLines: {
+    // textAlign: 'center',
+    // fontFamily: 'Times',
+    // color: '#2C3E50',
     textAlign: 'center',
-    fontFamily: 'Times',
-    color: '#2C3E50',
+    fontFamily: 'sans-serif-condensed',
+    fontSize: 16,
+    color: 'black',
   },
   decleration: {
     borderWidth: 1,
@@ -101,6 +121,3 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
 });
-
-
-

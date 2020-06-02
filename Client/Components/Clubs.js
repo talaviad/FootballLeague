@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import {CustomPicker} from 'react-native-custom-picker';
 import {List, ListItem} from 'react-native-elements';
@@ -43,8 +44,7 @@ export default class Clubs extends React.Component {
         .sort((a, b) => a.jerseyNumber - b.jerseyNumber) //sorting the list by the jersey number
         .map((l, i) => (
           <ListItem
-            // containerStyle={{backgroundColor: '#EDF5E1'}} //this was the other color I've tried
-            containerStyle={{backgroundColor: '#DEF2F1'}}
+            containerStyle={{backgroundColor: ''}} //this line is important, canceling the deafult color
             // key={i}
             leftIcon={
               <Text style={{fontSize: 20, fontFamily: 'serif'}}>
@@ -204,60 +204,64 @@ export default class Clubs extends React.Component {
   render() {
     const state = this.state;
     return (
-      <View style={styles.body}>
-        <Image
-          source={require('../Images/image2.jpg')}
-          style={{width: '100%', height: '25%'}}
-        />
-        <View
-          style={{
-            flexDirection: 'row',
-            flex: 0.2,
-            backgroundColor: '#3B8EBE',
-            width: '100%',
-            height: '10%',
-          }}>
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={[styles.image, {flex: 1}, {opacity: 0.8}]}>
+        <View style={styles.body}>
+          <Image
+            source={require('../Images/image2.jpg')}
+            style={{width: '100%', height: '25%'}}
+          />
           <View
             style={{
-              flex: 1,
+              flexDirection: 'row',
+              flex: 0.2,
+              // backgroundColor: '#3B8EBE',
+              width: '100%',
+              height: '10%',
             }}>
-            <CustomPicker
+            <View
               style={{
-                textAlign: 'center',
-                fontSize: 30,
-                paddingLeft: 5,
-                marginLeft: -5,
-                color: 'red',
-              }}
-              backdropStyle={{borderWidth: 3}}
-              value={this.state.selectedClub}
-              options={this.props.navigation.getParam('teamList')}
-              fieldTemplate={this.renderField}
-              optionTemplate={this.renderOption}
-              onValueChange={(itemValue, itemIndex) => {
-                this.setState({selectedClub: itemValue});
-                this.updatePlayerList(itemValue);
+                flex: 1,
+              }}>
+              <CustomPicker
+                style={{
+                  textAlign: 'center',
+                  fontSize: 30,
+                  paddingLeft: 5,
+                  marginLeft: -5,
+                  color: 'red',
+                }}
+                backdropStyle={{borderWidth: 3}}
+                value={this.state.selectedClub}
+                options={this.props.navigation.getParam('teamList')}
+                fieldTemplate={this.renderField}
+                optionTemplate={this.renderOption}
+                onValueChange={(itemValue, itemIndex) => {
+                  this.setState({selectedClub: itemValue});
+                  this.updatePlayerList(itemValue);
+                }}
+              />
+            </View>
+            <Icon
+              name="tshirt"
+              size={40}
+              style={{
+                marginTop: 18,
+                marginRight: 15,
+                color: state.currentClubDict.color,
               }}
             />
           </View>
-          <Icon
-            name="tshirt"
-            size={40}
-            style={{
-              marginTop: 18,
-              marginRight: 15,
-              color: state.currentClubDict.color,
-            }}
+          <TabView
+            style={{/*backgroundColor: '#DEF2F1',*/ flex: 1}}
+            navigationState={this.state}
+            renderScene={this.renderScene}
+            renderTabBar={this._renderTabBar}
+            onIndexChange={this._handleIndexChange}
           />
         </View>
-        <TabView
-          style={{backgroundColor: '#DEF2F1', flex: 1}}
-          navigationState={this.state}
-          renderScene={this.renderScene}
-          renderTabBar={this._renderTabBar}
-          onIndexChange={this._handleIndexChange}
-        />
-      </View>
+      </ImageBackground>
     );
   }
 
@@ -318,7 +322,7 @@ const styles = StyleSheet.create({
   },
   head: {
     height: 28,
-    backgroundColor: '#5D6D7E',
+    // backgroundColor: '#5D6D7E',
   },
 
   row: {
@@ -334,7 +338,7 @@ const styles = StyleSheet.create({
   textLines: {
     textAlign: 'center',
     fontFamily: 'sans-serif-condensed',
-    color: '#2C3E50',
+    // color: '#2C3E50',
     fontSize: 16,
   },
   container: {

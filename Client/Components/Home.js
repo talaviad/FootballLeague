@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
 import {Table, Row, Rows} from 'react-native-table-component';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -207,8 +209,11 @@ export default class Home extends React.Component {
 
   render() {
     return (
-      <View style={{height: '100%'}}>
-        <ScrollView style={styles.body}>
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={[styles.image, {flex: 1}, {opacity: 0.8}]}>
+        <View style={{height: Dimensions.get('window').height + Header.HEIGHT}}>
+          {/* <ScrollView style={styles.body}> */}
           <View style={styles.sectionTwoBtnContainer}>
             {!this.state.isLoggedIn ? (
               <TouchableOpacity
@@ -374,92 +379,94 @@ export default class Home extends React.Component {
               <ActivityIndicator color={'#fff'} size={80} />
             )}
           </View>
-        </ScrollView>
-        <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'manager' && (
-            <ButtonsRow>
-              <RoundButton
-                title="Add New Referee"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('AddReferee', {
-                    IP: IP,
-                    PORT: PORT,
-                  });
-                }}
-              />
-              <RoundButton
-                title="Add New Club"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('AddClub', {
-                    IP: IP,
-                    PORT: PORT,
-                  });
-                }}
-              />
-              <RoundButton
-                title="Change Password"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('ChangePassword', {
-                    IP: IP,
-                    PORT: PORT,
-                    username: this.state.username,
-                  });
-                }}
-              />
-            </ButtonsRow>
-          )}
+          {/* </ScrollView> */}
+          <View style={{height: GLOBALS.windowHeightSize / 10}}>
+            {this.state.role === 'manager' && (
+              <ButtonsRow>
+                <RoundButton
+                  title="Add New Referee"
+                  color="#5f9ea0"
+                  background="#3D3D3D"
+                  onPress={() => {
+                    this.props.navigation.navigate('AddReferee', {
+                      IP: IP,
+                      PORT: PORT,
+                    });
+                  }}
+                />
+                <RoundButton
+                  title="Add New Club"
+                  color="#5f9ea0"
+                  background="#3D3D3D"
+                  onPress={() => {
+                    this.props.navigation.navigate('AddClub', {
+                      IP: IP,
+                      PORT: PORT,
+                    });
+                  }}
+                />
+                <RoundButton
+                  title="Change Password"
+                  color="#5f9ea0"
+                  background="#3D3D3D"
+                  onPress={() => {
+                    this.props.navigation.navigate('ChangePassword', {
+                      IP: IP,
+                      PORT: PORT,
+                      username: this.state.username,
+                    });
+                  }}
+                />
+              </ButtonsRow>
+            )}
+          </View>
+          <View style={{height: GLOBALS.windowHeightSize / 10}}>
+            {this.state.role === 'referee' && (
+              <ButtonsRow>
+                <RoundButton
+                  title="Change Password"
+                  color="#5f9ea0"
+                  background="#3D3D3D"
+                  onPress={() => {
+                    this.props.navigation.navigate('ChangePassword', {
+                      IP: IP,
+                      PORT: PORT,
+                      username: this.state.username,
+                    });
+                  }}
+                />
+              </ButtonsRow>
+            )}
+          </View>
+          <View style={{height: GLOBALS.windowHeightSize / 10}}>
+            {this.state.role === 'captain' && (
+              <ButtonsRow>
+                <RoundButton
+                  title="Change Password"
+                  color="#5f9ea0"
+                  background="#3D3D3D"
+                  onPress={() => {
+                    this.props.navigation.navigate('ChangePassword', {
+                      IP: IP,
+                      PORT: PORT,
+                      username: this.state.username,
+                    });
+                  }}
+                />
+              </ButtonsRow>
+            )}
+          </View>
         </View>
-        <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'referee' && (
-            <ButtonsRow>
-              <RoundButton
-                title="Change Password"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('ChangePassword', {
-                    IP: IP,
-                    PORT: PORT,
-                    username: this.state.username,
-                  });
-                }}
-              />
-            </ButtonsRow>
-          )}
-        </View>
-        <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'captain' && (
-            <ButtonsRow>
-              <RoundButton
-                title="Change Password"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('ChangePassword', {
-                    IP: IP,
-                    PORT: PORT,
-                    username: this.state.username,
-                  });
-                }}
-              />
-            </ButtonsRow>
-          )}
-        </View>
-      </View>
+      </ImageBackground>
     );
   }
 }
 
 const styles = StyleSheet.create({
   body: {
-    height: GLOBALS.windowHeightSize * (6 / 10),
-    backgroundColor: '#5499C7',
+    // height: GLOBALS.windowHeightSize * (6 / 10),
+    // height: Dimensions.get('window').height,
+    // backgroundColor: '#5499C7',
   },
   sectionTwoBtnContainer: {
     display: 'flex',
@@ -467,6 +474,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 32,
     paddingHorizontal: 24,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   sectionContainer: {
     marginTop: 32,

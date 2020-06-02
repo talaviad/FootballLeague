@@ -6,7 +6,7 @@ import {
   Col,
   TableWrapper,
 } from 'react-native-table-component';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, ImageBackground} from 'react-native';
 import SearchBar from 'react-native-search-bar';
 var timeoutHandle;
 export default class ScorerTable extends React.Component {
@@ -62,30 +62,34 @@ export default class ScorerTable extends React.Component {
   render() {
     const state = this.state;
     return (
-      <ScrollView style={styles.container}>
-        <SearchBar
-          placeholder="Player Name"
-          onChangeText={this.updateSearch}
-          value={this.state.search}
-        />
-
-        <Table>
-          <Row
-            data={state.tableHead}
-            flexArr={[40, 20, 40, 20]}
-            style={styles.head}
-            textStyle={styles.textHead}
+      <ImageBackground
+        source={require('../Images/h.jpg')}
+        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        <ScrollView style={styles.container}>
+          <SearchBar
+            placeholder="Player Name"
+            onChangeText={this.updateSearch}
+            value={this.state.search}
           />
-          <TableWrapper style={styles.wrapper}>
-            <Rows
-              data={this.state.found ? this.state.foundList : state.tableData}
+
+          <Table style={{flex: 1}}>
+            <Row
+              data={state.tableHead}
               flexArr={[40, 20, 40, 20]}
-              style={styles.row}
-              textStyle={styles.textLines}
+              style={styles.head}
+              textStyle={styles.textHead}
             />
-          </TableWrapper>
-        </Table>
-      </ScrollView>
+            <TableWrapper style={styles.wrapper}>
+              <Rows
+                data={this.state.found ? this.state.foundList : state.tableData}
+                flexArr={[40, 20, 40, 20]}
+                style={styles.row}
+                textStyle={styles.textLines}
+              />
+            </TableWrapper>
+          </Table>
+        </ScrollView>
+      </ImageBackground>
     );
   }
 }
@@ -93,10 +97,11 @@ export default class ScorerTable extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DEF2F1',
+    // backgroundColor: '#DEF2F1',
   },
   head: {
-    height: 32,
+    flex: 1,
+    height: '2%',
     backgroundColor: '#123c69',
   },
   wrapper: {
@@ -105,18 +110,19 @@ const styles = StyleSheet.create({
   },
   row: {
     height: 55,
-    borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
+    borderBottomWidth: 0.6,
+    borderTopWidth: 0.6,
   },
   textHead: {
     textAlign: 'center',
     fontFamily: 'sans-serif-medium',
     color: 'white',
+    fontSize: 17,
   },
   textLines: {
     textAlign: 'center',
     fontFamily: 'sans-serif-condensed',
-    color: '#2C3E50',
-    fontSize: 16,
+    color: 'black',
+    fontSize: 17,
   },
 });
