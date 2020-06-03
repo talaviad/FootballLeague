@@ -25,8 +25,8 @@ import {
 import {Header} from 'react-navigation-stack';
 import GLOBALS from '../Globals';
 
-var IP = '132.72.23.63';
-var PORT = '3079';
+// var IP = '132.72.23.63';
+// var PORT = '3079';
 
 // var IP = '192.168.1.124';
 // var PORT = '3000';
@@ -47,7 +47,7 @@ function RoundButton({title, color, background, onPress, disabled}) {
 function ButtonsRow({children}) {
   return <View style={styles.buttonsRow}>{children}</View>;
 }
-export default class Home extends React.Component {
+export default class RefereeTools extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
@@ -64,65 +64,6 @@ export default class Home extends React.Component {
     this.load = this.load.bind(this);
     this.getTeamsNames();
   }
-
-  handleSendRequestToServer = async param => {
-    let token = await AsyncStorage.getItem('token');
-    this.setState({isLoading: true});
-    let response = fetch('http://' + IP + ':' + PORT + '/?data=' + param, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Football-Request': param,
-        Authorization: this.state.token,
-      },
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(resJson => {
-        if (!resJson.success) {
-          alert(resJson.error.msg);
-          return;
-        }
-        this.setState({isLoading: false});
-
-        switch (param) {
-          case 'leagueTable':
-            this.props.navigation.navigate('LeagueTable', {
-              tableData: resJson.tableData,
-            });
-            break;
-          case 'scorerTable':
-            this.props.navigation.navigate('ScorerTable', {
-              tableData: resJson.tableData,
-            });
-            break;
-          case 'clubs':
-            this.props.navigation.navigate('Clubs', {
-              tableData: resJson.tableData,
-              teamList: this.state.teamsNames,
-            });
-            break;
-          case 'register':
-            this.props.navigation.navigate('Register');
-            break;
-          case 'insertGameResult':
-            this.props.navigation.navigate('Home');
-            break;
-          case 'GetConstraints':
-            this.props.navigation.navigate('Constraints', {
-              IP: IP,
-              PORT: PORT,
-            });
-            break;
-          default:
-            break;
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
 
   async getTeamsNames() {
     let response;
@@ -608,12 +549,9 @@ export default class Home extends React.Component {
           <View style={styles.rowOfTwoButton}>
             <View>
               <AwesomeButtonCartman
-                onPress={() =>
-                  this.props.navigation.navigate('RefereeTools', {
-                    IP: IP,
-                    PORT: PORT,
-                  })
-                }
+                onPress={() => {
+                  this.handleSendRequestToServer('scorerTable');
+                }}
                 style={{
                   justifyContent: 'center',
                   alignItems: 'center',
