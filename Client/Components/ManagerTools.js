@@ -13,7 +13,7 @@ import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/
 import {Header} from 'react-navigation-stack';
 import GLOBALS from '../Globals';
 
-export default class RefereeTools extends React.Component {
+export default class ManagerTools extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
@@ -33,10 +33,9 @@ export default class RefereeTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('Game Mode', {
+                  this.props.navigation.navigate('ManageSchedule', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
-                    teamList: this.props.navigation.getParam('teamsNames'),
                   })
                 }
                 style={{
@@ -67,7 +66,7 @@ export default class RefereeTools extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      source={require('../Images/gameMode6.png')}
+                      source={require('../Images/manageSched.png')}
                       style={{
                         width: 100,
                         height: 100,
@@ -85,16 +84,15 @@ export default class RefereeTools extends React.Component {
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                Game Mode
+                {'Manage\nSchedule'}
               </Text>
             </View>
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('Insert Result', {
+                  this.props.navigation.navigate('Add Club', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
-                    teamList: this.props.navigation.getParam('teamsNames'),
                   })
                 }
                 style={{
@@ -125,10 +123,10 @@ export default class RefereeTools extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      source={require('../Images/result3.png')}
+                      source={require('../Images/addClub.png')}
                       style={{
-                        width: 120,
-                        height: 110,
+                        width: 140,
+                        height: 140,
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
@@ -143,7 +141,7 @@ export default class RefereeTools extends React.Component {
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                Insert Result
+                Add Club
               </Text>
             </View>
           </View>
@@ -151,10 +149,9 @@ export default class RefereeTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('LeagueSchedule', {
+                  this.props.navigation.navigate('Add Referee', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
-                    teamList: this.props.navigation.getParam('teamsNames'),
                   })
                 }
                 style={{
@@ -185,10 +182,10 @@ export default class RefereeTools extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      source={require('../Images/schedule3.png')}
+                      source={require('../Images/addReferee.png')}
                       style={{
-                        width: 110,
-                        height: 110,
+                        width: 230,
+                        height: 230,
                         marginRight: '5%',
                         marginTop: '5%',
                         alignItems: 'center',
@@ -205,13 +202,13 @@ export default class RefereeTools extends React.Component {
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                Schedule
+                Add Referee
               </Text>
             </View>
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('Constraints', {
+                  this.props.navigation.navigate('PitchConstraints', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
                   })
@@ -262,7 +259,7 @@ export default class RefereeTools extends React.Component {
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                Constraints
+                {'Set Pitch\nConstraints'}
               </Text>
             </View>
           </View>

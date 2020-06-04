@@ -13,7 +13,7 @@ import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/
 import {Header} from 'react-navigation-stack';
 import GLOBALS from '../Globals';
 
-export default class RefereeTools extends React.Component {
+export default class CaptainTools extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
@@ -33,128 +33,9 @@ export default class RefereeTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('Game Mode', {
-                    IP: this.props.navigation.getParam('IP'),
-                    PORT: this.props.navigation.getParam('PORT'),
-                    teamList: this.props.navigation.getParam('teamsNames'),
-                  })
-                }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
-                borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
-                raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
-                <ImageBackground
-                  source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Image
-                      source={require('../Images/gameMode6.png')}
-                      style={{
-                        width: 100,
-                        height: 100,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    />
-                  </View>
-                </ImageBackground>
-              </AwesomeButtonCartman>
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
-                  fontFamily: 'sans-serif-medium',
-                  textAlign: 'center',
-                }}>
-                Game Mode
-              </Text>
-            </View>
-            <View>
-              <AwesomeButtonCartman
-                onPress={() =>
-                  this.props.navigation.navigate('Insert Result', {
-                    IP: this.props.navigation.getParam('IP'),
-                    PORT: this.props.navigation.getParam('PORT'),
-                    teamList: this.props.navigation.getParam('teamsNames'),
-                  })
-                }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
-                borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
-                raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
-                <ImageBackground
-                  source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Image
-                      source={require('../Images/result3.png')}
-                      style={{
-                        width: 120,
-                        height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    />
-                  </View>
-                </ImageBackground>
-              </AwesomeButtonCartman>
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
-                  fontFamily: 'sans-serif-medium',
-                  textAlign: 'center',
-                }}>
-                Insert Result
-              </Text>
-            </View>
-          </View>
-          <View style={styles.rowOfTwoButton}>
-            <View>
-              <AwesomeButtonCartman
-                onPress={() =>
                   this.props.navigation.navigate('LeagueSchedule', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
-                    teamList: this.props.navigation.getParam('teamsNames'),
                   })
                 }
                 style={{
@@ -262,7 +143,7 @@ export default class RefereeTools extends React.Component {
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                Constraints
+                {'Teams\nConstraints'}
               </Text>
             </View>
           </View>

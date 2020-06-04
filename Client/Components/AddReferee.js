@@ -90,9 +90,9 @@ export default class AddReferee extends React.Component {
   render() {
     return (
       <ImageBackground
-        source={require('../Images/new2.jpg')}
+        source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.9}}>
+        imageStyle={{opacity: 0.85}}>
         <View style={styles.container}>
           {/* <Image
             source={require('../Images/z.jpg')}

@@ -84,7 +84,7 @@ export default class GamesResults extends React.Component {
     const state = this.state;
     return (
       <ImageBackground
-        source={require('../Images/h.jpg')}
+        source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
         imageStyle={{opacity: 0.8}}>
         <View style={styles.container}>

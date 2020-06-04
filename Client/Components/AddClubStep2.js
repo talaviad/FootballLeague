@@ -217,7 +217,7 @@ export default class AddClubStep2 extends React.Component {
   render() {
     return (
       <ImageBackground
-        source={require('../Images/h.jpg')}
+        source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
         imageStyle={{opacity: 0.85}}>
         {/* <View style={styles.container}> */}

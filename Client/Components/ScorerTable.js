@@ -63,7 +63,7 @@ export default class ScorerTable extends React.Component {
     const state = this.state;
     return (
       <ImageBackground
-        source={require('../Images/h.jpg')}
+        source={require('../Images/wall1.png')}
         style={[styles.image, styles.container, {opacity: 0.8}]}>
         <ScrollView style={styles.container}>
           <SearchBar

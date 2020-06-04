@@ -104,6 +104,7 @@ export default class GameMode extends React.Component {
       this.timer = setInterval(() => {
         this.setState({now: new Date().getTime()});
       }, 100);
+      this.sendLiveGameResult();
     }
   };
 
@@ -250,6 +251,7 @@ export default class GameMode extends React.Component {
       });
       this.setState({team1Goals: this.state.team1Goals + 1});
     }
+    this.sendLiveGameResult();
     this.resume();
   }
 
@@ -282,6 +284,8 @@ export default class GameMode extends React.Component {
       });
       this.setState({team2Goals: this.state.team2Goals + 1});
     }
+    this.sendLiveGameResult();
+
     this.resume();
   }
 
@@ -461,6 +465,36 @@ export default class GameMode extends React.Component {
     }
   }
 
+  async sendLiveGameResult() {
+    let response = fetch(
+      'http://' +
+        this.props.navigation.getParam('IP') +
+        ':' +
+        this.props.navigation.getParam('PORT') +
+        '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Football-Request': 'liveResult',
+        },
+        body: JSON.stringify({
+          selectedTeam1: this.state.team1,
+          selectedTeam2: this.state.team2,
+          scoreTeam1: this.state.team1Goals,
+          scoreTeam2: this.state.team2Goals,
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(async resJson => {
+        if (resJson.success) {
+        } else {
+          alert(resJson.error.msg);
+        }
+      })
+      .catch(err => alert(err));
+  }
   render() {
     const {submitConfirmationAlert} = this.state;
     const {now, start, laps} = this.state;

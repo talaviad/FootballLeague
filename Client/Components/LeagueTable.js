@@ -32,7 +32,7 @@ export default class LeagueTable extends React.Component {
     const state = this.state;
     return (
       <ImageBackground
-        source={require('../Images/h.jpg')}
+        source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
         imageStyle={{opacity: 0.8}}>
         <ScrollView style={styles.container}>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     // fontFamily: 'Times',
     // color: '#2C3E50',
     textAlign: 'center',
-    fontFamily: 'sans-serif-condensed',
+    fontFamily: 'sans-serif-medium',
     fontSize: 16,
     color: 'black',
   },

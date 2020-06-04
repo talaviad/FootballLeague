@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -15,7 +16,7 @@ export default class ChangePassword extends React.Component {
     super(props);
     const {navigation} = this.props;
     this.state = {
-      username: this.props.navigation.getParam('username'),
+      username: 'g',
       oldPassword: '',
       newPassword: '',
       newPasswordVerified: '',
@@ -23,6 +24,17 @@ export default class ChangePassword extends React.Component {
       differentPasswords: false,
       isLoading: false,
     };
+    this.getUserName();
+  }
+
+  async getUserName() {
+    let username;
+    try {
+      username = await AsyncStorage.getItem('username');
+      this.setState({username: username});
+    } catch (err) {
+      alert(err);
+    }
   }
 
   onPressButton = () => {
@@ -78,84 +90,91 @@ export default class ChangePassword extends React.Component {
   }
   render() {
     return (
-      <View style={styles.container}>
-        <TextInput
-          style={styles.inputBox}
-          placeholder={this.state.username}
-          placeholderTextColor="black"
-          underlineColorAndroid="#2C3E50"
-          editable={false}
-          //onChangeText={username => this.setState({username})}
-        />
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Old Password"
-          placeholderTextColor="#F8F9F9"
-          underlineColorAndroid="#2C3E50"
-          onChangeText={oldPassword => this.setState({oldPassword})}
-        />
-        <TextInput
-          style={styles.inputBox}
-          placeholder="New Password"
-          secureTextEntry={true}
-          placeholderTextColor="#F8F9F9"
-          underlineColorAndroid="#2C3E50"
-          onChangeText={newPassword => this.setState({newPassword})}
-        />
-        <TextInput
-          style={styles.inputBox}
-          placeholder="New Password Verified"
-          secureTextEntry={true}
-          placeholderTextColor="#F8F9F9"
-          underlineColorAndroid="#2C3E50"
-          onChangeText={newPasswordVerified =>
-            this.setState({newPasswordVerified})
-          }
-        />
+      <ImageBackground
+        source={require('../Images/wall1.png')}
+        style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+        imageStyle={{opacity: 0.8}}>
+        <View style={styles.container}>
+          <TextInput
+            style={styles.inputBox}
+            placeholder={this.state.username}
+            placeholderTextColor="black"
+            underlineColorAndroid="#2C3E50"
+            editable={false}
+            //onChangeText={username => this.setState({username})}
+          />
+          <TextInput
+            style={styles.inputBox}
+            placeholder="Old Password"
+            placeholderTextColor="#F8F9F9"
+            underlineColorAndroid="#2C3E50"
+            onChangeText={oldPassword => this.setState({oldPassword})}
+          />
+          <TextInput
+            style={styles.inputBox}
+            placeholder="New Password"
+            secureTextEntry={true}
+            placeholderTextColor="#F8F9F9"
+            underlineColorAndroid="#2C3E50"
+            onChangeText={newPassword => this.setState({newPassword})}
+          />
+          <TextInput
+            style={styles.inputBox}
+            placeholder="New Password Verified"
+            secureTextEntry={true}
+            placeholderTextColor="#F8F9F9"
+            underlineColorAndroid="#2C3E50"
+            onChangeText={newPasswordVerified =>
+              this.setState({newPasswordVerified})
+            }
+          />
 
-        <TouchableOpacity style={styles.touchAble} onPress={this.onPressButton}>
-          <Text style={styles.buttonText}>Change Password</Text>
-        </TouchableOpacity>
-        <AwesomeAlert
-          show={this.state.IllegalPassword}
-          showProgress={false}
-          title="Error"
-          message={
-            '\t\t\t\t\t\t\t\t\tIllegal password' +
-            '\n' +
-            '- Should be minimum 6 characters'
-          }
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showConfirmButton={true}
-          confirmText="Yes"
-          confirmText="ok"
-          confirmButtonColor="#8fbc8f"
-          onConfirmPressed={() => {
-            this.setState({IllegalPassword: false});
-          }}
-        />
-        <AwesomeAlert
-          show={this.state.differentPasswords}
-          showProgress={false}
-          title="Error"
-          message={'\t\t\tThe new passwords are differents'}
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showConfirmButton={true}
-          confirmText="Yes"
-          confirmText="ok"
-          confirmButtonColor="#8fbc8f"
-          onConfirmPressed={() => {
-            this.setState({differentPasswords: false});
-          }}
-        />
-        <View style={styles.loadingStyle}>
-          {this.state.isLoading && (
-            <ActivityIndicator color={'#fff'} size={80} />
-          )}
+          <TouchableOpacity
+            style={styles.touchAble}
+            onPress={this.onPressButton}>
+            <Text style={styles.buttonText}>Change Password</Text>
+          </TouchableOpacity>
+          <AwesomeAlert
+            show={this.state.IllegalPassword}
+            showProgress={false}
+            title="Error"
+            message={
+              '\t\t\t\t\t\t\t\t\tIllegal password' +
+              '\n' +
+              '- Should be minimum 6 characters'
+            }
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="ok"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({IllegalPassword: false});
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.differentPasswords}
+            showProgress={false}
+            title="Error"
+            message={'\t\t\tThe new passwords are differents'}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="ok"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({differentPasswords: false});
+            }}
+          />
+          <View style={styles.loadingStyle}>
+            {this.state.isLoading && (
+              <ActivityIndicator color={'#fff'} size={80} />
+            )}
+          </View>
         </View>
-      </View>
+      </ImageBackground>
     );
   }
 }
@@ -165,7 +184,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     flexGrow: 1,
     alignItems: 'center',
-    backgroundColor: '#5499C7',
+    // backgroundColor: '#5499C7',
     //paddingVertical: 0,
   },
   inputBox: {

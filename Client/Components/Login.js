@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -95,26 +96,31 @@ export default class Login extends React.Component {
   }
   render() {
     return (
-      <View style={styles.container}>
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Enter a username"
-          placeholderTextColor="#F8F9F9"
-          underlineColorAndroid="#2C3E50"
-          onChangeText={user => this.setState({user})}
-        />
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Enter a password"
-          secureTextEntry={true}
-          placeholderTextColor="#F8F9F9"
-          underlineColorAndroid="#2C3E50"
-          onChangeText={password => this.setState({password})}
-        />
-        <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
-          <Text style={styles.buttonText}>login</Text>
-        </TouchableOpacity>
-      </View>
+      <ImageBackground
+        source={require('../Images/wall1.png')}
+        style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+        imageStyle={{opacity: 0.8}}>
+        <View style={styles.container}>
+          <TextInput
+            style={styles.inputBox}
+            placeholder="Enter a username"
+            placeholderTextColor="#F8F9F9"
+            underlineColorAndroid="#2C3E50"
+            onChangeText={user => this.setState({user})}
+          />
+          <TextInput
+            style={styles.inputBox}
+            placeholder="Enter a password"
+            secureTextEntry={true}
+            placeholderTextColor="#F8F9F9"
+            underlineColorAndroid="#2C3E50"
+            onChangeText={password => this.setState({password})}
+          />
+          <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
+            <Text style={styles.buttonText}>login</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
     );
   }
 }
@@ -123,7 +129,6 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: 'center',
-    backgroundColor: '#5499C7',
   },
   inputBox: {
     width: 300,

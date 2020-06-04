@@ -13,7 +13,7 @@ import {
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
 import {CustomPicker} from 'react-native-custom-picker';
-import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import TeamSelector from './TeamSelector';
@@ -44,7 +44,7 @@ export default class InsertGame extends React.Component {
   render() {
     return (
       <ImageBackground
-        source={require('../Images/h.jpg')}
+        source={require('../Images/wall1.png')}
         style={[styles.image, styles.container, {opacity: 0.8}]}>
         {/* <View style={styles.container}> */}
         <ScrollView>
@@ -145,7 +145,7 @@ export default class InsertGame extends React.Component {
                 !this.state.score1Legal
                   ? {backgroundColor: 'red'}
                   : this.state.selectedTeam1
-                  ? {backgroundColor: '#0c4271'}
+                  ? {backgroundColor: 'white'}
                   : {backgroundColor: '#a9a9a9'},
               ]}
               keyboardType="number-pad"
@@ -184,7 +184,7 @@ export default class InsertGame extends React.Component {
             style={{
               flexDirection: 'row',
               width: '100%',
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
               marginTop: '7.5%',
             }}>
             <View style={{width: '70%'}}>
@@ -228,7 +228,7 @@ export default class InsertGame extends React.Component {
                 !this.state.score2Legal
                   ? {backgroundColor: 'red'}
                   : this.state.selectedTeam2
-                  ? {backgroundColor: '#0c4271'}
+                  ? {backgroundColor: 'white'}
                   : {backgroundColor: '#a9a9a9'},
               ]}
               keyboardType="numeric"
@@ -270,13 +270,40 @@ export default class InsertGame extends React.Component {
               onPress={() => {
                 this.submitGame();
               }}
+              type="anchor"
+              //textColor="#FFF"
+              textSize={18}
+              backgroundColor="#123c69"
+              paddingHorizontal={50}
+              // backgroundActive="#123c69"
+              // backgroundDarker="#123c69"
+              //backgroundDarker="#123c69"
+              //backgroundPlaceholder="#123c69"
+              //borderColor="white"
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}>
+              Submit
+            </AwesomeButtonCartman>
+            {/* <AwesomeButtonCartman
+              onPress={() => {
+                this.submitGame();
+              }}
               type="primary"
               textColor="#FFF"
               textSize={18}
               backgroundColor="#0e4f88"
-              raiseLevel={6}>
-              Submit Match
-            </AwesomeButtonCartman>
+              paddingHorizontal={50}
+              // backgroundActive="#123c69"
+              // backgroundDarker="#123c69"
+              backgroundDarker="#123c69"
+              backgroundPlaceholder="#123c69"
+              borderColor="white"
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}>
+              Submit
+            </AwesomeButtonCartman> */}
           </View>
           <View
             style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -562,7 +589,7 @@ export default class InsertGame extends React.Component {
                       this.state.team2ScorrersDic[i].Name = '';
                       return;
                     }
-                    var arr = vallue.split(' ');
+                    var arr = value.split(' ');
                     this.state.team2ScorrersDic[i].Number = arr[0].subString(1);
                     this.state.team2ScorrersDic[i].Name = arr[1] + arr[2];
                     this.state.team2ScorrersDic[i].Goals = 1;
@@ -633,13 +660,15 @@ const styles = StyleSheet.create({
 
   scoreTextInput: {
     height: '90%',
+    fontSize: 19,
+
     borderWidth: 0.8,
     borderColor: 'black',
     width: '15%',
     borderRadius: 10,
     textAlign: 'center',
     marginLeft: '2%',
-    color: 'white',
+    color: 'black',
   },
   errorMsg: {
     color: 'red',

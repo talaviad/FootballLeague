@@ -9,6 +9,9 @@ import Clubs from './Components/Clubs';
 import Register from './Components/Register';
 import InsertGame from './Components/InsertGame';
 import RefereeTools from './Components/RefereeTools';
+import CaptainTools from './Components/CaptainTools';
+import ManagerTools from './Components/ManagerTools';
+
 import Login from './Components/Login';
 import GameMode from './Components/GameMode';
 import AddReferee from './Components/AddReferee';
@@ -17,6 +20,7 @@ import Constraints from './Components/Constraints';
 import ManageSchedule from './Components/ManageSchedule';
 import LeagueSchedule from './Components/LeagueSchedule';
 import PitchConstraints from './Components/PitchConstraints';
+import PersonalArea from './Components/PersonalArea';
 
 import Inbox from './Components/Inbox';
 import ChangePassword from './Components/ChangePassword';
@@ -27,23 +31,26 @@ const AppNavigator = createStackNavigator(
   {
     Home: Home,
 
-    LeagueTable: LeagueTable,
-    GamesResults: GamesResults,
-    ScorerTable: ScorerTable,
+    'League Table': LeagueTable,
+    Results: GamesResults,
+    'Scorer Table': ScorerTable,
     Clubs: Clubs,
     Register: Register,
-    InsertGame: InsertGame,
+    'Insert Result': InsertGame,
     Login: Login,
-    GameMode: GameMode,
-    AddReferee: AddReferee,
-    AddClub: AddClub,
+    'Game Mode': GameMode,
+    'Add Referee': AddReferee,
+    'Add Club': AddClub,
     Constraints: Constraints,
     ManageSchedule: ManageSchedule,
     PitchConstraints: PitchConstraints,
-    RefereeTools: RefereeTools,
+    'Referee Tools': RefereeTools,
+    'Captain Tools': CaptainTools,
+    'Manager Tools': ManagerTools,
 
+    'Personal Area': PersonalArea,
     Inbox: Inbox,
-    ChangePassword: ChangePassword,
+    'Change Password': ChangePassword,
     LeagueSchedule: LeagueSchedule,
   },
 
@@ -51,7 +58,7 @@ const AppNavigator = createStackNavigator(
     initialRouteName: 'Home',
     defaultNavigationOptions: {
       headerStyle: {
-        backgroundColor: '#8cb3d9', //#3B8EBE
+        backgroundColor: '#073567', //#3B8EBE
         borderBottomWidth: 1,
         // borderWidth: 3,
         borderBottomColor: 'black',
@@ -59,7 +66,7 @@ const AppNavigator = createStackNavigator(
       headerTintColor: '#black',
       headerTitleStyle: {
         fontFamily: 'sans-serif-medium',
-        color: 'black',
+        color: 'white',
       },
     },
   },
@@ -76,13 +83,6 @@ Home.navigationOptions = {
     fontFamily: 'sans-serif-medium',
     color: 'white',
   },
-  headerLeft: (
-    <Image
-      source={require('./Images/aguda3.png')}
-      style={{width: 60, height: 60, marginLeft: 7.5, marginTop: 7.5}}
-      resizeMode={'cover'} // cover or contain its upto you view look
-    />
-  ),
 };
 
 GameMode.navigationOptions = {

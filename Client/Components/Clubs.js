@@ -205,7 +205,7 @@ export default class Clubs extends React.Component {
     const state = this.state;
     return (
       <ImageBackground
-        source={require('../Images/h.jpg')}
+        source={require('../Images/wall1.png')}
         style={[styles.image, {flex: 1}, {opacity: 0.8}]}>
         <View style={styles.body}>
           <Image
