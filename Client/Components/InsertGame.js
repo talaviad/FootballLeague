@@ -6,11 +6,15 @@ import {
   StyleSheet,
   Text,
   View,
+  ImageBackground,
   ActivityIndicator,
 } from 'react-native';
 
 import 'isomorphic-fetch';
 import DatePicker from 'react-native-datepicker';
+import {CustomPicker} from 'react-native-custom-picker';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import TeamSelector from './TeamSelector';
 
@@ -21,8 +25,8 @@ export default class InsertGame extends React.Component {
 
     this.state = {
       date: '',
-      team1Name: '',
-      team2Name: '',
+      team1Name: null,
+      team2Name: null,
       team1Goals: '',
       team2Goals: '',
       team1ScorrersDic: [],
@@ -32,15 +36,24 @@ export default class InsertGame extends React.Component {
       score1Legal: true,
       score2Legal: true,
       isLoading: false,
+      playersTeam1: [],
+      playersTeam2: [],
     };
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <ImageBackground
+        source={require('../Images/wall1.png')}
+        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        {/* <View style={styles.container}> */}
         <ScrollView>
           <DatePicker
-            style={{width: 200, paddingVertical: 20}}
+            style={{
+              paddingVertical: 20,
+              flex: 1,
+              width: '92%',
+            }}
             date={this.state.date}
             mode="date"
             placeholder="Date Of The Match"
@@ -50,131 +63,247 @@ export default class InsertGame extends React.Component {
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={{
+              dateTouchBody: {
+                borderWidth: 0.65,
+                borderRadius: 7.5,
+                backgroundColor: '#0c4271',
+              },
               dateIcon: {
                 position: 'absolute',
-                left: 0,
+                left: 4,
                 top: 4,
                 marginLeft: 0,
               },
               dateInput: {
                 marginLeft: 36,
+                borderWidth: 0,
+              },
+              // dateInput: {backgroundColor: '#ADADAD'},
+              dateText: {
+                color: 'white',
+                fontSize: 19,
+                fontFamily: 'sans',
+                fontWeight: 'bold',
+              },
+              placeholderText: {
+                color: 'white',
+                fontSize: 19,
+                fontFamily: 'sans-serif-condensed',
+                fontStyle: 'italic',
+                fontWeight: '600',
               },
             }}
             onDateChange={date => {
               this.setState({date: date});
             }}
           />
-          <View style={{flexDirection: 'row', width: 200}}>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>Team1</Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{width: '70%'}}>
+              {/* <Text style={{alignSelf: 'flex-start', fontSize: 16}}>Team1</Text> */}
               <TeamSelector
+                selectedTitleStyle={{
+                  //the style of select team text
+                  color: 'white',
+                  fontSize: 18,
+                  textAlign: 'center',
+                  fontFamily: 'sans-serif-condensed',
+                  fontWeight: '60',
+                }}
+                style={{backgroundColor: '#0c4271'}}
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
-                  this.setState({
-                    team1Name: text,
-                    team1Goals: '',
-                    team1ScorrersDic: [],
-                    selectedTeam1: true,
-                  });
+                  if (text !== null) {
+                    this.setState({
+                      team1Name: text,
+                      team1Goals: '',
+                      team1ScorrersDic: [],
+                      selectedTeam1: true,
+                    });
+                    this.getPlayersList(1, text);
+                  } else {
+                    this.setState({
+                      team1Name: text,
+                      team1Goals: '',
+                      team1ScorrersDic: [],
+                      selectedTeam1: false,
+                    });
+                  }
                 }}
               />
             </View>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>score:</Text>
-              <TextInput
-                style={[
-                  styles.scoreTextInput,
-                  !this.state.score1Legal
-                    ? {backgroundColor: 'red'}
-                    : this.state.selectedTeam1
-                    ? {backgroundColor: 'white'}
-                    : {backgroundColor: '#c0c0c0'},
-                ]}
-                keyboardType="number-pad"
-                value={this.state.team1Goals}
-                editable={this.state.selectedTeam1}
-                onChangeText={text => {
-                  if (!this.isNumericAndLegal(text)) {
-                    this.setState({score1Legal: false});
-                  } else {
-                    this.setState({score1Legal: true});
-                  }
+            {/* <View style={{marginRight: 10, width: '20%'}}> */}
+            {/* <Text style={{alignSelf: 'center'}}>score:</Text> */}
+            <TextInput
+              style={[
+                styles.scoreTextInput,
+                !this.state.score1Legal
+                  ? {backgroundColor: 'red'}
+                  : this.state.selectedTeam1
+                  ? {backgroundColor: 'white'}
+                  : {backgroundColor: '#a9a9a9'},
+              ]}
+              keyboardType="number-pad"
+              value={this.state.team1Goals}
+              editable={this.state.selectedTeam1}
+              onChangeText={text => {
+                if (!this.isNumericAndLegal(text)) {
+                  this.setState({team1Goals: text});
+                  this.setState({score1Legal: false});
+                } else {
+                  this.setState({score1Legal: true});
                   this.setState({team1Goals: text});
                   var arr = [];
                   for (var i = 0; i < text; i++) {
                     arr.push({
-                      Name: [],
+                      Name: '',
                       Team: this.state.team1Name,
                       Number: '',
                       Goals: 0,
                     });
                   }
                   this.setState({team1ScorrersDic: arr});
-                }}
-              />
-            </View>
+                }
+              }}
+            />
+            <Icon
+              name="soccer"
+              size={35}
+              style={{
+                marginTop: '1%',
+                width: '12%',
+              }}
+            />
           </View>
-          <View style={{flexDirection: 'row', width: 200}}>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>Team2</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              marginTop: '7.5%',
+            }}>
+            <View style={{width: '70%'}}>
               <TeamSelector
+                selectedTitleStyle={{
+                  //the style of select team text
+                  color: 'white',
+                  fontSize: 18,
+                  textAlign: 'center',
+                  fontFamily: 'sans-serif-condensed',
+                  fontWeight: '60',
+                }}
+                style={{backgroundColor: '#0c4271'}}
                 teamList={this.props.navigation.getParam('teamList')}
                 onSelect={text => {
-                  this.setState({
-                    team2Name: text,
-                    team2Goals: '',
-                    team2ScorrersDic: [],
-                    selectedTeam2: true,
-                  });
+                  if (text !== null) {
+                    this.setState({
+                      team2Name: text,
+                      team2Goals: '',
+                      team2ScorrersDic: [],
+                      selectedTeam2: true,
+                    });
+                    this.getPlayersList(2, text);
+                  } else {
+                    this.setState({
+                      team2Name: text,
+                      team2Goals: '',
+                      team2ScorrersDic: [],
+                      selectedTeam2: false,
+                    });
+                  }
                 }}
               />
             </View>
-            <View style={{marginRight: 10, width: 200}}>
-              <Text style={{alignSelf: 'flex-start'}}>score:</Text>
-              <TextInput
-                style={[
-                  styles.scoreTextInput,
-                  ,
-                  !this.state.score2Legal
-                    ? {backgroundColor: 'red'}
-                    : this.state.selectedTeam2
-                    ? {backgroundColor: 'white'}
-                    : {backgroundColor: '#c0c0c0'},
-                ]}
-                keyboardType="numeric"
-                value={this.state.team2Goals}
-                editable={this.state.selectedTeam2}
-                onChangeText={text => {
-                  if (!this.isNumericAndLegal(text)) {
-                    this.setState({score2Legal: false});
-                  } else {
-                    this.setState({score2Legal: true});
-                  }
+            {/* <View style={{marginRight: 10, width: '20%'}}>
+              <Text style={{alignSelf: 'center'}}>score:</Text> */}
+            <TextInput
+              style={[
+                styles.scoreTextInput,
+                ,
+                !this.state.score2Legal
+                  ? {backgroundColor: 'red'}
+                  : this.state.selectedTeam2
+                  ? {backgroundColor: 'white'}
+                  : {backgroundColor: '#a9a9a9'},
+              ]}
+              keyboardType="numeric"
+              value={this.state.team2Goals}
+              editable={this.state.selectedTeam2}
+              onChangeText={text => {
+                if (!this.isNumericAndLegal(text)) {
+                  this.setState({team2Goals: text});
+                  this.setState({score2Legal: false});
+                } else {
+                  this.setState({score2Legal: true});
                   this.setState({team2Goals: text});
                   var arr = [];
                   for (var i = 0; i < text; i++) {
                     arr.push({
-                      Name: [],
+                      Name: '',
                       Team: this.state.team2Name,
                       Number: '',
                       Goals: 0,
                     });
                   }
                   this.setState({team2ScorrersDic: arr});
-                }}
-              />
-            </View>
+                }
+              }}
+            />
+            <Icon
+              name="soccer"
+              size={35}
+              style={{
+                marginTop: '1%',
+                width: '12%',
+              }}
+            />
           </View>
           {this.state.score1Legal && this.displayScorersFields(1)}
           {this.state.score2Legal && this.displayScorersFields(2)}
           <View style={styles.button}>
-            <Button
+            <AwesomeButtonCartman
               onPress={() => {
                 this.submitGame();
               }}
-              title="Submit"
-              color="#000080"
-            />
+              type="anchor"
+              //textColor="#FFF"
+              textSize={18}
+              backgroundColor="#123c69"
+              paddingHorizontal={50}
+              // backgroundActive="#123c69"
+              // backgroundDarker="#123c69"
+              //backgroundDarker="#123c69"
+              //backgroundPlaceholder="#123c69"
+              //borderColor="white"
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}>
+              Submit
+            </AwesomeButtonCartman>
+            {/* <AwesomeButtonCartman
+              onPress={() => {
+                this.submitGame();
+              }}
+              type="primary"
+              textColor="#FFF"
+              textSize={18}
+              backgroundColor="#0e4f88"
+              paddingHorizontal={50}
+              // backgroundActive="#123c69"
+              // backgroundDarker="#123c69"
+              backgroundDarker="#123c69"
+              backgroundPlaceholder="#123c69"
+              borderColor="white"
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}>
+              Submit
+            </AwesomeButtonCartman> */}
           </View>
           <View
             style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -183,9 +312,61 @@ export default class InsertGame extends React.Component {
             )}
           </View>
         </ScrollView>
-      </View>
+        {/* </View> */}
+      </ImageBackground>
     );
   }
+
+  async getPlayersList(clubIndex, clubName) {
+    try {
+      let response = fetch(
+        'http://' +
+          this.props.navigation.getParam('IP') +
+          ':' +
+          this.props.navigation.getParam('PORT') +
+          '/?data=' +
+          clubName,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'PlayersList',
+          },
+        },
+      )
+        .then(response => response.json())
+        .then(async resJson => {
+          if (resJson.success) {
+            this.arrangePlayersList(clubIndex, resJson.players);
+          } else {
+            alert('Error');
+          }
+        })
+        .catch(err => alert(err));
+    } catch (err) {
+      alert('catch');
+      alert(err);
+    }
+  }
+
+  arrangePlayersList = (clubIndex, playersList) => {
+    var newPlayersList = playersList.map(
+      dic =>
+        '#' +
+        dic.jerseyNumber.toString() +
+        ' ' +
+        dic.firstName.toString() +
+        ' ' +
+        dic.lastName.toString(),
+    );
+    clubIndex === 1
+      ? this.setState({
+          playersTeam1: newPlayersList,
+        })
+      : this.setState({
+          playersTeam2: newPlayersList,
+        });
+  };
 
   async sendResultToServer() {
     try {
@@ -226,11 +407,33 @@ export default class InsertGame extends React.Component {
       alert(err);
     }
   }
+
+  //part of the picker, the views of the options
+  renderOption(settings) {
+    const {item, getLabel} = settings;
+    return (
+      <View style={styles.optionContainer}>
+        <View style={styles.innerContainer}>
+          <View style={[styles.box, {backgroundColor: item.color}]} />
+          <Text
+            style={{
+              fontFamily: 'sans-serif-condensed',
+              fontSize: 17,
+              color: item.color,
+              alignSelf: 'flex-start',
+            }}>
+            {getLabel(item)}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   initalizeState = () => {
     this.setState({
       date: '',
-      team1Name: '',
-      team2Name: '',
+      team1Name: null,
+      team2Name: null,
       team1Goals: '',
       team2Goals: '',
       team1ScorrersDic: [],
@@ -278,7 +481,7 @@ export default class InsertGame extends React.Component {
       alert('Please Select The Date');
       return;
     }
-    if (this.state.team1Name === '' || this.state.team2Name === '') {
+    if (this.state.team1Name === null || this.state.team2Name === null) {
       alert('Please Select The Teams');
       return;
     }
@@ -298,34 +501,18 @@ export default class InsertGame extends React.Component {
     for (var i = 0; i < this.state.team1ScorrersDic.length; i++) {
       if (
         this.state.team1ScorrersDic[i].Number === '' ||
-        this.state.team1ScorrersDic[i].Name.length === 0
+        this.state.team1ScorrersDic[i].Name === ''
       ) {
         alert('Please Fill All The Scorers Details');
-        return;
-      }
-      if (!this.isNumeric(this.state.team1ScorrersDic[i].Number)) {
-        alert('Illegal scorer jersy number details');
-        return;
-      }
-      if (!this.isLegalName(this.state.team1ScorrersDic[i].Name[0])) {
-        alert('Illegal scorer name details');
         return;
       }
     }
     for (var i = 0; i < this.state.team2ScorrersDic.length; i++) {
       if (
         this.state.team2ScorrersDic[i].Number === '' ||
-        this.state.team2ScorrersDic[i].Name.length === 0
+        this.state.team2ScorrersDic[i].Name === ''
       ) {
         alert('Please Fill All The Scorers Details');
-        return;
-      }
-      if (!this.isNumeric(this.state.team2ScorrersDic[i].Number)) {
-        alert('Illegal scorer jersy number details');
-        return;
-      }
-      if (!this.isLegalName(this.state.team2ScorrersDic[i].Name[0])) {
-        alert('Illegal scorer name details');
         return;
       }
     }
@@ -339,56 +526,73 @@ export default class InsertGame extends React.Component {
         <View>
           {i === 0 && (
             <Text
-              style={{fontWeight: 'bold', fontSize: 20}}
+              style={{
+                marginTop: '2%',
+                fontWeight: '700',
+                fontSize: 20,
+                fontStyle: 'sans-serif-medium',
+              }}
               borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
               {'Team ' + teamNum + ' Scorers:'}
             </Text>
           )}
           <View style={styles.columns}>
             <Text
-              style={{fontWeight: 'bold', fontSize: 15}}
+              style={{
+                fontStyle: 'sans-serif-medium',
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
               borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
               {i + 1 + '. '}
             </Text>
-
-            <TextInput
-              style={{backgroundColor: 'white', borderWidth: 0.6}}
-              keyboardType="numeric"
-              placeholder="#Shirt"
-              onChangeText={text => {
-                switch (teamNum) {
-                  case 1: {
-                    this.state.team1ScorrersDic[i].Number = text;
-                    this.state.team1ScorrersDic[i].Goals = +1;
-
-                    break;
-                  }
-                  case 2: {
-                    this.state.team2ScorrersDic[i].Number = text;
-                    this.state.team2ScorrersDic[i].Goals = +1;
-                    break;
-                  }
-                }
+            <CustomPicker
+              fieldTemplateProps={{
+                defaultText: 'Select The Scorer',
+                textStyle: {
+                  color: 'black',
+                  fontSize: 19,
+                  fontFamily: 'sans',
+                  // fontWeight: 'bold',
+                  opacity: 3,
+                },
               }}
-            />
-            <TextInput
               style={{
-                backgroundColor: 'white',
-                borderWidth: 0.6,
-                width: 100,
-                marginLeft: 10,
+                color: 'black',
+                fontSize: 19,
+                fontFamily: 'sans',
+                fontWeight: 'bold',
               }}
-              placeholder="Name"
-              onChangeText={text => {
-                //To convert the first letter of the name to Capital letter
-                var name = text.replace(/\b\w/g, l => l.toUpperCase());
+              options={
+                teamNum === 1
+                  ? this.state.playersTeam1
+                  : this.state.playersTeam2
+              }
+              optionTemplate={this.renderOption}
+              onValueChange={value => {
                 switch (teamNum) {
                   case 1: {
-                    this.state.team1ScorrersDic[i].Name[0] = name;
+                    if (value === null) {
+                      this.state.team1ScorrersDic[i].Number = '';
+                      this.state.team1ScorrersDic[i].Name = '';
+                      return;
+                    }
+                    var arr = value.split(' ');
+                    this.state.team1ScorrersDic[i].Number = arr[0].substring(1);
+                    this.state.team1ScorrersDic[i].Name = arr[1] + ' ' + arr[2];
+                    this.state.team1ScorrersDic[i].Goals = 1;
                     break;
                   }
                   case 2: {
-                    this.state.team2ScorrersDic[i].Name[0] = name;
+                    if (value === null) {
+                      this.state.team2ScorrersDic[i].Number = '';
+                      this.state.team2ScorrersDic[i].Name = '';
+                      return;
+                    }
+                    var arr = value.split(' ');
+                    this.state.team2ScorrersDic[i].Number = arr[0].subString(1);
+                    this.state.team2ScorrersDic[i].Name = arr[1] + arr[2];
+                    this.state.team2ScorrersDic[i].Goals = 1;
                     break;
                   }
                 }
@@ -417,9 +621,14 @@ export default class InsertGame extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5499C7',
+    backgroundColor: '#DEF2F1',
     paddingTop: 30,
     paddingHorizontal: 30,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   row: {
     marginBottom: 20,
@@ -432,16 +641,7 @@ const styles = StyleSheet.create({
   field: {
     marginRight: 10,
   },
-  fieldNumber: {
-    marginRight: 10,
-    width: 60,
-    height: 40,
-  },
-  fieldName: {
-    marginRight: 10,
-    width: 100,
-    height: 40,
-  },
+
   scorerField: {
     marginRight: 10,
     width: 50,
@@ -451,25 +651,40 @@ const styles = StyleSheet.create({
     width: 60,
   },
   button: {
-    width: 80,
-    marginTop: 15,
+    alignSelf: 'center',
+    marginTop: '10%',
   },
   error: {
     marginTop: 10,
   },
-  input: {
-    margin: 15,
-    height: 40,
-    borderColor: '#7a42f4',
-    borderWidth: 1,
-  },
+
   scoreTextInput: {
-    borderWidth: 0.6,
-    width: 50,
+    height: '90%',
+    fontSize: 19,
+
+    borderWidth: 0.8,
+    borderColor: 'black',
+    width: '15%',
     borderRadius: 10,
     textAlign: 'center',
+    marginLeft: '2%',
+    color: 'black',
   },
   errorMsg: {
     color: 'red',
+  },
+  optionContainer: {
+    padding: 10,
+    borderBottomColor: 'grey',
+  },
+
+  box: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  innerContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
   },
 });

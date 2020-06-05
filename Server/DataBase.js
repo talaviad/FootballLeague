@@ -61,9 +61,12 @@ module.exports = class DataBase {
           role: requestedRole,
           team: team,
           inbox: {
-            messages: [ 
-              { msg: 'Hello ' + user + ', we hope you will enjoy our app', read: false, },
-            ]
+            messages: [
+              {
+                msg: "Hello " + user + ", we hope you will enjoy our app",
+                read: false,
+              },
+            ],
           },
         });
     } catch (err) {
@@ -77,14 +80,14 @@ module.exports = class DataBase {
       return registerError;
     }
 
-    if (requestedRole === 'referee') {
+    if (requestedRole === "referee") {
       result = await this.client
-      .db("FootballLeague")
-      .collection("RefereesGames")
-      .insertOne({
-        user: user,
-        games: {},
-      });
+        .db("FootballLeague")
+        .collection("RefereesGames")
+        .insertOne({
+          user: user,
+          games: {},
+        });
     }
 
     return { success: true };
@@ -102,7 +105,26 @@ module.exports = class DataBase {
       console.log("hey you111: " + combine_dict[i]);
       console.log("hey you222: " + JSON.stringify(combine_dict[i]));
 
-      console.log("hey you333: " + combine_dict[i].Name.length);
+      //for the Clubs page - players stats of team1
+      let result1 = await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .find({
+          clubName: combine_dict[i].Team,
+        });
+
+      result1 = await result1.toArray();
+      for (var j = 0; j < result1[0].players.length; j++) {
+        if (result1[0].players[j].jerseyNumber === combine_dict[i].Number) {
+          result1[0].players[j].goals = +1;
+          break;
+        }
+      }
+      let result2 = this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .replaceOne({ clubName: result1[0].clubName }, result1[0]);
+
       let result = await this.client
         .db("FootballLeague")
         .collection("ScorerTable")
@@ -141,11 +163,6 @@ module.exports = class DataBase {
 
         result[0].Goals =
           parseInt(result[0].Goals) + parseInt(combine_dict[i].Goals);
-        for (var j = 0; j < combine_dict[i].Name.length; j++) {
-          if (!result[0].Name.includes(combine_dict[i].Name[j])) {
-            result[0].Name.push(combine_dict[i].Name[j]);
-          }
-        }
         let ans = this.client
           .db("FootballLeague")
           .collection("ScorerTable")
@@ -164,7 +181,7 @@ module.exports = class DataBase {
   }
 
   async getUser(user) {
-    console.log('Trying to find user: ' + user)
+    console.log("Trying to find user: " + user);
     let result = await this.client
       .db("FootballLeague")
       .collection("Users")
@@ -190,10 +207,10 @@ module.exports = class DataBase {
     }
   }
 
-  async addNewClub(clubName) {
+  async addNewClub(clubName, players, color) {
     try {
-      console.log('In DataBase, addNewClub()');
-      let result = await this.client
+      console.log("In DataBase, addNewClub()");
+      await this.client
         .db("FootballLeague")
         .collection("LeagueTable")
         .insertOne({
@@ -207,10 +224,22 @@ module.exports = class DataBase {
           GD: 0,
           Pts: 0,
         });
-      console.log('In DataBase, addNewClub()- succeed to insert a new club - ' + clubName);
+      console.log(
+        "In DataBase, addNewClub()- succeed to insert a new club - " + clubName
+      );
+      await this.client.db("FootballLeague").collection("Clubs").insertOne({
+        clubName: clubName,
+        players: players,
+        color: color,
+        results: [],
+      });
+      console.log(
+        "In DataBase, addNewClub()- succeed to insert a squad of a club - " +
+          clubName
+      );
       return { success: true };
     } catch (err) {
-      console.log('In DataBase, addNewClub() - error: ' + err);
+      console.log("In DataBase, addNewClub() - error: " + err);
       let error = {
         success: false,
         error: {
@@ -322,8 +351,8 @@ module.exports = class DataBase {
         console.log(JSON.stringify(JSON.stringify(scorer)));
         return [
           scorer.Name.toString(),
-          scorer.Team.toString(),
           scorer.Number.toString(),
+          scorer.Team.toString(),
           scorer.Goals.toString(),
         ];
       });
@@ -338,6 +367,41 @@ module.exports = class DataBase {
         success: false,
         error: {
           msg: 'Coudln"t find collection "ScorerTable"',
+        },
+      };
+    }
+  }
+
+  async getClubs() {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .find();
+      result = await result.toArray();
+      // let results = result.map((club) => {
+      //   return {
+      //     clubName: club.clubName,
+      //     players: club.players.map((player) => [
+      //       player.jerseyNumber +
+      //         "  " +
+      //         player.firstName +
+      //         " " +
+      //         player.lastName,
+      //     ]),
+      //   };
+      // });
+      let resultsToTheServer = {
+        success: true,
+        tableData: result,
+      };
+      return resultsToTheServer;
+    } catch {
+      console.log("in catch");
+      return {
+        success: false,
+        error: {
+          msg: 'Coudln"t find collection "Clubs"',
         },
       };
     }
@@ -371,6 +435,24 @@ module.exports = class DataBase {
     }
   }
 
+  async getPlayersList(clubName) {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .find({ clubName: clubName });
+      result = await result.toArray();
+
+      let resultsToTheServer = {
+        success: true,
+        players: result[0].players,
+      };
+      return JSON.stringify(resultsToTheServer);
+    } catch {
+      console.log("in catch");
+      return JSON.stringify({ success: false });
+    }
+  }
   async getTeamsNames() {
     try {
       let result = await this.client
@@ -485,6 +567,23 @@ module.exports = class DataBase {
           team1ScorrersDic: team1ScorrersDic,
           team2ScorrersDic: team2ScorrersDic,
         });
+      //for the Clubs page - team stats
+      result = this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .update(
+          { $or: [{ clubName: selectedTeam1 }, { clubName: selectedTeam2 }] },
+          {
+            $push: {
+              results: {
+                team1: selectedTeam1,
+                result: scoreTeam1 + " - " + scoreTeam2,
+                team2: selectedTeam2,
+                date: date,
+              },
+            },
+          }
+        );
 
       let resultsToTheServer = {
         success: true,
@@ -571,41 +670,50 @@ module.exports = class DataBase {
       return "December";
     }
   }
-  
+
   async insertOrUpdatePitchConstraints(pitchConstraints) {
     let result = await this.client
-    .db("FootballLeague")
-    .collection("PitchConstraints")
-    .find({});
-    console.log('result: ' + result);
+      .db("FootballLeague")
+      .collection("PitchConstraints")
+      .find({});
+    console.log("result: " + result);
     result = await result.toArray();
 
     if (result.length !== 0) {
-      console.log('pitchConstraints: ' + pitchConstraints);
-      console.log('result: ' + result[0]);
-      console.log('there are already pitch constraints, now we will update them')
+      console.log("pitchConstraints: " + pitchConstraints);
+      console.log("result: " + result[0]);
+      console.log(
+        "there are already pitch constraints, now we will update them"
+      );
       result = this.client
-      .db("FootballLeague")
-      .collection("PitchConstraints")
-      .replaceOne({}, { pitchConstraints: pitchConstraints });
-      return { 
+        .db("FootballLeague")
+        .collection("PitchConstraints")
+        .replaceOne({}, { pitchConstraints: pitchConstraints });
+      return {
         success: true,
-      }
+      };
     } else {
-      console.log('there are no pitch constraints yet, now we will insert thyem')
+      console.log(
+        "there are no pitch constraints yet, now we will insert thyem"
+      );
       result = await this.client
-      .db("FootballLeague")
-      .collection("PitchConstraints")
-      .insertOne({
-        pitchConstraints: pitchConstraints,
-      });
-      return { 
-        success: true
-      }
+        .db("FootballLeague")
+        .collection("PitchConstraints")
+        .insertOne({
+          pitchConstraints: pitchConstraints,
+        });
+      return {
+        success: true,
+      };
     }
   }
 
-  async insertOrUpdateConstraints(user, weeklyConstraints, specificConstraints, collection) {
+  async insertOrUpdateConstraints(
+    user,
+    weeklyConstraints,
+    specificConstraints,
+    collection
+  ) {
     let result = await this.getUser(user);
     if (result.success) {
       result = await this.client
@@ -613,79 +721,90 @@ module.exports = class DataBase {
         .collection(collection)
         .find({ user: user });
       result = await result.toArray();
-      console.log('result: ' + result);
+      console.log("result: " + result);
       if (result.length !== 0) {
-          console.log('there is already user, now we will update')
-          let teamName = result[0].teamName;
-          result = this.client
+        console.log("there is already user, now we will update");
+        let teamName = result[0].teamName;
+        result = this.client
           .db("FootballLeague")
           .collection(collection)
-          .replaceOne({ user: user }, { teamName: teamName, user: user, weeklyConstraints: weeklyConstraints, specificConstraints: specificConstraints });
-          return { 
-            success: true,
-          }
+          .replaceOne(
+            { user: user },
+            {
+              teamName: teamName,
+              user: user,
+              weeklyConstraints: weeklyConstraints,
+              specificConstraints: specificConstraints,
+            }
+          );
+        return {
+          success: true,
+        };
       } else {
-        console.log('there is no user, now we will insert')
+        console.log("there is no user, now we will insert");
         result = await this.client
           .db("FootballLeague")
           .collection("Users")
           .find({ username: user });
         result = await result.toArray();
-        console.log('result: ' + result[0]);
+        console.log("result: " + result[0]);
         let team = result[0].team;
-        console.log('The team is: ' + team);
+        console.log("The team is: " + team);
         result = await this.client
-        .db("FootballLeague")
-        .collection(collection)
-        .insertOne({
-          user: user,
-          teamName: team,
-          weeklyConstraints: weeklyConstraints,
-          specificConstraints: {
-            counter: 0,
-            constraints: [],
-          }
-        });
-        console.log('uuuuuuuuuuuuuuuuuuuuuu');
-        return { 
-          success: true
-        }
+          .db("FootballLeague")
+          .collection(collection)
+          .insertOne({
+            user: user,
+            teamName: team,
+            weeklyConstraints: weeklyConstraints,
+            specificConstraints: {
+              counter: 0,
+              constraints: [],
+            },
+          });
+        console.log("uuuuuuuuuuuuuuuuuuuuuu");
+        return {
+          success: true,
+        };
       }
-    } 
-    else {
-      console.log('failed to get user')
+    } else {
+      console.log("failed to get user");
       return result;
     }
   }
 
   async getTeamsConstraints() {
-      let result = await this.client
-        .db("FootballLeague")
-        .collection("CaptainConstraints")
-        .find({});
-      result = await result.toArray();
-      let teamsConstraints = {};
-      if (result.length !== 0) {
-        for (let i=0; i<result.length; i++) {
-          let teamId = i+1;
-          let teamName = result[i].teamName;
-          let constraints = result[i].weeklyConstraints;
-          let user = result[i].user;
-          teamsConstraints[teamId] = { teamName: teamName, constraints: constraints, teamCaptainUser: user };
-        }
-        return {
-          success: true,
-          teamsConstraints: teamsConstraints,
-        }     
-      } else {
-        console.log('there are captain constraints set yet')
-        return { 
-          success: false,
-          error: {
-            msg: 'there are captain constraints set yet'
-          }
-        }
+    let result = await this.client
+      .db("FootballLeague")
+      .collection("CaptainConstraints")
+      .find({});
+    result = await result.toArray();
+    let teamsConstraints = {};
+    if (result.length !== 0) {
+      for (let i = 0; i < result.length; i++) {
+        let teamId = i + 1;
+        let teamName = result[i].teamName;
+        let constraints = result[i].weeklyConstraints;
+        let user = result[i].user;
+        teamsConstraints[teamId] = {
+          teamName: teamName,
+          constraints: constraints,
+          teamCaptainUser: user,
+        };
       }
+      return {
+        success: true,
+        teamsConstraints: teamsConstraints,
+      };
+    } else {
+      console.log("there are captain constraints set yet");
+      return {
+        success: false,
+        error: {
+          msg: "there are captain constraints set yet",
+        },
+      };
+    }
 
     // let result = await this.client
     //   .db("FootballLeague")
@@ -702,7 +821,7 @@ module.exports = class DataBase {
     //     teamsConstraints[otherTeamNum].teamCanPlayAgainst.push(teamId);
     //     teamCanPlayAgainst.push(otherTeamNum);
     //   }
-      
+
     //   teamsConstraints[teamId] = { teamId: teamId, teamName: teamName, teamCanPlayAgainst: teamCanPlayAgainst };
     //   // teamsIds.push(result[i].teamNum);
     //   // teamsConstraints.push({
@@ -723,108 +842,112 @@ module.exports = class DataBase {
 
   async getPitchConstraints() {
     let result = await this.client
-    .db("FootballLeague")
-    .collection("PitchConstraints")
-    .find({});
-    console.log('before toArray()');
+      .db("FootballLeague")
+      .collection("PitchConstraints")
+      .find({});
+    console.log("before toArray()");
     result = await result.toArray();
     // We assume there are already constraints on database..
     if (result.length !== 0) {
-      return { 
+      return {
         success: true,
         pitchConstraints: result[0].pitchConstraints,
-      }
+      };
     } else {
-      console.log('there are no pitch constraints on database yet')
-      return { 
+      console.log("there are no pitch constraints on database yet");
+      return {
         success: false,
         error: {
-          msg: 'there are no pitch constraints set yet'
-        }
-      }
+          msg: "there are no pitch constraints set yet",
+        },
+      };
     }
   }
 
   async getLeagueSchedule() {
-    console.log('In Database.js - getLeagueSchedule() - at beginning.....')
+    console.log("In Database.js - getLeagueSchedule() - at beginning.....");
     let result = await this.client
-    .db("FootballLeague")
-    .collection('Schedule')
-    .find({});
+      .db("FootballLeague")
+      .collection("Schedule")
+      .find({});
     result = await result.toArray();
     if (result.length === 0)
       return {
         success: false,
         error: {
-          msg: 'there is no schedule set by league manager yet'
-        }
-      }
+          msg: "there is no schedule set by league manager yet",
+        },
+      };
 
-     let schedule = result[0].schedule;
-     let teamsNumbers = result[0].teamsNumbers;
-     let refereesSchedule = result[0].refereesSchedule;
-     let teamsConstraints = result[0].teamsConstraints;
+    let schedule = result[0].schedule;
+    let teamsNumbers = result[0].teamsNumbers;
+    let refereesSchedule = result[0].refereesSchedule;
+    let teamsConstraints = result[0].teamsConstraints;
 
-     console.log('In Database.js - getLeagueSchedule() - returning.....')
-     return {
-       success: true,
-       schedule: schedule,
-       teamsNumbers: teamsNumbers,
-       refereesSchedule: refereesSchedule,
-       teamsConstraints: teamsConstraints,
-     }
+    console.log("In Database.js - getLeagueSchedule() - returning.....");
+    return {
+      success: true,
+      schedule: schedule,
+      teamsNumbers: teamsNumbers,
+      refereesSchedule: refereesSchedule,
+      teamsConstraints: teamsConstraints,
+    };
   }
 
   async getConstraints(user, collection) {
     let result = await this.getUser(user);
-    if (result.success) { 
+    if (result.success) {
       result = await this.client
         .db("FootballLeague")
         .collection(collection)
         .find({ user: user });
       result = await result.toArray();
-      console.log('result: ' + result);
+      console.log("result: " + result);
       if (result.length !== 0) {
-          console.log('there is a user, now we will send the constraints to the client');
-          console.log('constraints: ' + result[0].weeklyConstraints);
-          return { 
-            success: true,
-            weeklyConstraints: result[0].weeklyConstraints,
-            specificConstraints: result[0].specificConstraints,
-          }
+        console.log(
+          "there is a user, now we will send the constraints to the client"
+        );
+        console.log("constraints: " + result[0].weeklyConstraints);
+        return {
+          success: true,
+          weeklyConstraints: result[0].weeklyConstraints,
+          specificConstraints: result[0].specificConstraints,
+        };
       } else {
-        console.log('that user('+user+') is not set with constraints')
-        return { 
+        console.log("that user(" + user + ") is not set with constraints");
+        return {
           success: false,
           error: {
-            msg: 'there are no constraints set yet'
-          }
-        }
-      } 
-    }
-    else {
-      console.log('failed to get user')
+            msg: "there are no constraints set yet",
+          },
+        };
+      }
+    } else {
+      console.log("failed to get user");
       return result;
     }
   }
 
   async getManagerSchedule() {
     let result = await this.client
-    .db("FootballLeague")
-    .collection("Schedule")
-    .find({});
-    console.log('result: ' + result);
+      .db("FootballLeague")
+      .collection("Schedule")
+      .find({});
+    console.log("result: " + result);
     result = await result.toArray();
     if (result.length !== 0) {
       let refereesResult = await this.client
-      .db("FootballLeague")
-      .collection("RefereeConstraints")
-      .find({});
-      console.log('result: ' + refereesResult);
+        .db("FootballLeague")
+        .collection("RefereeConstraints")
+        .find({});
+      console.log("result: " + refereesResult);
       refereesResult = await refereesResult.toArray();
       let refereesConstraints = [];
-      for (let i=0; i<refereesResult.length; i++) {
-        refereesConstraints.push({ user: refereesResult[i].user, constraints: refereesResult[i].weeklyConstraints });
+      for (let i = 0; i < refereesResult.length; i++) {
+        refereesConstraints.push({
+          user: refereesResult[i].user,
+          constraints: refereesResult[i].weeklyConstraints,
+        });
       }
 
       return {
@@ -835,17 +958,16 @@ module.exports = class DataBase {
         teamsNumbers: result[0].teamsNumbers,
         teamsConstraints: result[0].teamsConstraints,
         refereesConstraints: refereesConstraints,
-      }
-    }
-    else {
+      };
+    } else {
       result = await this.getTeamsConstraints();
       if (!result.success) {
         return {
           success: false,
           error: {
-            msg: 'there is no schedule set'
-          }
-        }
+            msg: "there is no schedule set",
+          },
+        };
       }
 
       return {
@@ -857,23 +979,23 @@ module.exports = class DataBase {
   }
 
   async deleteGameFromReferee(changeDetails) {
-    console.log('In Database.js - deleteGameFromReferee()');
+    console.log("In Database.js - deleteGameFromReferee()");
     let referee = changeDetails.referee;
     let matchId = changeDetails.matchId;
     let result = await this.client
-    .db("FootballLeague")
-    .collection("RefereesGames")
-    .find({ user: referee });
-    
+      .db("FootballLeague")
+      .collection("RefereesGames")
+      .find({ user: referee });
+
     result = await result.toArray();
     if (result.length === 0)
       return {
         success: false,
         error: {
-          msg: 'no such referee games for: ' + referee,
-        }
-      }
-    
+          msg: "no such referee games for: " + referee,
+        },
+      };
+
     let games = result[0].games;
     let day = games[matchId].day;
     let hour = games[matchId].hour;
@@ -882,60 +1004,76 @@ module.exports = class DataBase {
 
     delete games[matchId];
     result = await this.client
-    .db("FootballLeague")
-    .collection("RefereesGames")
-    .updateOne({ user: referee }, { $set: {"games": games} });
+      .db("FootballLeague")
+      .collection("RefereesGames")
+      .updateOne({ user: referee }, { $set: { games: games } });
 
     // Send the referee a message to let him know
     result = await this.client
-    .db("FootballLeague")
-    .collection("Users")
-    .find({ username: referee });
+      .db("FootballLeague")
+      .collection("Users")
+      .find({ username: referee });
     result = await result.toArray();
     if (result.length === 0)
       return {
         success: false,
         error: {
-          msg: 'no such user: ' + referee,
-        }
-      }
+          msg: "no such user: " + referee,
+        },
+      };
 
-      let inbox = result[0].inbox;
-      let game = teamA + ' - ' + teamB + ', on day: ' + day + ', at ' + hour + 'o`clock';
-      inbox.messages.push({ msg: 'The league manager has removed you from game: ' + game });
-      result = await this.client
+    let inbox = result[0].inbox;
+    let game =
+      teamA + " - " + teamB + ", on day: " + day + ", at " + hour + "o`clock";
+    inbox.messages.push({
+      msg: "The league manager has removed you from game: " + game,
+    });
+    result = await this.client
       .db("FootballLeague")
       .collection("Users")
-      .updateOne({ username: referee }, { $set: {"inbox": inbox} });
+      .updateOne({ username: referee }, { $set: { inbox: inbox } });
 
     return {
-      success: true
-    }
+      success: true,
+    };
   }
 
-  async updateSchedule(schedule, gamesToBeCompleted, teamsNumbers, teamsConstraints, gamesIdsToUsers, changeDetails, refereesConstraints, refereesSchedule) {
+  async updateSchedule(
+    schedule,
+    gamesToBeCompleted,
+    teamsNumbers,
+    teamsConstraints,
+    gamesIdsToUsers,
+    changeDetails,
+    refereesConstraints,
+    refereesSchedule
+  ) {
     let result = await this.client
-    .db("FootballLeague")
-    .collection("Schedule")
-    .find({});
-    console.log('result: ' + result);
+      .db("FootballLeague")
+      .collection("Schedule")
+      .find({});
+    console.log("result: " + result);
     result = await result.toArray();
 
     if (result.length !== 0) {
-      console.log('Updating an existung schedule');
-      console.log('result: ' + result[0]);
+      console.log("Updating an existung schedule");
+      console.log("result: " + result[0]);
       let gamesIdsToUsers = result[0].gamesIdsToUsers;
       result = this.client
-      .db("FootballLeague")
-      .collection("Schedule")
-      .replaceOne({}, { schedule: schedule,
-                        gamesToBeCompleted: gamesToBeCompleted,
-                        teamsNumbers: teamsNumbers,
-                        teamsConstraints: teamsConstraints,
-                        gamesIdsToUsers: result[0].gamesIdsToUsers,
-                        refereesConstraints: refereesConstraints,
-                        refereesSchedule: refereesSchedule,
-           });
+        .db("FootballLeague")
+        .collection("Schedule")
+        .replaceOne(
+          {},
+          {
+            schedule: schedule,
+            gamesToBeCompleted: gamesToBeCompleted,
+            teamsNumbers: teamsNumbers,
+            teamsConstraints: teamsConstraints,
+            gamesIdsToUsers: result[0].gamesIdsToUsers,
+            refereesConstraints: refereesConstraints,
+            refereesSchedule: refereesSchedule,
+          }
+        );
 
       let userA = gamesIdsToUsers[changeDetails.matchId][0].user;
       let teamA = gamesIdsToUsers[changeDetails.matchId][0].teamName;
@@ -946,93 +1084,160 @@ module.exports = class DataBase {
       result = this.client
         .db("FootballLeague")
         .collection("Users")
-        .find({$or: [{ username: userA }, { username: userB }]});
+        .find({ $or: [{ username: userA }, { username: userB }] });
       if (result.length === 0)
         return {
           success: false,
           error: {
-            msg: 'change has set but the users didnt get the message'
-          }
-        }
-        result = await result.toArray();
-        console.log('before updating the messages of the users...');
-        console.log('changeDetails.change: ' + changeDetails.change + ', changeDetails.matchId: ' + changeDetails.matchId);
-        console.log('userA: ' + userA + ', userB: ' + userB);
-        let userAInbox = (result[0].username === userA)? result[0].inbox : result[1].inbox;
-        let userBInbox = (result[0].username === userB)? result[0].inbox : result[1].inbox;
-        if (changeDetails.change === "AddGame") {
-          userAInbox.messages.push({msg: 'The league manager added a game of your team.\nThe game is against '+ teamB +', in day: ' + changeDetails.day + ', in hour: ' + changeDetails.hour, read: false});
-          userBInbox.messages.push({msg: 'The league manager added a game of your team.\nThe game is against ' + teamA + ', in day: ' + changeDetails.day + ', in hour: ' + changeDetails.hour, read: false});
-        }
-        else if (changeDetails.change === "DeleteGame") {
-          userAInbox.messages.push({msg: 'The league manager deleted a game of your team against ' + teamB + '.\nThe game supposed to be in day: ' + changeDetails.day + ', in hour: ' + changeDetails.hour, read: false});
-          userBInbox.messages.push({msg: 'The league manager deleted a game of your team against ' + teamA + '.\nThe game supposed to be in day: ' + changeDetails.day + ', in hour: ' + changeDetails.hour, read: false});
-        }
-        else if (changeDetails.change === "ChangeGame") {
-          userAInbox.messages.push({msg: 'The league manager changed a game of your team against ' + teamB + '.\nThe game rescheduled to be in day: ' + changeDetails.day + ', in hour: ' + changeDetails.hour, read: false});
-          userBInbox.messages.push({msg: 'The league manager changed a game of your team against ' + teamA + '.\nThe game rescheduled to be in day: ' + changeDetails.day + ', in hour: ' + changeDetails.hour, read: false});
-        }
-        else { // Not implemented yet
-
-        }
-
-        if (changeDetails.referee !== undefined)
-          await this.deleteGameFromReferee(changeDetails);
-
-        result = this.client
-          .db("FootballLeague")
-          .collection("Users")
-          .updateOne({ username: userA }, { $set: {"inbox": userAInbox} });
-        result = this.client
-        .db("FootballLeague")
-        .collection("Users")
-        .updateOne({ username: userB }, { $set: {"inbox": userBInbox} });
-        
-        return { 
-            success: true,
-        }
-
-    } else {
-      let refereesResult = await this.client
-      .db("FootballLeague")
-      .collection("RefereeConstraints")
-      .find({});
-      refereesResult = await refereesResult.toArray();
-      let refereesConstraints = [];
-      for (let i=0; i<refereesResult.length; i++) {
-        refereesConstraints.push({ user: refereesResult[i].user, constraints: refereesResult[i].weeklyConstraints });
+            msg: "change has set but the users didnt get the message",
+          },
+        };
+      result = await result.toArray();
+      console.log("before updating the messages of the users...");
+      console.log(
+        "changeDetails.change: " +
+          changeDetails.change +
+          ", changeDetails.matchId: " +
+          changeDetails.matchId
+      );
+      console.log("userA: " + userA + ", userB: " + userB);
+      let userAInbox =
+        result[0].username === userA ? result[0].inbox : result[1].inbox;
+      let userBInbox =
+        result[0].username === userB ? result[0].inbox : result[1].inbox;
+      if (changeDetails.change === "AddGame") {
+        userAInbox.messages.push({
+          msg:
+            "The league manager added a game of your team.\nThe game is against " +
+            teamB +
+            ", in day: " +
+            changeDetails.day +
+            ", in hour: " +
+            changeDetails.hour,
+          read: false,
+        });
+        userBInbox.messages.push({
+          msg:
+            "The league manager added a game of your team.\nThe game is against " +
+            teamA +
+            ", in day: " +
+            changeDetails.day +
+            ", in hour: " +
+            changeDetails.hour,
+          read: false,
+        });
+      } else if (changeDetails.change === "DeleteGame") {
+        userAInbox.messages.push({
+          msg:
+            "The league manager deleted a game of your team against " +
+            teamB +
+            ".\nThe game supposed to be in day: " +
+            changeDetails.day +
+            ", in hour: " +
+            changeDetails.hour,
+          read: false,
+        });
+        userBInbox.messages.push({
+          msg:
+            "The league manager deleted a game of your team against " +
+            teamA +
+            ".\nThe game supposed to be in day: " +
+            changeDetails.day +
+            ", in hour: " +
+            changeDetails.hour,
+          read: false,
+        });
+      } else if (changeDetails.change === "ChangeGame") {
+        userAInbox.messages.push({
+          msg:
+            "The league manager changed a game of your team against " +
+            teamB +
+            ".\nThe game rescheduled to be in day: " +
+            changeDetails.day +
+            ", in hour: " +
+            changeDetails.hour,
+          read: false,
+        });
+        userBInbox.messages.push({
+          msg:
+            "The league manager changed a game of your team against " +
+            teamA +
+            ".\nThe game rescheduled to be in day: " +
+            changeDetails.day +
+            ", in hour: " +
+            changeDetails.hour,
+          read: false,
+        });
+      } else {
+        // Not implemented yet
       }
 
-      console.log('Inserting new schedule');
-      console.log('JSON.parse(JSON.stringify(schedule)): ' + JSON.parse(JSON.stringify(schedule)));
+      if (changeDetails.referee !== undefined)
+        await this.deleteGameFromReferee(changeDetails);
+
+      result = this.client
+        .db("FootballLeague")
+        .collection("Users")
+        .updateOne({ username: userA }, { $set: { inbox: userAInbox } });
+      result = this.client
+        .db("FootballLeague")
+        .collection("Users")
+        .updateOne({ username: userB }, { $set: { inbox: userBInbox } });
+
+      return {
+        success: true,
+      };
+    } else {
+      let refereesResult = await this.client
+        .db("FootballLeague")
+        .collection("RefereeConstraints")
+        .find({});
+      refereesResult = await refereesResult.toArray();
+      let refereesConstraints = [];
+      for (let i = 0; i < refereesResult.length; i++) {
+        refereesConstraints.push({
+          user: refereesResult[i].user,
+          constraints: refereesResult[i].weeklyConstraints,
+        });
+      }
+
+      console.log("Inserting new schedule");
+      console.log(
+        "JSON.parse(JSON.stringify(schedule)): " +
+          JSON.parse(JSON.stringify(schedule))
+      );
       result = await this.client
-      .db("FootballLeague")
-      .collection("Schedule")
-      .insertOne({ 
-        schedule: schedule, 
-        refereesSchedule: refereesSchedule,
-        gamesToBeCompleted: gamesToBeCompleted, 
-        teamsNumbers: teamsNumbers,
-        teamsConstraints: teamsConstraints,
-        gamesIdsToUsers: gamesIdsToUsers,
-        refereesConstraints: refereesConstraints,
-      });
+        .db("FootballLeague")
+        .collection("Schedule")
+        .insertOne({
+          schedule: schedule,
+          refereesSchedule: refereesSchedule,
+          gamesToBeCompleted: gamesToBeCompleted,
+          teamsNumbers: teamsNumbers,
+          teamsConstraints: teamsConstraints,
+          gamesIdsToUsers: gamesIdsToUsers,
+          refereesConstraints: refereesConstraints,
+        });
 
       // Updating all the users about the schedule
       result = this.client
         .db("FootballLeague")
         .collection("Users")
-        .find({ role: 'captain' });
+        .find({ role: "captain" });
       result = await result.toArray();
-      for (let i=0; i<result.length; i++) {
+      for (let i = 0; i < result.length; i++) {
         let user = result[i].username;
         let userInbox = result[i].inbox;
-        console.log('user: ' + user + ', userInbox: ' + userInbox);
-        userInbox.messages.push({ msg: 'The league manager has schedule the league, you can watch it on "Schedule"', read: false});
+        console.log("user: " + user + ", userInbox: " + userInbox);
+        userInbox.messages.push({
+          msg:
+            'The league manager has schedule the league, you can watch it on "Schedule"',
+          read: false,
+        });
         let updateResult = this.client
           .db("FootballLeague")
           .collection("Users")
-          .updateOne({ username: user }, { $set: {"inbox": userInbox} });
+          .updateOne({ username: user }, { $set: { inbox: userInbox } });
       }
 
       return {
@@ -1043,159 +1248,165 @@ module.exports = class DataBase {
         gamesToBeCompleted: gamesToBeCompleted,
         teamsConstraints: teamsConstraints,
         refereesConstraints: refereesConstraints,
-      }
+      };
     }
   }
 
   async getRefereesGames() {
     let result = this.client
-    .db("FootballLeague")
-    .collection("RefereesGames")
-    .find({});
+      .db("FootballLeague")
+      .collection("RefereesGames")
+      .find({});
     result = await result.toArray();
     if (result.length === 0)
       return {
         success: false,
         error: {
-          msg: 'no referees are found in the league',
-        }
-      }
+          msg: "no referees are found in the league",
+        },
+      };
 
     let refereesGames = [];
-    for (let i=0; i<result.length; i++) {
+    for (let i = 0; i < result.length; i++) {
       refereesGames.push(result[i]);
     }
-    
+
     return {
       success: true,
       refereesGames: refereesGames,
-    }
+    };
   }
 
   async getMessages(user) {
-    console.log('In database - getMessages()');
+    console.log("In database - getMessages()");
     let result = await this.getUser(user);
-    if (!result.success)
-      return result;
-    
-    console.log('result.inbox.messages: ' + result.inbox.messages);
+    if (!result.success) return result;
+
+    console.log("result.inbox.messages: " + result.inbox.messages);
     return {
       success: true,
       inbox: result.inbox,
-    }
+    };
   }
 
   async addGameToReferee(changeDetails) {
-    console.log('In Database.js - addGameToReferee()');
-    let referee = changeDetails.referee
-    let matchId = changeDetails.matchId
+    console.log("In Database.js - addGameToReferee()");
+    let referee = changeDetails.referee;
+    let matchId = changeDetails.matchId;
     let result = await this.client
-    .db("FootballLeague")
-    .collection("RefereesGames")
-    .find({ user: referee });
-    
+      .db("FootballLeague")
+      .collection("RefereesGames")
+      .find({ user: referee });
+
     result = await result.toArray();
     if (result.length === 0)
       return {
         success: false,
         error: {
-          msg: 'no such referee games for: ' + referee,
-        }
-      }
-    
+          msg: "no such referee games for: " + referee,
+        },
+      };
+
     let games = result[0].games;
-    games[changeDetails.matchId] = { 
-      day: changeDetails.day, 
+    games[changeDetails.matchId] = {
+      day: changeDetails.day,
       hour: changeDetails.hour,
       teamA: changeDetails.teamA,
       teamB: changeDetails.teamB,
-    }
+    };
 
     result = await this.client
-    .db("FootballLeague")
-    .collection("RefereesGames")
-    .updateOne({ user: referee }, { $set: {"games": games} });
+      .db("FootballLeague")
+      .collection("RefereesGames")
+      .updateOne({ user: referee }, { $set: { games: games } });
 
     // Send the referee a message to let him know
     result = await this.client
-    .db("FootballLeague")
-    .collection("Users")
-    .find({ username: referee });
+      .db("FootballLeague")
+      .collection("Users")
+      .find({ username: referee });
     result = await result.toArray();
     if (result.length === 0)
       return {
         success: false,
         error: {
-          msg: 'no such user: ' + referee,
-        }
-      }
+          msg: "no such user: " + referee,
+        },
+      };
 
-      let inbox = result[0].inbox;
-      let game = changeDetails.teamA + ' - ' + changeDetails.teamB + ', on day: ' + changeDetails.day + ', at ' + changeDetails.hour + 'o`clock';
-      inbox.messages.push({ msg: 'The league manager has added you to judge the game: ' + game });
-      result = await this.client
+    let inbox = result[0].inbox;
+    let game =
+      changeDetails.teamA +
+      " - " +
+      changeDetails.teamB +
+      ", on day: " +
+      changeDetails.day +
+      ", at " +
+      changeDetails.hour +
+      "o`clock";
+    inbox.messages.push({
+      msg: "The league manager has added you to judge the game: " + game,
+    });
+    result = await this.client
       .db("FootballLeague")
       .collection("Users")
-      .updateOne({ username: referee }, { $set: {"inbox": inbox} });
+      .updateOne({ username: referee }, { $set: { inbox: inbox } });
 
     return {
-      success: true
-    }
+      success: true,
+    };
   }
 
   async updateRefereesSchedule(refereesSchedule, changeDetails) {
-    console.log('In Database.js - updateRefereesSchedule()');
+    console.log("In Database.js - updateRefereesSchedule()");
     let result = await this.getUser(changeDetails.referee);
-    if (!result.success) 
-      return result;
-    
+    if (!result.success) return result;
+
     switch (changeDetails.change) {
       case "AddRefereeToGame":
-        result = await this.addGameToReferee(changeDetails)
+        result = await this.addGameToReferee(changeDetails);
         break;
       case "ChangeReferees":
         result = await this.addGameToReferee(changeDetails);
         changeDetails.referee = changeDetails.exReferee;
-        result = await this.deleteGameFromReferee(changeDetails)
+        result = await this.deleteGameFromReferee(changeDetails);
         // if (refereeGames[changeDetails.matchId])
         //   refereeGames[changeDetails.matchId] = null;
-        break;   
+        break;
       default:
         break;
     }
 
-    if (!result.success) 
-      return result;
-    
+    if (!result.success) return result;
+
     // Updating the referees schedule
     result = await this.client
-    .db("FootballLeague")
-    .collection("Schedule")
-    .updateOne({}, { $set: {"refereesSchedule": refereesSchedule} });
+      .db("FootballLeague")
+      .collection("Schedule")
+      .updateOne({}, { $set: { refereesSchedule: refereesSchedule } });
 
     return {
       success: true,
-    }
+    };
   }
 
   async updateInbox(inbox, user) {
-    console.log('inbox: ' + inbox);
-    console.log('user: ' + user);
+    console.log("inbox: " + inbox);
+    console.log("user: " + user);
 
-    console.log('In database - getMessaupdateInboxges()');
+    console.log("In database - getMessaupdateInboxges()");
     let result = await this.getUser(user);
-    console.log('result: ' + result);
-    if (!result.success)
-      return result;
-    
-    result = await this.client
-    .db("FootballLeague")
-    .collection("Users")
-    .updateOne({ username: user }, { $set: {"inbox": inbox} });
+    console.log("result: " + result);
+    if (!result.success) return result;
 
-    console.log('returning trueeee');
-    return { 
+    result = await this.client
+      .db("FootballLeague")
+      .collection("Users")
+      .updateOne({ username: user }, { $set: { inbox: inbox } });
+
+    console.log("returning trueeee");
+    return {
       success: true,
-    }
+    };
   }
 };

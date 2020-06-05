@@ -8,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { Picker } from '@react-native-community/picker';
+import {Picker} from '@react-native-community/picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import {Colors} from 'react-native/Libraries/NewAppScreen'; // tal's old state
 

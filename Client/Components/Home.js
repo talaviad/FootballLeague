@@ -7,9 +7,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
+  ImageBackground,
+  Dimensions,
+  Image,
 } from 'react-native';
 import {Table, Row, Rows} from 'react-native-table-component';
 import AsyncStorage from '@react-native-community/async-storage';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Icon2 from 'react-native-vector-icons/FontAwesome5';
+
 import {
   Colors,
   DebugInstructions,
@@ -20,6 +27,9 @@ import GLOBALS from '../Globals';
 
 var IP = '132.72.23.63';
 var PORT = '3079';
+
+// var IP = '192.168.1.124';
+// var PORT = '3000';
 
 function RoundButton({title, color, background, onPress, disabled}) {
   return (
@@ -37,7 +47,6 @@ function RoundButton({title, color, background, onPress, disabled}) {
 function ButtonsRow({children}) {
   return <View style={styles.buttonsRow}>{children}</View>;
 }
-
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -79,30 +88,25 @@ export default class Home extends React.Component {
 
         switch (param) {
           case 'leagueTable':
-            this.props.navigation.navigate('LeagueTable', {
+            this.props.navigation.navigate('League Table', {
               tableData: resJson.tableData,
             });
             break;
-          case 'GamesWeek1':
-            return resJson.tableData;
-            break;
           case 'scorerTable':
-            this.props.navigation.navigate('ScorerTable', {
+            this.props.navigation.navigate('Scorer Table', {
               tableData: resJson.tableData,
+            });
+            break;
+          case 'clubs':
+            this.props.navigation.navigate('Clubs', {
+              tableData: resJson.tableData,
+              teamList: this.state.teamsNames,
             });
             break;
           case 'register':
             this.props.navigation.navigate('Register');
             break;
-          case 'insertGameResult':
-            this.props.navigation.navigate('Home');
-            break;
-          case 'GetConstraints':
-            this.props.navigation.navigate('Constraints', {
-              IP: IP,
-              PORT: PORT,
-            });
-            break;
+
           default:
             break;
         }
@@ -200,11 +204,200 @@ export default class Home extends React.Component {
     });
   }
 
+  displayButtonByUser = () => {
+    if (this.state.isLoggedIn && this.state.role === 'referee') {
+      return (
+        <View>
+          <AwesomeButtonCartman
+            onPress={() => {
+              this.props.navigation.navigate('Referee Tools', {
+                IP: IP,
+                PORT: PORT,
+                teamsNames: this.state.teamsNames,
+              });
+            }}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            backgroundColor="#3f7ec1"
+            backgroundActive="#b3cce7"
+            backgroundDarker="#b3cce7"
+            backgroundDarker="#b3cce7"
+            backgroundPlaceholder="#b3cce7"
+            borderColor="#b3cce7"
+            type="primary"
+            textColor="#FFF"
+            textSize={18}
+            height={80}
+            raiseLevel={4}
+            height={100}
+            width={100}
+            borderRadius={50}>
+            <ImageBackground
+              source={require('../Images/star.png')}
+              style={{height: 100, width: 100}}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={require('../Images/referee4.png')}
+                  style={{
+                    width: 200,
+                    height: 200,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                />
+              </View>
+            </ImageBackground>
+          </AwesomeButtonCartman>
+          <Text
+            style={{
+              fontSize: 20,
+              color: '#edf3f9',
+              fontFamily: 'sans-serif-medium',
+              textAlign: 'center',
+            }}>
+            Referee Tools
+          </Text>
+        </View>
+      );
+    } else if (this.state.isLoggedIn && this.state.role === 'captain') {
+      return (
+        <View>
+          <AwesomeButtonCartman
+            onPress={() => {
+              this.props.navigation.navigate('Captain Tools', {
+                IP: IP,
+                PORT: PORT,
+              });
+            }}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            backgroundColor="#3f7ec1"
+            backgroundActive="#b3cce7"
+            backgroundDarker="#b3cce7"
+            backgroundDarker="#b3cce7"
+            backgroundPlaceholder="#b3cce7"
+            borderColor="#b3cce7"
+            type="primary"
+            textColor="#FFF"
+            textSize={18}
+            height={80}
+            raiseLevel={4}
+            height={100}
+            width={100}
+            borderRadius={50}>
+            <ImageBackground
+              source={require('../Images/star.png')}
+              style={{height: 100, width: 100}}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={require('../Images/captain.png')}
+                  style={{
+                    width: 140,
+                    height: 140,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                />
+              </View>
+            </ImageBackground>
+          </AwesomeButtonCartman>
+          <Text
+            style={{
+              fontSize: 20,
+              color: '#edf3f9',
+              fontFamily: 'sans-serif-medium',
+              textAlign: 'center',
+            }}>
+            Captain Tools
+          </Text>
+        </View>
+      );
+    }
+    if (this.state.isLoggedIn && this.state.role === 'manager') {
+      return (
+        <View>
+          <AwesomeButtonCartman
+            onPress={() => {
+              this.props.navigation.navigate('Manager Tools', {
+                IP: IP,
+                PORT: PORT,
+              });
+            }}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            backgroundColor="#3f7ec1"
+            backgroundActive="#b3cce7"
+            backgroundDarker="#b3cce7"
+            backgroundDarker="#b3cce7"
+            backgroundPlaceholder="#b3cce7"
+            borderColor="#b3cce7"
+            type="primary"
+            textColor="#FFF"
+            textSize={18}
+            height={80}
+            raiseLevel={4}
+            height={100}
+            width={100}
+            borderRadius={50}>
+            <ImageBackground
+              source={require('../Images/star.png')}
+              style={{height: 100, width: 100}}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={require('../Images/manager.png')}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                />
+              </View>
+            </ImageBackground>
+          </AwesomeButtonCartman>
+          <Text
+            style={{
+              fontSize: 20,
+              color: '#edf3f9',
+              fontFamily: 'sans-serif-medium',
+              textAlign: 'center',
+            }}>
+            Manager Tools
+          </Text>
+        </View>
+      );
+    }
+  };
+
   render() {
     return (
-      <View style={{height: '100%'}}>
-        <ScrollView style={styles.body}>
-          <View style={styles.sectionTwoBtnContainer}>
+      <ImageBackground
+        source={require('../Images/wall.jpg')}
+        style={[styles.image, {flex: 1}, {opacity: 1}]}>
+        <View style={{marginTop: 5, flex: 1}}>
+          {/* <ScrollView style={styles.body}> */}
+          {/* <View style={styles.sectionTwoBtnContainer}>
             {!this.state.isLoggedIn ? (
               <TouchableOpacity
                 style={styles.divided}
@@ -226,8 +419,8 @@ export default class Home extends React.Component {
                 {this.state.isLoggedIn ? 'Logout' : 'Login'}
               </Text>
             </TouchableOpacity>
-          </View>
-          {this.state.isLoggedIn ? (
+          </View> */}
+          {/* {this.state.isLoggedIn ? (
             <TouchableOpacity
               style={styles.touchAble}
               onPress={() =>
@@ -255,71 +448,295 @@ export default class Home extends React.Component {
                   : 'no new messages'}
               </Text>
             </TouchableOpacity>
-          ) : null}
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() => this.handleSendRequestToServer('leagueTable')}>
-            <Text style={styles.buttonText}>League Table</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() =>
-              this.props.navigation.navigate('GamesResults', {
-                IP: IP,
-                PORT: PORT,
-              })
-            }>
-            <Text style={styles.buttonText}>Games Results</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={() => {
-              this.handleSendRequestToServer('scorerTable');
-            }}>
-            <Text style={styles.buttonText}>Scorer Table</Text>
-          </TouchableOpacity>
-          {this.state.isLoggedIn &&
-          (this.state.role === 'referee' || this.state.role === 'manager') ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('InsertGame', {
-                  IP: IP,
-                  PORT: PORT,
-                  teamList: this.state.teamsNames,
-                })
-              }>
-              <Text style={styles.buttonText}>Insert a game result</Text>
-            </TouchableOpacity>
-          ) : null}
-          {this.state.isLoggedIn &&
-          (this.state.role === 'referee' || this.state.role === 'manager') ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('GameMode', {
-                  IP: IP,
-                  PORT: PORT,
-                  teamList: this.state.teamsNames,
-                })
-              }>
-              <Text style={styles.buttonText}>Enter game mode</Text>
-            </TouchableOpacity>
-          ) : null}
-          {(this.state.isLoggedIn && this.state.role === 'captain') ||
-          this.state.role === 'referee' ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() => this.handleSendRequestToServer('GetConstraints')}>
-              <Text style={styles.buttonText}>
-                {this.state.role === 'captain'
-                  ? 'My Team Constraints'
-                  : 'My Referee Constraints'}
+          ) : null} */}
+          <View style={styles.rowOfTwoButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={
+                  this.state.isLoggedIn
+                    ? () =>
+                        this.props.navigation.navigate('Personal Area', {
+                          IP: IP,
+                          PORT: PORT,
+                        })
+                    : () =>
+                        this.props.navigation.navigate('Login', {
+                          IP: IP,
+                          PORT: PORT,
+                        })
+                }
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                backgroundColor="#3f7ec1"
+                backgroundActive="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundPlaceholder="#b3cce7"
+                borderColor="#b3cce7"
+                type="primary"
+                textColor="#FFF"
+                textSize={18}
+                height={80}
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{height: 100, width: 100}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/user3.png')}
+                      style={{
+                        width: 110,
+                        height: 110,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#edf3f9',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                {this.state.isLoggedIn ? 'Personl Area' : 'Login'}
               </Text>
-            </TouchableOpacity>
-          ) : null}
+            </View>
+            {this.displayButtonByUser()}
+          </View>
+          <View style={styles.rowOfTwoButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() => this.handleSendRequestToServer('leagueTable')}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                backgroundColor="#3f7ec1"
+                backgroundActive="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundPlaceholder="#b3cce7"
+                borderColor="#b3cce7"
+                type="primary"
+                textColor="#FFF"
+                textSize={18}
+                height={80}
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{height: 100, width: 100}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/excel.png')}
+                      style={{
+                        width: 70,
+                        height: 70,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#edf3f9',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Table
+              </Text>
+            </View>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() =>
+                  this.props.navigation.navigate('Results', {
+                    IP: IP,
+                    PORT: PORT,
+                  })
+                }
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                backgroundColor="#3f7ec1"
+                backgroundActive="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundPlaceholder="#b3cce7"
+                borderColor="#b3cce7"
+                type="primary"
+                textColor="#FFF"
+                textSize={18}
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{height: 100, width: 100}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/result3.png')}
+                      style={{
+                        width: 120,
+                        height: 110,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#edf3f9',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Results
+              </Text>
+            </View>
+          </View>
+          <View style={styles.rowOfTwoButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() => {
+                  this.handleSendRequestToServer('scorerTable');
+                }}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                backgroundColor="#3f7ec1"
+                backgroundActive="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundPlaceholder="#b3cce7"
+                borderColor="#b3cce7"
+                type="primary"
+                textColor="#FFF"
+                textSize={18}
+                height={80}
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{height: 100, width: 100}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/scorer.png')}
+                      style={{
+                        width: 120,
+                        height: 110,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#edf3f9',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Scorer Table
+              </Text>
+            </View>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() => {
+                  this.handleSendRequestToServer('clubs');
+                }}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                backgroundColor="#3f7ec1"
+                backgroundActive="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundDarker="#b3cce7"
+                backgroundPlaceholder="#b3cce7"
+                borderColor="#b3cce7"
+                type="primary"
+                textColor="#FFF"
+                textSize={18}
+                height={80}
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{height: 100, width: 100}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/club.png')}
+                      style={{
+                        width: 120,
+                        height: 110,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#edf3f9',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Clubs
+              </Text>
+            </View>
+          </View>
+          <View style={styles.rowOfTwoButton} />
           {this.state.isLoggedIn && this.state.role === 'manager' ? (
             <TouchableOpacity
               style={styles.touchAble}
@@ -332,122 +749,23 @@ export default class Home extends React.Component {
               <Text style={styles.buttonText}>Manage Schedule</Text>
             </TouchableOpacity>
           ) : null}
-          {this.state.isLoggedIn &&
-          (this.state.role === 'captain' || this.state.role === 'referee') ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('LeagueSchedule', {
-                  IP: IP,
-                  PORT: PORT,
-                })
-              }>
-              <Text style={styles.buttonText}>League Schedule</Text>
-            </TouchableOpacity>
-          ) : null}
-          {this.state.isLoggedIn && this.state.role === 'manager' ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('PitchConstraints', {
-                  IP: IP,
-                  PORT: PORT,
-                })
-              }>
-              <Text style={styles.buttonText}>Set Pitch Constraints</Text>
-            </TouchableOpacity>
-          ) : null}
+
           <View style={styles.loadingStyle}>
             {this.state.isLoading && (
               <ActivityIndicator color={'#fff'} size={80} />
             )}
           </View>
-        </ScrollView>
-        <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'manager' && (
-            <ButtonsRow>
-              <RoundButton
-                title="Add New Referee"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('AddReferee', {
-                    IP: IP,
-                    PORT: PORT,
-                  });
-                }}
-              />
-              <RoundButton
-                title="Add New Club"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('AddClub', {
-                    IP: IP,
-                    PORT: PORT,
-                  });
-                }}
-              />
-              <RoundButton
-                title="Change Password"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('ChangePassword', {
-                    IP: IP,
-                    PORT: PORT,
-                    username: this.state.username,
-                  });
-                }}
-              />
-            </ButtonsRow>
-          )}
         </View>
-        <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'referee' && (
-            <ButtonsRow>
-              <RoundButton
-                title="Change Password"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('ChangePassword', {
-                    IP: IP,
-                    PORT: PORT,
-                    username: this.state.username,
-                  });
-                }}
-              />
-            </ButtonsRow>
-          )}
-        </View>
-        <View style={{height: GLOBALS.windowHeightSize / 10}}>
-          {this.state.role === 'captain' && (
-            <ButtonsRow>
-              <RoundButton
-                title="Change Password"
-                color="#5f9ea0"
-                background="#3D3D3D"
-                onPress={() => {
-                  this.props.navigation.navigate('ChangePassword', {
-                    IP: IP,
-                    PORT: PORT,
-                    username: this.state.username,
-                  });
-                }}
-              />
-            </ButtonsRow>
-          )}
-        </View>
-      </View>
+      </ImageBackground>
     );
   }
 }
 
 const styles = StyleSheet.create({
   body: {
-    height: GLOBALS.windowHeightSize * (6 / 10),
-    backgroundColor: '#5499C7',
+    // height: GLOBALS.windowHeightSize * (6 / 10),
+    // height: Dimensions.get('window').height,
+    // backgroundColor: '#5499C7',
   },
   sectionTwoBtnContainer: {
     display: 'flex',
@@ -455,6 +773,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 32,
     paddingHorizontal: 24,
+  },
+  rowOfTwoButton: {
+    paddingVertical: '5%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   sectionContainer: {
     marginTop: 32,
@@ -475,6 +803,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3E50',
     borderRadius: 25,
     paddingVertical: 5,
+  },
+  speacialButton: {
+    borderRadius: 40,
   },
   buttonText: {
     fontSize: 20,
