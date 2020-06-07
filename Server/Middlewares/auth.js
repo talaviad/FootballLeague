@@ -12,6 +12,8 @@ var possibleRequests = [
   "gameResults",
   "scorerTable",
   "clubs",
+  "setLiveResult",
+  "getLiveResult",
   "insertGameResult",
   "TeamsNames",
   "NumberOfWeeks",

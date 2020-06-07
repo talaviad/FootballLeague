@@ -473,6 +473,30 @@ module.exports = class DataBase {
       return JSON.stringify({ success: false });
     }
   }
+
+  async getLiveResult() {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .find();
+      result = await result.toArray();
+      if (result.length !== 0) {
+        let resultToTheServer = {
+          success: true,
+          liveResults: result,
+        };
+      } else {
+        let resultToTheServer = {
+          success: false,
+        };
+      }
+      return JSON.stringify(resultToTheServer);
+    } catch {
+      console.log("in catch");
+      return JSON.stringify({ success: false });
+    }
+  }
   async getNumberOfWeeks() {
     try {
       let allCollections = [];
@@ -498,6 +522,35 @@ module.exports = class DataBase {
     }
   }
 
+  async insertLiveResult(selectedTeam1, selectedTeam2, scoreTeam1, scoreTeam2) {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .remove({});
+
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .insertOne({
+          team1: selectedTeam1,
+          team2: selectedTeam2,
+          scoreTeam1: scoreTeam1,
+          scoreTeam2: scoreTeam2,
+        });
+
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
   async insertResult(
     selectedTeam1,
     selectedTeam2,
@@ -509,6 +562,12 @@ module.exports = class DataBase {
   ) {
     let winner = 0;
     try {
+      //remove the live result
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .remove({});
+
       //let arr_data = data.split(",");
       //console.log(arr_data);
       if (parseInt(scoreTeam1) > parseInt(scoreTeam2)) {

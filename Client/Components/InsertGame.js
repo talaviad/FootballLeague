@@ -272,7 +272,6 @@ export default class InsertGame extends React.Component {
               }}
               type="anchor"
               //textColor="#FFF"
-              textSize={18}
               backgroundColor="#123c69"
               paddingHorizontal={50}
               // backgroundActive="#123c69"

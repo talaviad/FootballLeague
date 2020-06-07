@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -18,6 +19,7 @@ export default class Login extends React.Component {
     this.state = {
       user: '',
       password: '',
+      isLoading: false,
     };
     this.load = this.load.bind(this);
     this.onButtonPress = this.onButtonPress.bind(this);
@@ -61,6 +63,8 @@ export default class Login extends React.Component {
       alert('you did not fill all the fields');
       return;
     }
+    this.setState({isLoading: true});
+
     let response = fetch(
       'http://' +
         this.props.navigation.getParam('IP') +
@@ -81,6 +85,7 @@ export default class Login extends React.Component {
     )
       .then(response => response.json())
       .then(async resJson => {
+        this.setState({isLoading: false});
         if (resJson.success) {
           console.log('resJson.jwt: ' + resJson.jwt);
           await AsyncStorage.setItem('role', resJson.role);
@@ -92,7 +97,10 @@ export default class Login extends React.Component {
           alert(resJson.error.msg);
         }
       })
-      .catch(err => alert(err));
+      .catch(err => {
+        this.setState({isLoading: false});
+        alert(err);
+      });
   }
   render() {
     return (
@@ -103,22 +111,27 @@ export default class Login extends React.Component {
         <View style={styles.container}>
           <TextInput
             style={styles.inputBox}
-            placeholder="Enter a username"
+            placeholder="Username"
             placeholderTextColor="#F8F9F9"
             underlineColorAndroid="#2C3E50"
             onChangeText={user => this.setState({user})}
           />
           <TextInput
             style={styles.inputBox}
-            placeholder="Enter a password"
+            placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor="#F8F9F9"
             underlineColorAndroid="#2C3E50"
             onChangeText={password => this.setState({password})}
           />
           <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
-            <Text style={styles.buttonText}>login</Text>
+            <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
+        </View>
+        <View style={styles.loadingStyle}>
+          {this.state.isLoading && (
+            <ActivityIndicator color={'#fff'} size={80} />
+          )}
         </View>
       </ImageBackground>
     );
@@ -127,28 +140,38 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 15,
     flexGrow: 1,
     alignItems: 'center',
   },
   inputBox: {
     width: 300,
     paddingHorizontal: 16,
-    fontSize: 16,
+    fontSize: 18,
     marginVertical: 10,
     marginTop: 20,
   },
   button: {
-    width: '80%',
     backgroundColor: '#2C3E50',
     borderRadius: 25,
     marginVertical: 10,
-    paddingVertical: 13,
-    marginTop: 60,
+    paddingVertical: 12.5,
+    width: '50%',
+    marginTop: 30,
   },
   buttonText: {
     fontSize: 20,
     fontWeight: '500',
     color: '#AED6F1',
     textAlign: 'center',
+  },
+  loadingStyle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

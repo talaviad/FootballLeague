@@ -47,7 +47,6 @@ const AppNavigator = createStackNavigator(
     'Referee Tools': RefereeTools,
     'Captain Tools': CaptainTools,
     'Manager Tools': ManagerTools,
-
     'Personal Area': PersonalArea,
     Inbox: Inbox,
     'Change Password': ChangePassword,
@@ -60,7 +59,6 @@ const AppNavigator = createStackNavigator(
       headerStyle: {
         backgroundColor: '#073567', //#3B8EBE
         borderBottomWidth: 1,
-        // borderWidth: 3,
         borderBottomColor: 'black',
       },
       headerTintColor: '#black',

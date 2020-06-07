@@ -38,27 +38,15 @@ export default class CaptainTools extends React.Component {
                     PORT: this.props.navigation.getParam('PORT'),
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
                 height={100}
                 width={100}
                 borderRadius={50}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -72,8 +60,6 @@ export default class CaptainTools extends React.Component {
                         height: 110,
                         marginRight: '5%',
                         marginTop: '5%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     />
                   </View>
@@ -81,8 +67,8 @@ export default class CaptainTools extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -97,27 +83,15 @@ export default class CaptainTools extends React.Component {
                     PORT: this.props.navigation.getParam('PORT'),
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
                 height={100}
                 width={100}
                 borderRadius={50}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -129,8 +103,6 @@ export default class CaptainTools extends React.Component {
                       style={{
                         width: 120,
                         height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     />
                   </View>
@@ -138,8 +110,8 @@ export default class CaptainTools extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>

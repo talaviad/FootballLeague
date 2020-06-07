@@ -476,7 +476,7 @@ export default class GameMode extends React.Component {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Football-Request': 'liveResult',
+          'Football-Request': 'setLiveResult',
         },
         body: JSON.stringify({
           selectedTeam1: this.state.team1,
@@ -728,7 +728,6 @@ export default class GameMode extends React.Component {
                   backgroundDarker="#687864"
                   type="primary"
                   textColor="#FFF"
-                  textSize={18}
                   backgroundColor="#844D36"
                   raiseLevel={7}>
                   Finish Game And Submit Result

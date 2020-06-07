@@ -21,7 +21,7 @@ export default class ScorerTable extends React.Component {
     });
 
     this.state = {
-      tableHead: ['Name', 'Jersey Number', 'Team', 'Goals'],
+      tableHead: ['Name', 'Jersey Number', 'Club', 'Goals'],
       tableData: sortedTableData,
       search: '',
       found: false,
@@ -41,16 +41,16 @@ export default class ScorerTable extends React.Component {
     this.setState({found: false, foundList: []});
     if (search.length === 0) return;
 
-    var reg1 = new RegExp('^' + search + '$');
-    var reg2 = new RegExp('^' + search + ',');
-    var reg3 = new RegExp(',' + search + ',');
-    var reg4 = new RegExp(search + '$');
+    var reg1 = new RegExp('^' + search.toLowerCase() + '$');
+    var reg2 = new RegExp('^' + search.toLowerCase() + ',');
+    var reg3 = new RegExp(',' + search.toLowerCase() + ',');
+    var reg4 = new RegExp(search.toLowerCase() + '$');
     for (var i = 0; i < this.state.tableData.length; i++) {
       if (
-        reg1.test(this.state.tableData[i][0]) ||
-        reg2.test(this.state.tableData[i][0]) |
-          reg3.test(this.state.tableData[i][0]) ||
-        reg4.test(this.state.tableData[i][0])
+        reg1.test(this.state.tableData[i][0].toLowerCase()) ||
+        reg2.test(this.state.tableData[i][0].toLowerCase()) |
+          reg3.test(this.state.tableData[i][0].toLowerCase()) ||
+        reg4.test(this.state.tableData[i][0].toLowerCase())
       ) {
         this.state.foundList.push(this.state.tableData[i]);
         this.setState({foundList: this.state.foundList});
@@ -67,7 +67,7 @@ export default class ScorerTable extends React.Component {
         style={[styles.image, styles.container, {opacity: 0.8}]}>
         <ScrollView style={styles.container}>
           <SearchBar
-            placeholder="Player Name"
+            placeholder="Search by player name"
             onChangeText={this.updateSearch}
             value={this.state.search}
           />

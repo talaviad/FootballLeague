@@ -43,16 +43,8 @@ export default class PersonalArea extends React.Component {
                 })
               }
               style={{}}
-              backgroundColor="#3f7ec1"
-              backgroundActive="#b3cce7"
               backgroundDarker="#b3cce7"
-              backgroundDarker="#b3cce7"
-              backgroundPlaceholder="#b3cce7"
               borderColor="#b3cce7"
-              type="primary"
-              textColor="#FFF"
-              textSize={18}
-              height={80}
               raiseLevel={2}
               height={50}
               width={300}
@@ -98,16 +90,8 @@ export default class PersonalArea extends React.Component {
                 })
               }
               style={{marginTop: 25}}
-              backgroundColor="#3f7ec1"
-              backgroundActive="#b3cce7"
               backgroundDarker="#b3cce7"
-              backgroundDarker="#b3cce7"
-              backgroundPlaceholder="#b3cce7"
               borderColor="#b3cce7"
-              type="primary"
-              textColor="#FFF"
-              textSize={18}
-              height={80}
               raiseLevel={2}
               height={50}
               width={300}
@@ -138,16 +122,8 @@ export default class PersonalArea extends React.Component {
             <AwesomeButtonCartman
               onPress={() => {}}
               style={{marginTop: 25}}
-              backgroundColor="#3f7ec1"
-              backgroundActive="#b3cce7"
               backgroundDarker="#b3cce7"
-              backgroundDarker="#b3cce7"
-              backgroundPlaceholder="#b3cce7"
               borderColor="#b3cce7"
-              type="primary"
-              textColor="#FFF"
-              textSize={18}
-              height={80}
               raiseLevel={2}
               height={50}
               width={300}

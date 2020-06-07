@@ -28,7 +28,7 @@ export default class Clubs extends React.Component {
       index: 0,
       routes: [
         {key: 'squad', title: 'Squad'},
-        {key: 'teamResults', title: 'Team Results'},
+        {key: 'teamResults', title: 'Results'},
         {key: 'playersStats', title: 'Players Stats'},
       ],
     };
@@ -47,12 +47,12 @@ export default class Clubs extends React.Component {
             containerStyle={{backgroundColor: ''}} //this line is important, canceling the deafult color
             // key={i}
             leftIcon={
-              <Text style={{fontSize: 20, fontFamily: 'serif'}}>
-                {'#' + l.jerseyNumber}
+              <Text style={{fontSize: 19, fontFamily: 'serif'}}>
+                {l.jerseyNumber}
               </Text>
             }
             title={
-              <Text style={{fontSize: 19, fontFamily: 'sans-serif-condensed'}}>
+              <Text style={{fontSize: 18, fontFamily: 'sans-serif-condensed'}}>
                 {l.firstName + ' ' + l.lastName}
               </Text>
             }
@@ -230,7 +230,6 @@ export default class Clubs extends React.Component {
                   fontSize: 30,
                   paddingLeft: 5,
                   marginLeft: -5,
-                  color: 'red',
                 }}
                 backdropStyle={{borderWidth: 3}}
                 value={this.state.selectedClub}
@@ -372,7 +371,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
   },
   tabItem: {
-    borderRadius: 5,
     backgroundColor: '#ECECEC', //color of the tabs
     flex: 1,
     alignItems: 'center',

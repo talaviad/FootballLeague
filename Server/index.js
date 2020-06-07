@@ -37,6 +37,10 @@ app.get("/", function (req, res) {
     database
       .getManagerSchedule()
       .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+  } else if (data === "getLiveResult") {
+    database
+      .getLiveResult()
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
   } else if (data === "StartScheduling") {
     console.log('taking get action, case "StartScheduling"....');
     schedule
@@ -385,6 +389,18 @@ app.post("/", function (req, res) {
           req.body.date,
           req.body.team1ScorrersDic,
           req.body.team2ScorrersDic
+        )
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+    case "setLiveResult":
+      database
+        .insertLiveResult(
+          req.body.selectedTeam1,
+          req.body.selectedTeam2,
+          req.body.scoreTeam1,
+          req.body.scoreTeam2
         )
         .then((DBResponse) => {
           res.send(DBResponse);

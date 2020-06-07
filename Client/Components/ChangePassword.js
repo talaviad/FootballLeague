@@ -120,7 +120,7 @@ export default class ChangePassword extends React.Component {
           />
           <TextInput
             style={styles.inputBox}
-            placeholder="New Password Verified"
+            placeholder="Confirm New Password"
             secureTextEntry={true}
             placeholderTextColor="#F8F9F9"
             underlineColorAndroid="#2C3E50"
@@ -223,7 +223,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     backgroundColor: '#2C3E50',
     borderRadius: 25,
-    paddingVertical: 5,
+    paddingVertical: 12.5,
+    paddingHorizontal: 25,
   },
   buttonText: {
     fontSize: 20,
