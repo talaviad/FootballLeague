@@ -30,7 +30,7 @@ export default class AddClub extends Component {
 
   render() {
     return (
-      <View style={{flex: 1, backgroundColor: '#1dd1a1'}}>
+      <View style={{flex: 1, backgroundColor: '#336da8'}}>
         <View style={styles.lowerContainer}>
           <AnimatedMultistep
             steps={allSteps}

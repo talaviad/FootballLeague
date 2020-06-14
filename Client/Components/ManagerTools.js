@@ -207,6 +207,52 @@ export default class ManagerTools extends React.Component {
               </Text>
             </View>
           </View>
+          <View style={styles.rowOfTwoButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() =>
+                  this.props.navigation.navigate('Edit Club', {
+                    IP: this.props.navigation.getParam('IP'),
+                    PORT: this.props.navigation.getParam('PORT'),
+                    teamList: this.props.navigation.getParam('teamsNames'),
+                  })
+                }
+                backgroundDarker="#b3cce7"
+                borderColor="#b3cce7"
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{flex: 1}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/edit.png')}
+                      style={{
+                        width: 110,
+                        height: 110,
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Edit Club
+              </Text>
+            </View>
+          </View>
         </View>
       </ImageBackground>
     );

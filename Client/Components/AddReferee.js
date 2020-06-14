@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   recommendationText: {
     fontStyle: 'italic',
-    marginTop: '5%',
+    marginTop: '1%',
     width: '80%',
     paddingHorizontal: 16,
     fontSize: 18,
@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3E50',
     borderRadius: 25,
     paddingVertical: 5,
+    width: '50%',
   },
   buttonText: {
     fontSize: 20,

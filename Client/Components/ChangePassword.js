@@ -20,6 +20,8 @@ export default class ChangePassword extends React.Component {
       oldPassword: '',
       newPassword: '',
       newPasswordVerified: '',
+      confirmationAlert: false,
+      IllegalOldPassword: false,
       IllegalPassword: false,
       differentPasswords: false,
       isLoading: false,
@@ -38,6 +40,11 @@ export default class ChangePassword extends React.Component {
   }
 
   onPressButton = () => {
+    if (this.state.oldPassword.length < 6) {
+      this.setState({IllegalOldPassword: true});
+      return;
+    }
+
     if (this.state.newPassword.length < 6) {
       this.setState({IllegalPassword: true});
       return;
@@ -76,8 +83,7 @@ export default class ChangePassword extends React.Component {
       .then(async resJson => {
         if (resJson.success) {
           this.setState({isLoading: false});
-          alert('you password has been changed');
-          this.props.navigation.navigate('Home');
+          this.setState({confirmationAlert: true});
         } else {
           this.setState({isLoading: false});
           alert(resJson.error.msg);
@@ -135,19 +141,57 @@ export default class ChangePassword extends React.Component {
             <Text style={styles.buttonText}>Change Password</Text>
           </TouchableOpacity>
           <AwesomeAlert
-            show={this.state.IllegalPassword}
+            show={this.state.confirmationAlert}
             showProgress={false}
-            title="Error"
-            message={
-              '\t\t\t\t\t\t\t\t\tIllegal password' +
-              '\n' +
-              '- Should be minimum 6 characters'
-            }
+            title="Confirmation"
+            message={'The password has been changed'}
+            messageStyle={{textAlign: 'center'}}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
             confirmText="Yes"
-            confirmText="ok"
+            confirmText="OK"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({confirmationAlert: false});
+              this.props.navigation.navigate('Home');
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.IllegalOldPassword}
+            showProgress={false}
+            title="Error"
+            message={
+              'Illegal password' +
+              '\n' +
+              'Passwords must be at least 6 characters long'
+            }
+            messageStyle={{textAlign: 'center'}}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="OK"
+            confirmButtonColor="#8fbc8f"
+            onConfirmPressed={() => {
+              this.setState({IllegalOldPassword: false});
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.IllegalPassword}
+            showProgress={false}
+            title="Error"
+            message={
+              'Illegal password' +
+              '\n' +
+              'Passwords must be at least 6 characters long'
+            }
+            messageStyle={{textAlign: 'center'}}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="OK"
             confirmButtonColor="#8fbc8f"
             onConfirmPressed={() => {
               this.setState({IllegalPassword: false});
@@ -157,12 +201,12 @@ export default class ChangePassword extends React.Component {
             show={this.state.differentPasswords}
             showProgress={false}
             title="Error"
-            message={'\t\t\tThe new passwords are differents'}
+            message={'Password and confirm password does not match'}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
             confirmText="Yes"
-            confirmText="ok"
+            confirmText="OK"
             confirmButtonColor="#8fbc8f"
             onConfirmPressed={() => {
               this.setState({differentPasswords: false});

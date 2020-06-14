@@ -65,20 +65,19 @@ export default class ScorerTable extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={[styles.image, styles.container, {opacity: 0.8}]}>
+        <SearchBar
+          placeholder="Search by player name"
+          onChangeText={this.updateSearch}
+          value={this.state.search}
+        />
+        <Row
+          data={state.tableHead}
+          flexArr={[40, 20, 40, 20]}
+          style={styles.head}
+          textStyle={styles.textHead}
+        />
         <ScrollView style={styles.container}>
-          <SearchBar
-            placeholder="Search by player name"
-            onChangeText={this.updateSearch}
-            value={this.state.search}
-          />
-
           <Table style={{flex: 1}}>
-            <Row
-              data={state.tableHead}
-              flexArr={[40, 20, 40, 20]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
             <TableWrapper style={styles.wrapper}>
               <Rows
                 data={this.state.found ? this.state.foundList : state.tableData}
@@ -100,8 +99,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#DEF2F1',
   },
   head: {
-    flex: 1,
-    height: '2%',
+    height: 36,
     backgroundColor: '#123c69',
   },
   wrapper: {

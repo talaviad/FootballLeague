@@ -406,6 +406,18 @@ app.post("/", function (req, res) {
           res.send(DBResponse);
         });
       break;
+    case "removeLiveResult":
+      database.removeLiveResult().then((DBResponse) => {
+        res.send(DBResponse);
+      });
+      break;
+    case "removePlayer":
+      database
+        .removePlayer(req.body.clubName, req.body.playerJerseyNUmber)
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
     case "SubmitConstraints":
       console.log('taking post action, case "SubmitConstraints"....');
       database

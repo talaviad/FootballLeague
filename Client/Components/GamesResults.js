@@ -94,7 +94,7 @@ export default class GamesResults extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.85}}>
         <View style={styles.container}>
           <View
             style={{
@@ -272,7 +272,7 @@ export default class GamesResults extends React.Component {
                               alignSelf: 'flex-start',
                               height:
                                 40 +
-                                12 * this.state.secondMaxScorrersOfMatch[index],
+                                14 * this.state.secondMaxScorrersOfMatch[index],
                             },
                           ]}
                           flexArr={[50, 50]}
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
     height: 55,
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
-    paddingHorizontal: 5,
+    //paddingHorizontal: 5,
   },
 
   picker: {

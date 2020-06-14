@@ -34,15 +34,15 @@ export default class LeagueTable extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
+        <Row
+          data={state.tableHead}
+          flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+          style={styles.head}
+          textStyle={styles.textHead}
+        />
         <ScrollView style={styles.container}>
           <Table>
-            <Row
-              data={state.tableHead}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
             <TableWrapper style={styles.wrapper}>
               <Rows
                 data={state.tableData}

@@ -482,19 +482,19 @@ module.exports = class DataBase {
         .find();
       result = await result.toArray();
       if (result.length !== 0) {
-        let resultToTheServer = {
+        return {
           success: true,
-          liveResults: result,
+          team1: result[0].team1,
+          team2: result[0].team2,
+          scoreTeam1: result[0].scoreTeam1,
+          scoreTeam2: result[0].scoreTeam2,
         };
       } else {
-        let resultToTheServer = {
-          success: false,
-        };
+        return { success: false };
       }
-      return JSON.stringify(resultToTheServer);
     } catch {
       console.log("in catch");
-      return JSON.stringify({ success: false });
+      return { success: false };
     }
   }
   async getNumberOfWeeks() {
@@ -539,6 +539,45 @@ module.exports = class DataBase {
           scoreTeam2: scoreTeam2,
         });
 
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async removeLiveResult() {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .remove({});
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async removePlayer(clubName, playerJerseyNUmber) {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .update(
+          { clubName: clubName },
+          { $pull: { players: { jerseyNumber: playerJerseyNUmber } } }
+        );
       return { success: true };
     } catch (err) {
       let error = {

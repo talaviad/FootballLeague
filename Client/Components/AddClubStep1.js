@@ -79,10 +79,9 @@ export default class AddClubStep1 extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.85}}>
+        imageStyle={{opacity: 0.6}}>
         <View style={styles.container}>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.guidanceText}>Choose the club name</Text>
+          <View style={{alignItems: 'center', marginTop: 30}}>
             <TextInput
               value={this.state.clubName}
               style={styles.inputBox}
@@ -124,10 +123,11 @@ export default class AddClubStep1 extends React.Component {
             showProgress={false}
             title="Error"
             message={
-              '\t\t\t\t\t\t\t\t\tIllegal Username' +
+              'Illegal Username' +
               '\n' +
-              '- Should be minimum 4 characters\n- Includes only english letters and digits'
+              'Username must be at least 4 characters long\nOnly english letters and digits'
             }
+            messageStyle={{textAlign: 'center'}}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
@@ -142,7 +142,7 @@ export default class AddClubStep1 extends React.Component {
             show={this.state.IllegalClubName}
             showProgress={false}
             title="Error"
-            message={'You did not fill the club name'}
+            message={'Please choose the Club Name'}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
@@ -158,8 +158,9 @@ export default class AddClubStep1 extends React.Component {
             showProgress={false}
             title="Error"
             message={
-              'You did not choose color\nThe need to click the long stripe'
+              "Please choose the team's color\nThe need to click the long stripe"
             }
+            messageStyle={{textAlign: 'center'}}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
@@ -176,6 +177,7 @@ export default class AddClubStep1 extends React.Component {
             title="Confirmation"
             message={'The club and the captain username has been created'}
             closeOnTouchOutside={true}
+            messageStyle={{textAlign: 'center'}}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
             confirmText="Yes"
@@ -229,12 +231,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 20,
     //marginVertical: 10,
-    marginTop: 40,
+    marginTop: 20,
     fontWeight: '600',
   },
   recommendationText: {
     fontStyle: 'italic',
-    marginTop: '2.5%',
+    marginTop: '1%',
     width: '80%',
     paddingHorizontal: 16,
     fontSize: 18,
@@ -249,12 +251,14 @@ const styles = StyleSheet.create({
   },
 
   touchAble: {
-    marginTop: 32,
-    marginHorizontal: 40,
-    paddingHorizontal: 24,
+    marginTop: 40,
+    width: '50%',
+    //marginHorizontal: 5,
+    paddingHorizontal: 15,
     backgroundColor: '#2C3E50',
     borderRadius: 25,
     paddingVertical: 5,
+    alignSelf: 'center',
   },
   buttonText: {
     fontSize: 20,

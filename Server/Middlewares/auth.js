@@ -13,6 +13,8 @@ var possibleRequests = [
   "scorerTable",
   "clubs",
   "setLiveResult",
+  "removeLiveResult",
+  "removePlayer",
   "getLiveResult",
   "insertGameResult",
   "TeamsNames",

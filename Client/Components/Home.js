@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
-
+import BlinkView from 'react-native-blink-view';
 import {
   Colors,
   DebugInstructions,
@@ -59,7 +59,7 @@ export default class Home extends React.Component {
       username: null,
       teamsNames: [],
       isLoading: false,
-      liveResult: 'a',
+      liveResult: null,
     };
     this.handleSendRequestToServer = this.handleSendRequestToServer.bind(this);
     this.load = this.load.bind(this);
@@ -142,27 +142,31 @@ export default class Home extends React.Component {
   async checkLiveResult() {
     let response;
     try {
-      response = await fetch('http://' + IP + ':' + PORT + '/', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Football-Request': 'getLiveResults',
+      response = await fetch(
+        'http://' + IP + ':' + PORT + '/?data=getLiveResult',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'getLiveResult',
+          },
         },
-      });
+      );
       const json = await response.json();
       if (json.success) {
         this.setState({
           liveResult: {
-            team1: json.liveResults.team1,
-            team2: json.liveResults.team2,
-            scoreTeam1: json.liveResults.scoreTeam1,
-            scoreTeam2: json.liveResults.scoreTeam2,
+            team1: json.team1,
+            team2: json.team2,
+            scoreTeam1: json.scoreTeam1,
+            scoreTeam2: json.scoreTeam2,
           },
         });
       } else {
-        //this.setState({liveResult: null});
+        this.setState({liveResult: null});
       }
     } catch (err) {
+      this.setState({liveResult: null});
       console.error(err);
     }
   }
@@ -171,7 +175,7 @@ export default class Home extends React.Component {
     //For live games
     this.timer = setInterval(() => {
       this.checkLiveResult();
-    }, 30000);
+    }, 10000);
 
     this.load();
     this.focusListener = this.props.navigation.addListener(
@@ -329,7 +333,7 @@ export default class Home extends React.Component {
               fontFamily: 'sans-serif-medium',
               textAlign: 'center',
             }}>
-            Captain Tools
+            {'Captain\nTools'}
           </Text>
         </View>
       );
@@ -342,6 +346,7 @@ export default class Home extends React.Component {
               this.props.navigation.navigate('Manager Tools', {
                 IP: IP,
                 PORT: PORT,
+                teamsNames: this.state.teamsNames,
               });
             }}
             backgroundDarker="#b3cce7"
@@ -376,7 +381,7 @@ export default class Home extends React.Component {
               fontFamily: 'sans-serif-medium',
               textAlign: 'center',
             }}>
-            Manager Tools
+            {'Manager\nTools'}
           </Text>
         </View>
       );
@@ -388,73 +393,26 @@ export default class Home extends React.Component {
       <ImageBackground
         source={require('../Images/wall.jpg')}
         style={[styles.image, {flex: 1}, {opacity: 1}]}>
-        <View style={{marginTop: 5, flex: 1}}>
-          {/* <ScrollView style={styles.body}> */}
-          {/* <View style={styles.sectionTwoBtnContainer}>
-            {!this.state.isLoggedIn ? (
-              <TouchableOpacity
-                style={styles.divided}
-                onPress={() =>
-                  this.props.navigation.navigate('Register', {
-                    IP: IP,
-                    PORT: PORT,
-                  })
-                }>
-                <Text style={styles.buttonText}>Register</Text>
-              </TouchableOpacity>
-            ) : null}
-            <TouchableOpacity
-              style={styles.divided}
-              onPress={() =>
-                this.props.navigation.navigate('Login', {IP: IP, PORT: PORT})
-              }>
-              <Text style={styles.buttonText}>
-                {this.state.isLoggedIn ? 'Logout' : 'Login'}
-              </Text>
-            </TouchableOpacity>
-          </View> */}
-          {/* {this.state.isLoggedIn ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('Inbox', {
-                  inbox: this.state.inbox,
-                  IP: IP,
-                  PORT: PORT,
-                })
-              }>
-              {console.log(
-                'this.state.inbox.messages.length: ' +
-                  this.state.inbox.messages.length,
-              )}
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '500',
-                  color:
-                    this.state.inbox.newMessages !== 0 ? '#BD1128' : '#AED6F1',
-                  textAlign: 'center',
-                }}>
-                Inbox -{' '}
-                {this.state.inbox.newMessages !== 0
-                  ? '' + this.state.inbox.newMessages + ' new messages'
-                  : 'no new messages'}
-              </Text>
-            </TouchableOpacity>
-          ) : null} */}
+        <View style={{flex: 1}}>
           {this.state.liveResult !== null && (
             <View style={styles.liveResult}>
-              <View
-                style={{
-                  borderRadius: 50,
-                  width: 20,
-                  height: 20,
-                  backgroundColor: 'red',
-                }}
-              />
+              <View>
+                <BlinkView blinking={true} delay={750}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      marginLeft: '10%',
+                      width: 20,
+                      height: 20,
+                      backgroundColor: 'red',
+                    }}
+                  />
+                </BlinkView>
+                <Text style={styles.liveResultText2}>LIVE</Text>
+              </View>
+
               <Text style={styles.liveResultText}>
-                {'LIVE:\t' +
-                  this.state.liveResult.team1 +
+                {this.state.liveResult.team1 +
                   ' - ' +
                   this.state.liveResult.team2 +
                   '  ' +
@@ -793,18 +751,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   liveResult: {
-    backgroundColor: '#336da8',
+    borderWidth: 1,
+    backgroundColor: '#295786',
     // position: 'absolute',
     // top: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: '5%',
-    height: '7.5%',
+    paddingHorizontal: '3%',
+    height: '8%',
     width: '100%',
   },
   liveResultText: {
-    marginLeft: '2.5%',
     fontSize: 16,
     fontFamily: 'sans-serif-medium',
+  },
+  liveResultText2: {
+    // marginLeft: '2.5%',
+    fontSize: 16,
+    fontFamily: 'sans-serif-medium',
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
