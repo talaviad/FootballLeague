@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class ChangePassword extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
     this.state = {
-      username: 'g',
+      username: '',
       oldPassword: '',
       newPassword: '',
       newPasswordVerified: '',
@@ -135,11 +136,19 @@ export default class ChangePassword extends React.Component {
             }
           />
 
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={this.onPressButton}>
-            <Text style={styles.buttonText}>Change Password</Text>
-          </TouchableOpacity>
+          <AwesomeButtonCartman
+            onPress={this.onPressButton}
+            type="anchor"
+            stretch={true}
+            textSize={18}
+            backgroundColor="#123c69"
+            style={{width: '50%'}}
+            borderWidth={0.5}
+            borderRadius={10}
+            raiseLevel={4}>
+            Change Password
+          </AwesomeButtonCartman>
+
           <AwesomeAlert
             show={this.state.confirmationAlert}
             showProgress={false}
@@ -273,7 +282,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: '500',
-    color: '#AED6F1',
     textAlign: 'center',
   },
   loadingStyle: {

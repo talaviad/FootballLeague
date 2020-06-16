@@ -206,7 +206,7 @@ export default class GamesResults extends React.Component {
                           style={[
                             styles.row,
                             {
-                              backgroundColor: '#2f7ccb',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
@@ -268,7 +268,7 @@ export default class GamesResults extends React.Component {
                           style={[
                             styles.row,
                             {
-                              backgroundColor: '#2f7ccb',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
@@ -329,7 +329,7 @@ export default class GamesResults extends React.Component {
                           style={[
                             styles.row,
                             {
-                              backgroundColor: '#2f7ccb',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
@@ -390,7 +390,7 @@ export default class GamesResults extends React.Component {
                           style={[
                             styles.row,
                             {
-                              backgroundColor: '#2f7ccb',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +

@@ -45,7 +45,8 @@ export default class InsertGame extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, styles.container, {opacity: 0.7}]}>
+        style={[styles.image, styles.container]}
+        imageStyle={{opacity: 0.7}}>
         {/* <View style={styles.container}> */}
         <ScrollView>
           <View style={{flex: 1}}>
@@ -67,7 +68,7 @@ export default class InsertGame extends React.Component {
                 dateTouchBody: {
                   borderWidth: 0.65,
                   borderRadius: 7.5,
-                  backgroundColor: '#0c4271',
+                  backgroundColor: '#123c69',
                 },
                 dateIcon: {
                   position: 'absolute',
@@ -116,7 +117,7 @@ export default class InsertGame extends React.Component {
                     fontFamily: 'sans-serif-condensed',
                     fontWeight: '60',
                   }}
-                  style={{backgroundColor: '#0c4271'}}
+                  style={{backgroundColor: '#123c69'}}
                   teamList={this.props.navigation.getParam('teamList')}
                   onSelect={text => {
                     if (text !== null) {
@@ -199,7 +200,7 @@ export default class InsertGame extends React.Component {
                     fontFamily: 'sans-serif-condensed',
                     fontWeight: '60',
                   }}
-                  style={{backgroundColor: '#0c4271'}}
+                  style={{backgroundColor: '#123c69'}}
                   teamList={this.props.navigation.getParam('teamList')}
                   onSelect={text => {
                     if (text !== null) {

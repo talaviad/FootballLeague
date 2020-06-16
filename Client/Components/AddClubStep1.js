@@ -10,6 +10,7 @@ import {
 
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {TriangleColorPicker} from 'react-native-color-picker';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class AddClubStep1 extends React.Component {
   constructor(props) {
@@ -79,7 +80,7 @@ export default class AddClubStep1 extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.6}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <View style={{alignItems: 'center', marginTop: 30}}>
             <TextInput
@@ -114,10 +115,21 @@ export default class AddClubStep1 extends React.Component {
             }}
             style={{flex: 0.7}}
           />
-
-          <TouchableOpacity style={styles.touchAble} onPress={this.nextStep}>
+          <AwesomeButtonCartman
+            onPress={this.nextStep}
+            type="anchor"
+            stretch={true}
+            textSize={18}
+            backgroundColor="#123c69"
+            style={{width: '40%', marginTop: '10%', alignSelf: 'center'}}
+            borderWidth={0.5}
+            borderRadius={10}
+            raiseLevel={4}>
+            Next
+          </AwesomeButtonCartman>
+          {/* <TouchableOpacity style={styles.touchAble} onPress={this.nextStep}>
             <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <AwesomeAlert
             show={this.state.IllegalUserName}
             showProgress={false}
@@ -255,7 +267,7 @@ const styles = StyleSheet.create({
     width: '50%',
     //marginHorizontal: 5,
     paddingHorizontal: 15,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#123c69',
     borderRadius: 25,
     paddingVertical: 5,
     alignSelf: 'center',
@@ -263,7 +275,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: '500',
-    color: '#AED6F1',
+    color: 'white',
     textAlign: 'center',
   },
   loadingStyle: {

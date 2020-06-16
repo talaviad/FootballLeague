@@ -51,7 +51,7 @@ export default class GameMode extends React.Component {
   constructor(props) {
     super(props);
 
-    this.initPushNotification();
+    //this.initPushNotification();
     this.state = {
       team1: null,
       team2: null,
@@ -372,30 +372,30 @@ export default class GameMode extends React.Component {
     }
   };
 
-  pushResult = () => {
-    PushNotification.localNotification({
-      title: 'My Notification Title', // (optional)
-      message: 'My Notification Message', // (required)
-    });
-  };
+  // pushResult = () => {
+  //   PushNotification.localNotification({
+  //     title: 'My Notification Title', // (optional)
+  //     message: 'My Notification Message', // (required)
+  //   });
+  // };
 
-  initPushNotification = () => {
-    PushNotification.configure({
-      onRegister: function(token) {
-        console.log('TOKEN:', token);
-      },
-      onNotification: function(notification) {
-        console.log('NOTIFICATION:', notification);
-      },
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-      popInitialNotification: true,
-      requestPermissions: true,
-    });
-  };
+  // initPushNotification = () => {
+  //   PushNotification.configure({
+  //     onRegister: function(token) {
+  //       console.log('TOKEN:', token);
+  //     },
+  //     onNotification: function(notification) {
+  //       console.log('NOTIFICATION:', notification);
+  //     },
+  //     permissions: {
+  //       alert: true,
+  //       badge: true,
+  //       sound: true,
+  //     },
+  //     popInitialNotification: true,
+  //     requestPermissions: true,
+  //   });
+  // };
 
   cancelAlert = () => {
     this.setState({
@@ -552,7 +552,7 @@ export default class GameMode extends React.Component {
       <ImageBackground
         source={require('../Images/c.jpg')}
         style={[styles.image /*, {opacity: 0.8}*/]}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           {this.state.firstStart && (
             <View style={styles.teamSelectorWrapper}>

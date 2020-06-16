@@ -99,8 +99,8 @@ export default class ManagerTools extends React.Component {
                     <Image
                       source={require('../Images/addClub.png')}
                       style={{
-                        width: 140,
-                        height: 140,
+                        width: 130,
+                        height: 130,
                       }}
                     />
                   </View>
@@ -187,10 +187,11 @@ export default class ManagerTools extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      /*source={require('../Images/club.png')}*/
+                      source={require('../Images/field2.png')}
                       style={{
-                        width: 120,
-                        height: 110,
+                        width: 70,
+                        height: 70,
+                        marginLeft: '12%',
                       }}
                     />
                   </View>
@@ -207,7 +208,7 @@ export default class ManagerTools extends React.Component {
               </Text>
             </View>
           </View>
-          <View style={styles.rowOfTwoButton}>
+          <View style={styles.rowOfOneButton}>
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
@@ -270,6 +271,12 @@ const styles = StyleSheet.create({
     paddingVertical: '5%',
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  rowOfOneButton: {
+    paddingVertical: '5%',
+    flexDirection: 'row',
+    marginLeft: '12.5%',
+    //justifyContent: '',
   },
   image: {
     flex: 1,

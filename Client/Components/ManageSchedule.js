@@ -2057,7 +2057,7 @@ export default class ManageSchedule extends React.Component {
           textStyle: {
             color: 'white',
             fontSize: 14,
-            fontFamily: 'sans',
+            fontFamily: 'sans-serif-medium',
             // fontWeight: 'bold',
             opacity: 3,
             textAlign: 'center',

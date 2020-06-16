@@ -666,10 +666,10 @@ export default class Home extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      source={require('../Images/free.png')}
+                      source={require('../Images/bench.png')}
                       style={{
-                        width: 140,
-                        height: 140,
+                        width: 80,
+                        height: 80,
                       }}
                     />
                   </View>
@@ -712,10 +712,10 @@ export default class Home extends React.Component {
                     <Image
                       source={require('../Images/schedule3.png')}
                       style={{
-                        width: 110,
-                        height: 110,
-                        marginRight: '5%',
-                        marginTop: '5%',
+                        width: 125,
+                        height: 125,
+                        marginRight: '8%',
+                        marginTop: '7%',
                       }}
                     />
                   </View>

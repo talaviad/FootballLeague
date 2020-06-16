@@ -72,7 +72,6 @@ var needAuthorization = {
   AddNewClub: { permissions: [permission.MANAGER] },
   AddReferee: { permissions: [permission.MANAGER] },
   RefereesSchedule: { permissions: [permission.MANAGER] },
-  GetLeagueSchedule: { permissions: [permission.REFEREE, permission.CAPTAIN] },
 };
 
 module.exports = function (req, res, next) {

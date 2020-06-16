@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class AddReferee extends React.Component {
   constructor(props) {
@@ -131,11 +132,24 @@ export default class AddReferee extends React.Component {
             </View>
           )}
           {this.state.password === '' && (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={this.createUser}>
-              <Text style={styles.buttonText}>Create User</Text>
-            </TouchableOpacity>
+            <AwesomeButtonCartman
+              onPress={this.createUser}
+              type="anchor"
+              stretch={true}
+              textSize={18}
+              backgroundColor="#123c69"
+              style={{width: '50%', marginTop: '10%'}}
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}
+              paddingHorizontal={5}>
+              Add Referee
+            </AwesomeButtonCartman>
+            // <TouchableOpacity
+            //   style={styles.touchAble}
+            //   onPress={this.createUser}>
+            //   <Text style={styles.buttonText}>Create User</Text>
+            // </TouchableOpacity>
           )}
           <AwesomeAlert
             show={this.state.IllegalUserName}

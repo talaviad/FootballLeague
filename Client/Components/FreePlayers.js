@@ -169,22 +169,29 @@ export default class FreePlayers extends React.Component {
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={{fontSize: 20, color: 'black'}}>Information</Text>
-              <Icon
-                name={'close'}
-                color={'black'}
-                style={{marginLeft: '50%'}}
-                size={25}
-                onPress={() => {
-                  this.setState({
-                    showInfoModal: false,
-                  });
-                }}
-              />
+              <View style={{flexDirection: 'row'}}>
+                <Text style={{fontSize: 20, color: 'black'}}>Information</Text>
+                <Icon
+                  name={'close'}
+                  color={'black'}
+                  style={{marginLeft: '50%'}}
+                  size={25}
+                  onPress={() => {
+                    this.setState({
+                      showInfoModal: false,
+                    });
+                  }}
+                />
+              </View>
+              <Text
+                style={{
+                  marginTop: '5%',
+                  fontSize: 16,
+                  color: 'black',
+                }}>
+                {this.state.tempFreeText}
+              </Text>
             </View>
-            <Text style={{fontSize: 16, color: 'black'}}>
-              {this.state.tempFreeText}
-            </Text>
           </View>
         </Modal>
         <Modal
@@ -192,10 +199,21 @@ export default class FreePlayers extends React.Component {
           transparent={true}
           visible={this.state.showAddModal}
           onRequestClose={() => {
-            alert('Modal has been closed.');
+            this.setState({showAddModal: false});
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
+              <Icon
+                name={'close'}
+                color={'black'}
+                style={{marginLeft: '90%'}}
+                size={25}
+                onPress={() => {
+                  this.setState({
+                    showAddModal: false,
+                  });
+                }}
+              />
               <TextInput
                 value={this.state.fullName}
                 style={styles.inputBox}
@@ -223,12 +241,11 @@ export default class FreePlayers extends React.Component {
                 />
               </View>
               <TouchableHighlight
-                style={{...styles.openButton, backgroundColor: '#2196F3'}}
+                style={{...styles.openButton, backgroundColor: '#123c69'}}
                 onPress={() => {
                   if (
                     this.state.fullName === '' ||
-                    this.state.contactDetails === '' ||
-                    this.state.freeText === ''
+                    this.state.contactDetails === ''
                   ) {
                     alert('Please fill all the fields');
 
@@ -336,9 +353,10 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   openButton: {
+    marginTop: '5%',
     backgroundColor: '#F194FF',
     borderRadius: 20,
-    padding: 10,
+    padding: 15,
     elevation: 2,
   },
   textStyle: {
@@ -351,7 +369,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 50,
+    padding: 30,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
