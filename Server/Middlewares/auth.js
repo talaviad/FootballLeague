@@ -40,6 +40,8 @@ var possibleRequests = [
   "AddGame",
   "DeleteGame",
   "ChangeGame",
+  "SetWeekDate",
+
   "GetManagerSchedule",
   "GetInbox",
   "UpdateInbox",
@@ -58,6 +60,8 @@ var needAuthorization = {
   AddGame: { permissions: [permission.MANAGER] },
   DeleteGame: { permissions: [permission.MANAGER] },
   ChangeGame: { permissions: [permission.MANAGER] },
+  SetWeekDate: { permissions: [permission.MANAGER] },
+
   GetManagerSchedule: { permissions: [permission.MANAGER] },
   GetInbox: {
     permissions: [permission.MANAGER, permission.REFEREE, permission.CAPTAIN],

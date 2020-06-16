@@ -29,52 +29,7 @@ export default class CaptainTools extends React.Component {
         source={require('../Images/wall.jpg')}
         style={[styles.image, {flex: 1}, {opacity: 1}]}>
         <View style={{marginTop: 5, flex: 1}}>
-          <View style={styles.rowOfTwoButton}>
-            <View>
-              <AwesomeButtonCartman
-                onPress={() =>
-                  this.props.navigation.navigate('LeagueSchedule', {
-                    IP: this.props.navigation.getParam('IP'),
-                    PORT: this.props.navigation.getParam('PORT'),
-                  })
-                }
-                backgroundDarker="#b3cce7"
-                borderColor="#b3cce7"
-                raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
-                <ImageBackground
-                  source={require('../Images/star.png')}
-                  style={{flex: 1}}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Image
-                      source={require('../Images/schedule3.png')}
-                      style={{
-                        width: 110,
-                        height: 110,
-                        marginRight: '5%',
-                        marginTop: '5%',
-                      }}
-                    />
-                  </View>
-                </ImageBackground>
-              </AwesomeButtonCartman>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: 'white',
-                  fontFamily: 'sans-serif-medium',
-                  textAlign: 'center',
-                }}>
-                Schedule
-              </Text>
-            </View>
+          <View style={styles.rowOfOneButton}>
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
@@ -99,10 +54,10 @@ export default class CaptainTools extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      /*source={require('../Images/club.png')}*/
+                      source={require('../Images/constraints.png')}
                       style={{
-                        width: 120,
-                        height: 110,
+                        width: 95,
+                        height: 95,
                       }}
                     />
                   </View>
@@ -136,6 +91,12 @@ const styles = StyleSheet.create({
     paddingVertical: '5%',
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  rowOfOneButton: {
+    paddingVertical: '5%',
+    flexDirection: 'row',
+    marginLeft: '12.5%',
+    //justifyContent: '',
   },
   image: {
     flex: 1,

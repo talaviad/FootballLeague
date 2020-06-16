@@ -685,6 +685,52 @@ export default class Home extends React.Component {
                 {'Free\nPlayers'}
               </Text>
             </View>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() =>
+                  this.props.navigation.navigate('LeagueSchedule', {
+                    IP: IP,
+                    PORT: PORT,
+                    teamList: this.state.teamsNames,
+                  })
+                }
+                backgroundDarker="#b3cce7"
+                borderColor="#b3cce7"
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{flex: 1}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/schedule3.png')}
+                      style={{
+                        width: 110,
+                        height: 110,
+                        marginRight: '5%',
+                        marginTop: '5%',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Schedule
+              </Text>
+            </View>
           </View>
           <View style={styles.loadingStyle}>
             {this.state.isLoading && (

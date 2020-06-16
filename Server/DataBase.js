@@ -482,11 +482,7 @@ module.exports = class DataBase {
         .find();
       result = await result.toArray();
       let results = result.map((player) => {
-        return JSON.stringify({
-          fullName: player.fullName,
-          contactDetails: player.contactDetails,
-          freeText: player.freeText,
-        });
+        return [player.fullName, player.contactDetails, player.freeText];
       });
       let resultsToTheServer = {
         success: true,
@@ -1059,6 +1055,7 @@ module.exports = class DataBase {
     let teamsNumbers = result[0].teamsNumbers;
     let refereesSchedule = result[0].refereesSchedule;
     let teamsConstraints = result[0].teamsConstraints;
+    let weekDates = result[0].weekDates;
 
     console.log("In Database.js - getLeagueSchedule() - returning.....");
     return {
@@ -1067,12 +1064,19 @@ module.exports = class DataBase {
       teamsNumbers: teamsNumbers,
       refereesSchedule: refereesSchedule,
       teamsConstraints: teamsConstraints,
+      weekDates: weekDates,
     };
   }
 
   async getConstraints(user, collection) {
     let result = await this.getUser(user);
     if (result.success) {
+      result = await this.client
+        .db("FootballLeague")
+        .collection("Schedule")
+        .find({});
+      result = await result.toArray();
+      let canSubmit = result.length === 0;
       result = await this.client
         .db("FootballLeague")
         .collection(collection)
@@ -1088,6 +1092,7 @@ module.exports = class DataBase {
           success: true,
           weeklyConstraints: result[0].weeklyConstraints,
           specificConstraints: result[0].specificConstraints,
+          canSubmit: canSubmit,
         };
       } else {
         console.log("that user(" + user + ") is not set with constraints");
@@ -1134,6 +1139,7 @@ module.exports = class DataBase {
         teamsNumbers: result[0].teamsNumbers,
         teamsConstraints: result[0].teamsConstraints,
         refereesConstraints: refereesConstraints,
+        weekDates: result[0].weekDates,
       };
     } else {
       result = await this.getTeamsConstraints();
@@ -1156,7 +1162,7 @@ module.exports = class DataBase {
 
   async deleteGameFromReferee(changeDetails) {
     console.log("In Database.js - deleteGameFromReferee()");
-    let referee = changeDetails.referee;
+    let referee = changeDetails.exReferee;
     let matchId = changeDetails.matchId;
     let result = await this.client
       .db("FootballLeague")
@@ -1222,7 +1228,8 @@ module.exports = class DataBase {
     gamesIdsToUsers,
     changeDetails,
     refereesConstraints,
-    refereesSchedule
+    refereesSchedule,
+    weekDates
   ) {
     let result = await this.client
       .db("FootballLeague")
@@ -1248,9 +1255,12 @@ module.exports = class DataBase {
             gamesIdsToUsers: result[0].gamesIdsToUsers,
             refereesConstraints: refereesConstraints,
             refereesSchedule: refereesSchedule,
+            weekDates: weekDates,
           }
         );
-
+      if (changeDetails.change === "SetWeekDate") {
+        return { success: true };
+      }
       let userA = gamesIdsToUsers[changeDetails.matchId][0].user;
       let teamA = gamesIdsToUsers[changeDetails.matchId][0].teamName;
       let userB = gamesIdsToUsers[changeDetails.matchId][1].user;
@@ -1348,8 +1358,12 @@ module.exports = class DataBase {
         // Not implemented yet
       }
 
-      if (changeDetails.referee !== undefined)
+      // Removing the exReferee and let him know
+      if (changeDetails.eXeferee)
         await this.deleteGameFromReferee(changeDetails);
+
+      // Adding the new referee and let him know
+      if (changeDetails.newReferee) await this.addGameToReferee(changeDetails);
 
       result = this.client
         .db("FootballLeague")
@@ -1378,10 +1392,15 @@ module.exports = class DataBase {
       }
 
       console.log("Inserting new schedule");
-      console.log(
-        "JSON.parse(JSON.stringify(schedule)): " +
-          JSON.parse(JSON.stringify(schedule))
-      );
+      let weekDates = [];
+      for (let weekNum = 0; weekNum < schedule.length; weekNum++) {
+        weekDates.push({
+          dateIsSet: false,
+          date: null,
+        });
+      }
+      console.log("weekDates: " + weekDates);
+
       result = await this.client
         .db("FootballLeague")
         .collection("Schedule")
@@ -1393,6 +1412,7 @@ module.exports = class DataBase {
           teamsConstraints: teamsConstraints,
           gamesIdsToUsers: gamesIdsToUsers,
           refereesConstraints: refereesConstraints,
+          weekDates: weekDates,
         });
 
       // Updating all the users about the schedule
@@ -1424,6 +1444,7 @@ module.exports = class DataBase {
         gamesToBeCompleted: gamesToBeCompleted,
         teamsConstraints: teamsConstraints,
         refereesConstraints: refereesConstraints,
+        weekDates: weekDates,
       };
     }
   }
@@ -1467,7 +1488,7 @@ module.exports = class DataBase {
 
   async addGameToReferee(changeDetails) {
     console.log("In Database.js - addGameToReferee()");
-    let referee = changeDetails.referee;
+    let referee = changeDetails.newReferee;
     let matchId = changeDetails.matchId;
     let result = await this.client
       .db("FootballLeague")

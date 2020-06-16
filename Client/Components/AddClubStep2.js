@@ -219,7 +219,7 @@ export default class AddClubStep2 extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.6}}>
+        imageStyle={{opacity: 0.7}}>
         {/* <View style={styles.container}> */}
         <ScrollView style={styles.container}>
           {/* <View

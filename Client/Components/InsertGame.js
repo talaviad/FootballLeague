@@ -45,7 +45,7 @@ export default class InsertGame extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        style={[styles.image, styles.container, {opacity: 0.7}]}>
         {/* <View style={styles.container}> */}
         <ScrollView>
           <View style={{flex: 1}}>

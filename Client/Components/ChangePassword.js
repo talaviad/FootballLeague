@@ -99,7 +99,7 @@ export default class ChangePassword extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <TextInput
             style={styles.inputBox}

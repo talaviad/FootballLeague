@@ -109,7 +109,10 @@ handleLoginRequest = async (user, pass) => {
   let DBresponse = await database.getUser(user);
   if (DBresponse.success) {
     try {
+      console.time("T1");
       let passwordAreMatch = await bcrypt.compare(pass, DBresponse.password);
+      console.timeEnd("T1");
+
       if (passwordAreMatch) {
         let randNumForSignature = Math.floor(Math.random() * 100);
         let resultsToTheServer = {
@@ -464,6 +467,8 @@ app.post("/", function (req, res) {
         .insertOrUpdatePitchConstraints(req.body.pitchConstraints)
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
       break;
+    case "SetWeekDate":
+
     case "AddGame":
     case "DeleteGame":
     case "ChangeGame":
@@ -476,7 +481,8 @@ app.post("/", function (req, res) {
           null,
           req.body.changeDetails,
           req.body.refereesConstraints,
-          req.body.refereesSchedule
+          req.body.refereesSchedule,
+          req.body.weekDates
         )
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
       break;

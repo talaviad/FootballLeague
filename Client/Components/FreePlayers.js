@@ -94,7 +94,9 @@ export default class FreePlayers extends React.Component {
       console.error(err);
     }
   }
-
+  closeInfoModal = () => {
+    this.setState({showInfoModal: false});
+  };
   returnWithButton = (dataRow, freeText, index) => {
     var newDataRow = Array.from(dataRow);
     newDataRow[2] = (
@@ -119,7 +121,8 @@ export default class FreePlayers extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        style={[styles.image, styles.container]}
+        imageStyle={{opacity: 0.7}}>
         <Row
           data={state.tableHead}
           flexArr={[30, 30, 30]}
@@ -151,11 +154,12 @@ export default class FreePlayers extends React.Component {
         <Icon
           style={{alignSelf: 'flex-end'}}
           name="plus-circle"
-          size={100}
+          size={75}
           onPress={() => {
             this.setState({showAddModal: true});
           }}
         />
+
         <Modal
           visible={this.state.showInfoModal}
           transparent={true}
@@ -163,46 +167,24 @@ export default class FreePlayers extends React.Component {
           onRequestClose={() => {
             this.setState({showInfoModal: false});
           }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: '#000000aa',
-            }}>
-            <View
-              style={{
-                margin: 50,
-                padding: 24,
-                marginTop: '50%',
-                backgroundColor: '#ffffff',
-                borderRadius: 10,
-                justifyContent: 'flex-start',
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flex: 1,
-                  margin: 50,
-                  marginTop: '9%',
-                  backgroundColor: '#ffffff',
-                }}>
-                <Text style={{fontSize: 20, color: 'black'}}>Information</Text>
-                <Icon
-                  name={'close'}
-                  color={'black'}
-                  style={{marginLeft: '50%'}}
-                  size={25}
-                  onPress={() => {
-                    alert('a');
-                    this.setState({
-                      showInfoModal: false,
-                    });
-                  }}
-                />
-              </View>
-              <Text style={{fontSize: 16, color: 'black'}}>
-                {this.state.tempFreeText}
-              </Text>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={{fontSize: 20, color: 'black'}}>Information</Text>
+              <Icon
+                name={'close'}
+                color={'black'}
+                style={{marginLeft: '50%'}}
+                size={25}
+                onPress={() => {
+                  this.setState({
+                    showInfoModal: false,
+                  });
+                }}
+              />
             </View>
+            <Text style={{fontSize: 16, color: 'black'}}>
+              {this.state.tempFreeText}
+            </Text>
           </View>
         </Modal>
         <Modal
@@ -210,7 +192,7 @@ export default class FreePlayers extends React.Component {
           transparent={true}
           visible={this.state.showAddModal}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            alert('Modal has been closed.');
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>

@@ -7,7 +7,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
 
 import {Header} from 'react-navigation-stack';
@@ -20,7 +20,77 @@ export default class PersonalArea extends React.Component {
 
     this.state = {
       isLoading: false,
+      inbox: {
+        newMessages: [],
+      },
     };
+
+    this.load = this.load.bind(this);
+  }
+
+  async componentDidMount() {
+    this.load();
+    this.focusListener = this.props.navigation.addListener(
+      'didFocus',
+      this.load,
+    );
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
+
+  async load() {
+    let token;
+    let currRole;
+    let inbox = {
+      messages: [],
+      newMessages: 0,
+    };
+
+    try {
+      token = await AsyncStorage.getItem('token');
+      currRole = await AsyncStorage.getItem('role');
+      username = await AsyncStorage.getItem('username');
+      console.log('load(): currRole - ' + currRole);
+      console.log('load(): token - ' + token);
+      // If connected, bring new messages
+      if (token !== 'none') {
+        let response = await fetch(
+          'http://' +
+            this.props.navigation.getParam('IP') +
+            ':' +
+            this.props.navigation.getParam('PORT') +
+            '/?data=GetInbox',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Football-Request': 'GetInbox',
+              Authorization: token,
+            },
+          },
+        );
+        let json = await response.json();
+        console.log(
+          'In PersonalArea.js, load() - json.success: ' + json.success,
+        );
+        if (json.success) {
+          console.log('json.inbox: ' + json.inbox);
+          inbox = json.inbox;
+          let newMessages = 0;
+          for (let i = 0; i < json.inbox.messages.length; i++) {
+            if (!json.inbox.messages[i].read) newMessages++;
+          }
+          inbox.newMessages = newMessages;
+        } else console.log('Error message: ' + json.error.msg);
+      }
+    } catch (err) {
+      console.log('in catch, err: ' + err);
+      throw err;
+    }
+
+    this.setState({inbox: inbox});
   }
 
   render() {
@@ -43,8 +113,16 @@ export default class PersonalArea extends React.Component {
                 })
               }
               style={{}}
+              backgroundColor="#3f7ec1"
+              backgroundActive="#b3cce7"
               backgroundDarker="#b3cce7"
+              backgroundDarker="#b3cce7"
+              backgroundPlaceholder="#b3cce7"
               borderColor="#b3cce7"
+              type="primary"
+              textColor="#FFF"
+              textSize={18}
+              height={80}
               raiseLevel={2}
               height={50}
               width={300}
@@ -90,8 +168,16 @@ export default class PersonalArea extends React.Component {
                 })
               }
               style={{marginTop: 25}}
+              backgroundColor="#3f7ec1"
+              backgroundActive="#b3cce7"
               backgroundDarker="#b3cce7"
+              backgroundDarker="#b3cce7"
+              backgroundPlaceholder="#b3cce7"
               borderColor="#b3cce7"
+              type="primary"
+              textColor="#FFF"
+              textSize={18}
+              height={80}
               raiseLevel={2}
               height={50}
               width={300}
@@ -120,10 +206,24 @@ export default class PersonalArea extends React.Component {
               </ImageBackground>
             </AwesomeButtonCartman>
             <AwesomeButtonCartman
-              onPress={() => {}}
+              onPress={() =>
+                this.props.navigation.navigate('Inbox', {
+                  inbox: this.state.inbox,
+                  IP: this.props.navigation.getParam('IP'),
+                  PORT: this.props.navigation.getParam('PORT'),
+                })
+              }
               style={{marginTop: 25}}
+              backgroundColor="#3f7ec1"
+              backgroundActive="#b3cce7"
               backgroundDarker="#b3cce7"
+              backgroundDarker="#b3cce7"
+              backgroundPlaceholder="#b3cce7"
               borderColor="#b3cce7"
+              type="primary"
+              textColor="#FFF"
+              textSize={18}
+              height={80}
               raiseLevel={2}
               height={50}
               width={300}
@@ -143,11 +243,17 @@ export default class PersonalArea extends React.Component {
 
                       alignSelf: 'center',
                       fontSize: 25,
-                      color: '#edf3f9',
+                      color:
+                        this.state.inbox.newMessages !== 0
+                          ? '#BD1128'
+                          : '#AED6F1', //'#edf3f9', //
                       fontFamily: 'sans-serif',
                       textAlign: 'center',
                     }}>
-                    {'Inbox Messages'}
+                    Inbox -{' '}
+                    {this.state.inbox.newMessages !== 0
+                      ? '' + this.state.inbox.newMessages + ' new messages'
+                      : 'no new messages'}
                   </Text>
                 </View>
               </ImageBackground>
