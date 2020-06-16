@@ -641,7 +641,51 @@ export default class Home extends React.Component {
               </Text>
             </View>
           </View>
-
+          <View style={styles.rowOfTwoButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() => {
+                  this.props.navigation.navigate('Free Players', {
+                    IP: IP,
+                    PORT: PORT,
+                  });
+                }}
+                backgroundDarker="#b3cce7"
+                borderColor="#b3cce7"
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{flex: 1}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/free.png')}
+                      style={{
+                        width: 140,
+                        height: 140,
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                {'Free\nPlayers'}
+              </Text>
+            </View>
+          </View>
           <View style={styles.loadingStyle}>
             {this.state.isLoading && (
               <ActivityIndicator color={'#fff'} size={80} />

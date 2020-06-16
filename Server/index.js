@@ -85,6 +85,10 @@ app.get("/", function (req, res) {
     database.getTeamsNames().then((DBResponse) => {
       res.send(DBResponse);
     });
+  } else if (data === "FreePlayers") {
+    database.getFreePlayers().then((DBResponse) => {
+      res.send(DBResponse);
+    });
   } else if (data === "NumberOfWeeks") {
     database.getNumberOfWeeks().then((DBResponse) => {
       res.send(DBResponse);
@@ -413,7 +417,30 @@ app.post("/", function (req, res) {
       break;
     case "removePlayer":
       database
-        .removePlayer(req.body.clubName, req.body.playerJerseyNUmber)
+        .removePlayer(req.body.clubName, req.body.playerJerseyNumber)
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+    case "addPlayer":
+      database
+        .addPlayer(
+          req.body.clubName,
+          req.body.jerseyToAdd,
+          req.body.firstNameToAdd,
+          req.body.lastNameToAdd
+        )
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+    case "addFreePlayer":
+      database
+        .addFreePlayer(
+          req.body.fullName,
+          req.body.contactDetails,
+          req.body.freeText
+        )
         .then((DBResponse) => {
           res.send(DBResponse);
         });

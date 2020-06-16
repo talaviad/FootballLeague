@@ -15,9 +15,14 @@ var possibleRequests = [
   "setLiveResult",
   "removeLiveResult",
   "removePlayer",
+  "addPlayer",
+  "addFreePlayer",
+
   "getLiveResult",
   "insertGameResult",
   "TeamsNames",
+  "FreePlayers",
+
   "NumberOfWeeks",
   "Result",
   "MonthlyGames",

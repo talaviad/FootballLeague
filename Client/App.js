@@ -17,6 +17,7 @@ import GameMode from './Components/GameMode';
 import AddReferee from './Components/AddReferee';
 import AddClub from './Components/AddClub';
 import EditClub from './Components/EditClub';
+import FreePlayers from './Components/FreePlayers';
 
 import Constraints from './Components/Constraints';
 import ManageSchedule from './Components/ManageSchedule';
@@ -44,7 +45,7 @@ const AppNavigator = createStackNavigator(
     'Add Referee': AddReferee,
     'Add Club': AddClub,
     'Edit Club': EditClub,
-
+    'Free Players': FreePlayers,
     Constraints: Constraints,
     ManageSchedule: ManageSchedule,
     PitchConstraints: PitchConstraints,

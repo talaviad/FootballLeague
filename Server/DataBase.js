@@ -474,6 +474,31 @@ module.exports = class DataBase {
     }
   }
 
+  async getFreePlayers() {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("FreePlayers")
+        .find();
+      result = await result.toArray();
+      let results = result.map((player) => {
+        return JSON.stringify({
+          fullName: player.fullName,
+          contactDetails: player.contactDetails,
+          freeText: player.freeText,
+        });
+      });
+      let resultsToTheServer = {
+        success: true,
+        freePlayersArray: results,
+      };
+      return JSON.stringify(resultsToTheServer);
+    } catch {
+      console.log("in catch");
+      return JSON.stringify({ success: false });
+    }
+  }
+
   async getLiveResult() {
     try {
       let result = await this.client
@@ -578,6 +603,59 @@ module.exports = class DataBase {
           { clubName: clubName },
           { $pull: { players: { jerseyNumber: playerJerseyNUmber } } }
         );
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async addPlayer(clubName, jerseyToAdd, firstNameToAdd, lastNameToAdd) {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .update(
+          { clubName: clubName },
+          {
+            $push: {
+              players: {
+                $each: [
+                  {
+                    jerseyNumber: jerseyToAdd,
+                    firstName: firstNameToAdd,
+                    lastName: lastNameToAdd,
+                    goals: 0,
+                  },
+                ],
+              },
+            },
+          }
+        );
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async addFreePlayer(fullName, contactDetails, freeText) {
+    try {
+      await this.client.db("FootballLeague").collection("FreePlayers").insert({
+        fullName: fullName,
+        contactDetails: contactDetails,
+        freeText: freeText,
+      });
       return { success: true };
     } catch (err) {
       let error = {
