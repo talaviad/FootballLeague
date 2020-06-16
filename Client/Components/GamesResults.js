@@ -94,7 +94,7 @@ export default class GamesResults extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.85}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <View
             style={{
@@ -416,7 +416,7 @@ export default class GamesResults extends React.Component {
   }
 
   createButton = (index, arr) => (
-    <Icon.Button
+    <Icon
       name={arr.includes(index) ? 'angle-up' : 'angle-down'}
       backgroundColor="#336da8" //this line is important, it's canceling the deafult color
       color={'black'}

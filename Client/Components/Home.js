@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   rowOfTwoButton: {
-    paddingVertical: '5%',
+    paddingTop: '5%',
     flexDirection: 'row',
     justifyContent: 'space-around',
   },

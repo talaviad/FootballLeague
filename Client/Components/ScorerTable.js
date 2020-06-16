@@ -64,7 +64,8 @@ export default class ScorerTable extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        style={[styles.image, styles.container]}
+        imageStyle={{opacity: 0.7}}>
         <SearchBar
           placeholder="Search by player name"
           onChangeText={this.updateSearch}
