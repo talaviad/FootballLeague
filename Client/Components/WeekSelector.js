@@ -19,44 +19,15 @@ export default class WeekSelector extends React.Component {
       },
     };
     this.onChange = this.onChange.bind(this);
-    this.createAllAlerts = this.createAllAlerts.bind(this);
-  }
-
-  createAllAlerts() {
-    const alerts = [];
-    alerts.push(
-      <AwesomeAlert
-        show={this.state.alerts.wrongChoose.toShow}
-        showProgress={false}
-        title={'Error'}
-        message={this.state.alerts.wrongChoose.msg}
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showConfirmButton={true}
-        confirmText="Yes"
-        confirmText="ok"
-        confirmButtonColor="#8fbc8f"
-        onConfirmPressed={() => {
-          this.setState(prevState => {
-            let alerts = Object.assign({}, prevState.alerts);
-            alerts.wrongChoose = {toShow: false, msg: ''};
-            return {alerts};
-          });
-        }}
-      />,
-    );
-
-    return alerts;
   }
 
   onChange = (dateStr, date) => {
     if (date.getDay() !== 0) {
-      // this.setState(prevState => {
-      //     let alerts = Object.assign({}, prevState.alerts);
-      //     alerts.wrongChoose = { toShow: true, msg: 'You are able to choose only sundays(start of the week)' };
-      //     return { alerts };
-      //   })
-      alert('You are able to choose only sundays(start of the week)');
+      this.state.weekPage.setAlertsState(
+        'wrongChoose',
+        true,
+        'You are able to choose only sundays (start of the week)',
+      );
       return;
     }
     this.setState({currDate: date});
@@ -71,9 +42,14 @@ export default class WeekSelector extends React.Component {
     const curr = new Date(); // get current date
     const startOfTheWeek = curr.getDate() - curr.getDay();
     return (
-      <View style={{width: '100%', height: '100%'}}>
+      <View style={{width: '100%', height: '80%'}}>
         <DatePicker
-          style={{borderRadius: 7.5, backgroundColor: '#E3E2DF', width: '100%'}}
+          style={{
+            borderRadius: 7.5,
+            backgroundColor: '#E3E2DF',
+            width: '100%',
+            height: GLOBALS.windowHeightSize * 0.05,
+          }}
           date={this.state.currDate}
           mode="date"
           placeholder="Select Day"
@@ -103,13 +79,13 @@ export default class WeekSelector extends React.Component {
             dateText: {
               color: 'white',
               fontSize: 14,
-              fontFamily: 'sans-serif-medium',
+              fontFamily: 'sans',
               //fontWeight: 'bold',
             },
             placeholderText: {
               color: 'white',
               fontSize: 14,
-              fontFamily: 'sans-serif-medium',
+              fontFamily: 'sans-serif-condensed',
               fontStyle: 'italic',
             },
           }}

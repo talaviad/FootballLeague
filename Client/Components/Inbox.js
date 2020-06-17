@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   ImageBackground,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import DatePicker from 'react-native-datepicker';
@@ -24,6 +25,7 @@ export default class Inbox extends React.Component {
       inbox: this.props.navigation.getParam('inbox'),
       msgIsShown: false,
       currMsg: '',
+      removeAll: false,
       alerts: {
         responseError: {
           toShow: false,
@@ -37,6 +39,37 @@ export default class Inbox extends React.Component {
     this.createAllAlerts = this.createAllAlerts.bind(this);
     this.setAlertsState = this.setAlertsState.bind(this);
     this.addAlertToarray = this.addAlertToarray.bind(this);
+    this.createRemoveAllAlert = this.createRemoveAllAlert.bind(this);
+  }
+
+  createRemoveAllAlert() {
+    if (!this.state.removeAll) return null;
+    return (
+      <AwesomeAlert
+        show={true}
+        showProgress={false}
+        title={'Confirm'}
+        message="Are you sure you want to remove all the messages?"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        showCancelButton={true}
+        confirmText="Yes"
+        cancelText="No"
+        confirmButtonColor={GLOBALS.colors.Positive}
+        cancelButtonColor={GLOBALS.colors.Negative}
+        onConfirmPressed={() => {
+          let inbox = {
+            messages: [],
+          };
+          this.setState({inbox: inbox, removeAll: false});
+          this.updateServer();
+        }}
+        onCancelPressed={() => {
+          this.setState({removeAll: false});
+        }}
+      />
+    );
   }
 
   createAllAlerts() {
@@ -179,9 +212,12 @@ export default class Inbox extends React.Component {
       messagesToRender.push(
         <View
           style={{
+            borderRadius: 7.5,
+            width: '95%',
             height: GLOBALS.windowHeightSize * 0.15,
             backgroundColor: '#ECE7E4',
-            borderBottomWidth: 1.5,
+            borderBottomWidth: msgNum === messages.length - 1 ? 0 : 1,
+            borderTopWidth: 1,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
@@ -202,14 +238,15 @@ export default class Inbox extends React.Component {
             <Text
               style={{
                 fontSize: 18,
-                height: '100%',
+                height: '80%',
                 width: '97%',
+                textAlignVertical: 'center',
                 textAlign: 'center',
                 fontFamily: 'sans',
                 fontWeight: messages[msgNum].read ? 'normal' : 'bold',
               }}>
               {' '}
-              {messages[msgNum].msg}{' '}
+              {messages[msgNum].msg.substring(0, 47) + '...'}{' '}
             </Text>
           </TouchableOpacity>
           <View style={{flex: 1}}>
@@ -225,41 +262,50 @@ export default class Inbox extends React.Component {
           </View>
         </View>,
       );
+      messagesToRender.push(
+        <View style={{height: GLOBALS.windowHeightSize * 0.01}} />,
+      );
     }
 
+    if (messagesToRender.length === 0)
+      return (
+        <ImageBackground
+          source={require('../Images/wall1.png')}
+          style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          {/* <View style={{ flex: 1, alignItems: 'center' }}> */}
+          <Image
+            style={{
+              width: GLOBALS.windowWidthSize,
+              height: GLOBALS.windowHeightSize,
+            }}
+            source={require('../Images/noMessages.jpeg')}
+          />
+        </ImageBackground>
+        // {/* </View>   */}
+      );
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={{height: '100%', width: '100%'}}
-        imageStyle={{opacity: 0.7}}>
-        <ScrollView
-          style={{
-            height: GLOBALS.windowHeightSize,
-            width: '100%',
-            backgroundColor: '#ECE7E4',
-          }}>
+        style={{height: '100%', width: '100%'}}>
+        <ScrollView style={{height: GLOBALS.windowHeightSize, width: '100%'}}>
+          <View style={{height: GLOBALS.windowHeightSize * 0.05}} />
           <View
             style={{
-              backgroundColor: '#ECE7E4',
-              height: GLOBALS.windowHeightSize * 0.1,
-              justifyContent: 'center',
+              height: GLOBALS.windowHeightSize * 0.05,
+              justifyContent: 'flex-end',
               alignItems: 'center',
               width: '100%',
             }}>
             <TouchableOpacity
               style={{
                 width: '30%',
-                height: '70%',
+                height: '100%',
                 alignItems: 'center',
                 backgroundColor: GLOBALS.colors.Negative,
                 borderRadius: 7.5,
               }}
               onPress={() => {
-                let inbox = {
-                  messages: [],
-                };
-                this.setState({inbox: inbox});
-                this.updateServer();
+                this.setState({removeAll: true});
               }}>
               <Text
                 style={{
@@ -276,11 +322,19 @@ export default class Inbox extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
-          <ScrollView style={{height: GLOBALS.windowHeightSize * 0.9}}>
+          <View style={{height: GLOBALS.windowHeightSize * 0.05}} />
+          <ScrollView
+            contentContainerStyle={{
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            style={{height: GLOBALS.windowHeightSize * 0.85}}>
             {messagesToRender.reverse()}
             {this.createMsgModal()}
+            <View style={{height: GLOBALS.windowHeightSize * 0.05}} />
           </ScrollView>
           {this.createAllAlerts()}
+          {this.createRemoveAllAlert()}
         </ScrollView>
       </ImageBackground>
     );

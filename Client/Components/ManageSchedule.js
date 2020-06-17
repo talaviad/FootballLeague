@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
+import Icon4 from 'react-native-vector-icons/Feather';
 import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import GLOBALS from '../Globals';
@@ -122,6 +123,10 @@ export default class ManageSchedule extends React.Component {
           toShow: false,
           msg: '',
         },
+        wrongChoose: {
+          toShow: false,
+          msg: '',
+        },
       },
     };
     this.load = this.load.bind(this);
@@ -158,6 +163,7 @@ export default class ManageSchedule extends React.Component {
     this.createAllAlerts = this.createAllAlerts.bind(this);
     this.setAlertsState = this.setAlertsState.bind(this);
     this.addAlertToarray = this.addAlertToarray.bind(this);
+    this.renderField = this.renderField.bind(this);
   }
 
   createAllAlerts() {
@@ -206,6 +212,28 @@ export default class ManageSchedule extends React.Component {
         }}
       />,
     );
+    alerts.push(
+      <AwesomeAlert
+        show={this.state.alerts.wrongChoose.toShow}
+        showProgress={false}
+        title={'Error'}
+        message={this.state.alerts.wrongChoose.msg}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Yes"
+        confirmText="ok"
+        confirmButtonColor="#8fbc8f"
+        onConfirmPressed={() => {
+          this.setState(prevState => {
+            let alerts = Object.assign({}, prevState.alerts);
+            alerts.wrongChoose = {toShow: false, msg: ''};
+            return {alerts};
+          });
+        }}
+      />,
+    );
+    this.addAlertToarray(alerts, 'wrongChoose', 'Error');
     this.addAlertToarray(alerts, 'actionAccepted', 'Confirm');
     this.addAlertToarray(alerts, 'responseError', 'Error');
     this.addAlertToarray(alerts, 'serverError', 'Error');
@@ -283,6 +311,7 @@ export default class ManageSchedule extends React.Component {
 
         if (!json.schedule) {
           this.setState({
+            finishedLoad: true,
             teamsConstraints: json.teamsConstraints,
             refereesConstraints: json.refereesConstraints,
             referee: referee,
@@ -290,6 +319,7 @@ export default class ManageSchedule extends React.Component {
           return;
         }
         this.setState({
+          finishedLoad: true,
           isScheduleSet: 'set',
           schedule: json.schedule,
           gamesToBeCompleted: json.gamesToBeCompleted,
@@ -302,11 +332,11 @@ export default class ManageSchedule extends React.Component {
         });
       } else {
         console.log(json.error.msg);
-        this.setState({isScheduleSet: 'notSet'});
+        this.setState({finishedLoad: true, isScheduleSet: 'notSet'});
       }
     } catch (err) {
       console.error(err);
-      this.setState({isScheduleSet: 'notSet'});
+      this.setState({finishedLoad: true, isScheduleSet: 'notSet'});
     }
   }
 
@@ -944,7 +974,7 @@ export default class ManageSchedule extends React.Component {
                   textStyle: {
                     color: 'white',
                     fontSize: 18,
-                    fontFamily: 'sans-serif-medium',
+                    fontFamily: 'sans',
                     // fontWeight: 'bold',
                     opacity: 3,
                     textAlign: 'center',
@@ -1325,7 +1355,7 @@ export default class ManageSchedule extends React.Component {
                   backgroundColor="#ECE7E4"
                   name="edit"
                   onPress={() =>
-                    this.changeDayOrHour(week[i][1], dayIndex, hourIndex)
+                    this.changeDayOrHour(week[i][j], dayIndex, hourIndex)
                   }
                   solid
                 />
@@ -1338,9 +1368,6 @@ export default class ManageSchedule extends React.Component {
                   }
                   solid
                 />
-                {/* <TouchableOpacity style={{ justifyContent: 'center', backgroundColor: GLOBALS.colors.Button, borderRadius: 25, width: '30%'}} onPress={() => this.pickReferee(dayIndex, hourIndex, matchId, thereIsReferee)}>
-                                        <Text style={{textAlign: 'center', color: '#FCFAFA'}}> {(thereIsReferee)? 'Change Referee' : 'Pick Referee'} </Text>
-                                </TouchableOpacity> */}
               </View>
             </View>,
           );
@@ -1350,6 +1377,25 @@ export default class ManageSchedule extends React.Component {
         }
       }
     }
+    games.push(<View style={{height: GLOBALS.windowHeightSize * 0.03}} />);
+    games.push(
+      <View
+        style={{
+          height: GLOBALS.windowHeightSize * 0.1,
+          width: '100%',
+          alignItems: 'center',
+        }}>
+        <Icon3.Button
+          color="white"
+          backgroundColor={GLOBALS.colors.Positive}
+          name="add"
+          onPress={() => this.addGame()}
+          iconStyle={{marginRight: 0, marginLeft: 0}}
+          size={25}
+          solid
+        />
+      </View>,
+    );
 
     return games;
   }
@@ -2057,7 +2103,7 @@ export default class ManageSchedule extends React.Component {
           textStyle: {
             color: 'white',
             fontSize: 14,
-            fontFamily: 'sans-serif-medium',
+            fontFamily: 'sans',
             // fontWeight: 'bold',
             opacity: 3,
             textAlign: 'center',
@@ -2066,8 +2112,8 @@ export default class ManageSchedule extends React.Component {
           },
         }}
         style={{
-          height: '100%',
-          width: '100%',
+          height: GLOBALS.windowHeightSize * 0.05,
+          // width: '100%',
           backgroundColor: '#0c4271',
           borderRadius: 7.5,
           color: 'black',
@@ -2077,6 +2123,7 @@ export default class ManageSchedule extends React.Component {
           justifyContent: 'center',
         }}
         options={weeksPickers}
+        fieldTemplate={this.renderField}
         getLabel={item => item.label}
         onValueChange={option => {
           if (!option) return;
@@ -2228,7 +2275,8 @@ export default class ManageSchedule extends React.Component {
           <View
             style={{
               height: GLOBALS.windowHeightSize * 0.1,
-              width: '60%',
+              width: '40%',
+              justifyContent: 'center',
               alignItems: 'center',
             }}>
             <CustomPicker
@@ -2243,22 +2291,25 @@ export default class ManageSchedule extends React.Component {
                   opacity: 3,
                   textAlign: 'center',
                   //width: '100%',
+                  height: '100%',
                   textAlignVertical: 'center',
                 },
               }}
               style={{
                 borderWidth: 0,
-                height: GLOBALS.windowHeightSize * 0.1,
+                height: '100%',
+                width: GLOBALS.windowWidthSize * 0.4,
                 backgroundColor: '#0c4271',
                 borderRadius: 7.5,
                 color: 'black',
                 fontSize: 15,
                 fontFamily: 'sans',
                 fontWeight: 'bold',
-                justifyContent: 'center',
+                //justifyContent: 'center'
               }}
               options={teamOptions}
               getLabel={item => item.label}
+              fieldTemplate={this.renderField}
               //optionTemplate={this.renderOption}
               onValueChange={option => {
                 if (!option) return;
@@ -2387,6 +2438,59 @@ export default class ManageSchedule extends React.Component {
     );
   }
 
+  renderField(settings) {
+    const {selectedItem, defaultText, getLabel, clear} = settings;
+    return (
+      <View style={styles.fieldContainer}>
+        <View
+          style={{
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {!selectedItem && (
+            <Text
+              style={{
+                height: '100%',
+                width: '100%',
+                color: 'white',
+                fontSize: 18,
+                textAlign: 'center',
+                textAlignVertical: 'center',
+                fontFamily: 'sans',
+              }}>
+              {defaultText}
+            </Text>
+          )}
+          {selectedItem && (
+            <View
+              style={{
+                height: '100%',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  textAlignVertical: 'center',
+                  textAlign: 'center',
+                  height: '100%',
+                  flex: 3,
+                  color: '#FEFFFF',
+                  fontFamily: 'sans',
+                  fontSize: 15,
+                }}>
+                {getLabel(selectedItem)}
+              </Text>
+              <Icon4 name="chevron-down" size={30} style={{flex: 1}} />
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  }
+
   renderHeader() {
     return (
       <View style={styles.headerFooterContainer}>
@@ -2413,11 +2517,20 @@ export default class ManageSchedule extends React.Component {
   }
 
   render() {
+    // if (!this.state.finishedLoad)
+    //   return (
+    //     <ImageBackground
+    //       source={require('../Images/wall.jpg')}
+    //       style={[styles.image, {flex: 1}, {opacity: 1}]}
+    //       imageStyle={{opacity: 0.7}}>
+    //       <View style={{height: GLOBALS.windowHeightSize}} />
+    //     </ImageBackground>
+    //   );
     if (this.state.isScheduleSet === 'notSet') {
       return (
         <ImageBackground
           source={require('../Images/wall1.png')}
-          style={[styles.image, {flex: 1}]}
+          style={[styles.image, {flex: 1}, {opacity: 1}]}
           imageStyle={{opacity: 0.7}}>
           <View
             contentContainerStyle={{
@@ -2498,7 +2611,7 @@ export default class ManageSchedule extends React.Component {
       return (
         <ImageBackground
           source={require('../Images/wall1.png')}
-          style={[styles.image, {flex: 1}]}
+          style={[styles.image, {flex: 1}, {opacity: 1}]}
           imageStyle={{opacity: 0.7}}>
           <View>
             <Text style={{color: 'white', fontSize: 25, fontFamily: 'sans'}}>
@@ -2521,7 +2634,7 @@ export default class ManageSchedule extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, {flex: 1}]}
+        style={[styles.image, {flex: 1}, {opacity: 1}]}
         imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <View style={{height: GLOBALS.windowHeightSize * 0.05}} />
@@ -2534,7 +2647,9 @@ export default class ManageSchedule extends React.Component {
             <View style={{flex: 0.5}} />
             <View style={styles.weekTitle}>{weekTitles}</View>
             <View style={{flex: 0.5}} />
-            <View style={{flex: 1}}>{weekSelector}</View>
+            <View style={{flex: 1, justifyContent: 'flex-start'}}>
+              {weekSelector}
+            </View>
             <View style={{flex: 0.5}} />
           </View>
           <View style={styles.gameTitlesContainer}>
@@ -2554,27 +2669,23 @@ export default class ManageSchedule extends React.Component {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            style={{width: '100%', height: GLOBALS.windowHeightSize * 0.55}}>
+            style={{width: '100%', height: GLOBALS.windowHeightSize * 0.53}}>
             {weekGames}
           </ScrollView>
-          <View style={{height: GLOBALS.windowHeightSize * 0.03}} />
-          <View
-            style={{
-              height: GLOBALS.windowHeightSize * 0.1,
-              width: '100%',
-              alignItems: 'center',
-            }}>
-            <Icon3.Button
-              color="white"
-              backgroundColor={GLOBALS.colors.Positive}
-              name="add"
-              onPress={() => this.addGame()}
-              iconStyle={{marginRight: 0, marginLeft: 0}}
-              size={25}
-              //style={{ height: '100%', padding: 0, margin: 0  }}
-              solid
-            />
-          </View>
+          {/* <View style={{ height: GLOBALS.windowHeightSize*0.03 }}/>
+                    <View style={{ height: GLOBALS.windowHeightSize*0.1, width: '100%', alignItems: 'center' }}>
+                        <Icon3.Button 
+                            color='white'
+                            backgroundColor={GLOBALS.colors.Positive}
+                            name="add" 
+                            onPress={() => this.addGame()}
+                            iconStyle={{ marginRight: 0, marginLeft: 0 }}
+                            size={25}
+                            //style={{ height: '100%', padding: 0, margin: 0  }}
+                            solid>
+                        </Icon3.Button>
+                    </View> */}
+          <View style={{height: GLOBALS.windowHeightSize * 0.02}} />
           <View
             style={{
               height: GLOBALS.windowHeightSize * 0.1,
@@ -2666,8 +2777,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   weekTitle: {
-    //backgroundColor: GLOBALS.colors.BackGround,
-    //height: Math.floor(GLOBALS.windowHeightSize/10),
     flex: 1,
   },
   gameLineText: {
@@ -2692,6 +2801,12 @@ const styles = StyleSheet.create({
   },
   gameLine: {
     flex: 1,
+  },
+  fieldContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     //backgroundColor: GLOBALS.colors.BackGround,

@@ -688,7 +688,7 @@ export default class Home extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('LeagueSchedule', {
+                  this.props.navigation.navigate('League Schedule', {
                     IP: IP,
                     PORT: PORT,
                     teamList: this.state.teamsNames,

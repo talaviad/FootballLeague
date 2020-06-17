@@ -10,6 +10,7 @@ import {
   Modal,
   Dimensions,
   ImageBackground,
+  Image,
 } from 'react-native';
 import {Table, Row, Rows, Col} from 'react-native-table-component';
 import {Picker} from '@react-native-community/picker';
@@ -18,6 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {CustomPicker} from 'react-native-custom-picker';
 import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import Icon from 'react-native-vector-icons/Feather';
 import GLOBALS from '../Globals';
 
 export default class LeagueSchedule extends React.Component {
@@ -51,6 +53,7 @@ export default class LeagueSchedule extends React.Component {
       currWeek: 1,
       thereIsSchedule: false,
       currOptionWeek: false,
+      finishedLoad: false,
       alerts: {
         responseError: {
           toShow: false,
@@ -64,6 +67,7 @@ export default class LeagueSchedule extends React.Component {
     this.createAllAlerts = this.createAllAlerts.bind(this);
     this.setAlertsState = this.setAlertsState.bind(this);
     this.addAlertToarray = this.addAlertToarray.bind(this);
+    this.renderField = this.renderField.bind(this);
   }
 
   createAllAlerts() {
@@ -76,7 +80,7 @@ export default class LeagueSchedule extends React.Component {
     this.setState(prevState => {
       let alerts = Object.assign({}, prevState.alerts);
       alerts[field] = {toShow: toShow, msg: msg};
-      return {alerts};
+      return {alerts, finishedLoad: true};
     });
   }
 
@@ -136,6 +140,7 @@ export default class LeagueSchedule extends React.Component {
       if (json.success) {
         // Should add handle here
         this.setState({
+          finishedLoad: true,
           thereIsSchedule: true,
           teamsNumbers: json.teamsNumbers,
           teamsConstraints: json.teamsConstraints,
@@ -146,6 +151,7 @@ export default class LeagueSchedule extends React.Component {
       } else {
         // Should handle this
         console.log(json.error.msg);
+        this.setState({finishedLoad: true});
       }
     } catch (err) {
       console.error(err);
@@ -322,109 +328,191 @@ export default class LeagueSchedule extends React.Component {
 
   getWeeksTitles() {
     let weeksOptions = [];
+    let weeksPickers = [];
     for (let i = 0; i < this.state.schedule.length; i++) {
       let week = 'Week ' + (i + 1);
-      // weeksPickers.push(
-      //     <Picker.Item key={'add_picker_week_' + i}label={week} value={week} />
-      // )
+      weeksPickers.push(
+        <Picker.Item key={'add_picker_week_' + i} label={week} value={week} />,
+      );
       weeksOptions.push({
         label: week,
         value: i,
         option: 'white',
       });
     }
-    let defaultWeek = {
-      value: 0,
-      label: 'Week ' + this.state.currWeek,
-      color: 'white',
-    };
-    let weekOptionValue = this.state.currOptionWeek
-      ? this.state.currOptionWeek
-      : defaultWeek;
+    //alert('this.state.currWeek: ' + this.state.currWeek)
+    let selectedValue = '' + this.state.currWeek;
+    // let defaultWeek = {
+    //     value: 0,
+    //     label: 'Week ' + this.state.currWeek,
+    //     color: 'white'
+    // };
+    // let weekOptionValue = this.state.currOptionWeek? this.state.currOptionWeek : defaultWeek;
     return (
-      // <Picker
-      //     selectedValue={selectedValue}
-      //     style={{ width: '50%' }}
-      //     onValueChange={(itemValue, itemIndex) => this.setState({currWeek: itemIndex+1 })}
-      // >
-      //     {weeksPickers}
-      // </Picker>
-      <CustomPicker
-        value={weekOptionValue}
-        fieldTemplateProps={{
-          defaultText: 'Select Week',
-          textStyle: {
-            color: 'white',
-            fontSize: 14,
-            fontFamily: 'sans',
-            // fontWeight: 'bold',
-            opacity: 3,
-            textAlign: 'center',
+      <Picker
+        selectedValue={selectedValue}
+        style={{width: '60%'}}
+        itemStyle={{textAlign: 'center', fontWeight: 'bold'}}
+        onValueChange={(itemValue, itemIndex) =>
+          this.setState({currWeek: itemIndex + 1})
+        }>
+        {weeksPickers}
+      </Picker>
+      // <CustomPicker
+      //     value={weekOptionValue}
+      //     fieldTemplateProps={{
+      //     defaultText: 'Select Week',
+      //     textStyle: {
+      //         color: 'white',
+      //         fontSize: 14,
+      //         fontFamily: 'sans',
+      //         // fontWeight: 'bold',
+      //         opacity: 3,
+      //         textAlign: 'center',
+      //         height: '100%',
+      //         textAlignVertical: 'center',
+      //     },
+      //     }}
+      //     style={{
+      //         width: '100%',
+      //         height: '100%',
+      //         backgroundColor: '#0c4271',
+      //         borderRadius: 7.5,
+      //         color: 'black',
+      //         fontSize: 15,
+      //         fontFamily: 'sans',
+      //         fontWeight: 'bold',
+      //         justifyContent: 'center'
+      //     }}
+      //     //fieldTemplate={this.renderField}
+      //     options={weeksOptions}
+      //     getLabel={item => item.label}
+      //     onValueChange={option => {
+      //         if (!option)
+      //             return
+      //         this.setState({ currOptionWeek: option, currWeek: option.value+1})
+      //     }}/>
+    );
+  }
+
+  renderField(settings) {
+    const {selectedItem, defaultText, getLabel, clear} = settings;
+    return (
+      <View style={styles.fieldContainer}>
+        <View
+          style={{
+            width: '100%',
             height: '100%',
-            textAlignVertical: 'center',
-          },
-        }}
-        style={{
-          width: '100%',
-          backgroundColor: '#0c4271',
-          borderRadius: 7.5,
-          color: 'black',
-          fontSize: 15,
-          fontFamily: 'sans',
-          fontWeight: 'bold',
-          justifyContent: 'center',
-        }}
-        options={weeksOptions}
-        getLabel={item => item.label}
-        onValueChange={option => {
-          if (!option) return;
-          this.setState({currOptionWeek: option, currWeek: option.value + 1});
-        }}
-      />
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {!selectedItem && (
+            <Text
+              style={{
+                height: '100%',
+                width: '100%',
+                color: 'white',
+                fontSize: 18,
+                textAlign: 'center',
+                textAlignVertical: 'center',
+                fontFamily: 'sans',
+              }}>
+              {defaultText}
+            </Text>
+          )}
+          {selectedItem && (
+            <View
+              style={{
+                height: '100%',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  textAlignVertical: 'center',
+                  textAlign: 'center',
+                  height: '100%',
+                  flex: 3,
+                  color: '#FEFFFF',
+                  fontFamily: 'sans',
+                  fontSize: 15,
+                }}>
+                {getLabel(selectedItem)}
+              </Text>
+              <Icon name="chevron-down" size={30} style={{flex: 1}} />
+            </View>
+          )}
+        </View>
+      </View>
     );
   }
 
   render() {
-    if (!this.state.thereIsSchedule)
+    if (!this.state.finishedLoad)
       return (
         <ImageBackground
           source={require('../Images/wall1.png')}
-          style={[styles.image, {flex: 1}]}
+          style={[styles.image, {flex: 1}, {opacity: 1}]}
           imageStyle={{opacity: 0.7}}>
-          <View
-            style={{
-              height: GLOBALS.windowHeightSize,
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <AwesomeButtonCartman
-              type="anchor"
-              stretch={true}
-              textSize={20}
-              backgroundColor="#123c69"
-              style={{width: '50%'}}
-              borderWidth={0.5}
-              borderRadius={10}
-              raiseLevel={4}>
-              Soon..
-            </AwesomeButtonCartman>
-          </View>
+          <View style={{height: GLOBALS.windowHeightSize}} />
         </ImageBackground>
+      );
+    if (!this.state.thereIsSchedule)
+      return (
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <Image
+            style={{
+              width: GLOBALS.windowWidthSize,
+              height: GLOBALS.windowHeightSize,
+            }}
+            source={require('../Images/comingSoon.jpeg')}
+          />
+        </View>
       );
     const weekTitles = this.getWeeksTitles();
     const weekGames = this.createWeekGames();
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, {flex: 1}]}
+        style={[styles.image, {flex: 1}, {opacity: 1}]}
         imageStyle={{opacity: 0.7}}>
         <ScrollView
           contentContainerStyle={{alignItems: 'center'}}
           style={styles.container}>
-          <View style={{height: GLOBALS.windowHeightSize * 0.05}} />
-          <View style={styles.weekTitle}>{weekTitles}</View>
-          <View style={{height: GLOBALS.windowHeightSize * 0.1}} />
+          {/* <View style={{ height: GLOBALS.windowHeightSize*0.05 }} /> */}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                height: '100%',
+                flex: 0.5,
+                borderRightWidth: 1,
+                borderRightColor: 'black',
+              }}
+            />
+            <View style={styles.weekTitle}>{weekTitles}</View>
+            <View
+              style={{
+                height: '100%',
+                flex: 0.5,
+                borderLeftWidth: 1,
+                borderLeftColor: 'black',
+              }}
+            />
+          </View>
+          <View
+            style={{
+              height: GLOBALS.windowHeightSize * 0.1,
+              borderTopWidth: 1,
+              borderTopColor: 'black',
+              width: '90%',
+            }}
+          />
           <ScrollView
             style={{height: GLOBALS.windowHeightSize * 0.7, width: '90%'}}>
             {weekGames}
@@ -438,6 +526,12 @@ export default class LeagueSchedule extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  fieldContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   TeamViewContainer: {
     flex: 9,
     flexDirection: 'row',
@@ -462,8 +556,10 @@ const styles = StyleSheet.create({
   weekTitle: {
     //backgroundColor: 'red',
     height: GLOBALS.windowHeightSize * 0.1,
-    width: '100%',
-    alignItems: 'center',
+    //width: '100%',
+    flex: 9,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   gameLineText: {
     color: '#000000',

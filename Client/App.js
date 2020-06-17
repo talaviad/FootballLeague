@@ -47,15 +47,15 @@ const AppNavigator = createStackNavigator(
     'Edit Club': EditClub,
     'Free Players': FreePlayers,
     Constraints: Constraints,
-    ManageSchedule: ManageSchedule,
-    PitchConstraints: PitchConstraints,
+    'Manage Schedule': ManageSchedule,
+    'Pitch Constraints': PitchConstraints,
     'Referee Tools': RefereeTools,
     'Captain Tools': CaptainTools,
     'Manager Tools': ManagerTools,
     'Personal Area': PersonalArea,
     Inbox: Inbox,
     'Change Password': ChangePassword,
-    LeagueSchedule: LeagueSchedule,
+    'League Schedule': LeagueSchedule,
   },
 
   {

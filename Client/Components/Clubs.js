@@ -22,7 +22,7 @@ export default class Clubs extends React.Component {
     const {navigation} = this.props;
 
     this.state = {
-      selectedClub: 'clubExample', //this.props.navigation.getParam('tableData')[0]
+      selectedClub: this.props.navigation.getParam('tableData')[0].clubName,
       clubsArrDict: this.props.navigation.getParam('tableData'),
       currentClubDict: null,
       index: 0,
@@ -210,8 +210,12 @@ export default class Clubs extends React.Component {
         imageStyle={{opacity: 0.7}}>
         <View style={styles.body}>
           <Image
-            source={require('../Images/image2.jpg')}
-            style={{width: '100%', height: '25%'}}
+            source={
+              this.state.selectedClub === 'Shoer Medume'
+                ? require('../Images/shoerMedume.png')
+                : require('../Images/image2.jpg')
+            }
+            style={{width: '100%', height: '30%'}}
           />
           <View
             style={{
@@ -249,7 +253,7 @@ export default class Clubs extends React.Component {
               style={{
                 marginTop: 18,
                 marginRight: 15,
-                color: state.currentClubDict.color,
+                color: this.state.currentClubDict.color,
               }}
             />
           </View>

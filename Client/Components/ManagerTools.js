@@ -33,7 +33,7 @@ export default class ManagerTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('ManageSchedule', {
+                  this.props.navigation.navigate('Manage Schedule', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
                   })
@@ -99,8 +99,9 @@ export default class ManagerTools extends React.Component {
                     <Image
                       source={require('../Images/addClub.png')}
                       style={{
-                        width: 130,
-                        height: 130,
+                        width: 140,
+                        height: 140,
+                        marginRight: '2.5%',
                       }}
                     />
                   </View>
@@ -166,7 +167,7 @@ export default class ManagerTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('PitchConstraints', {
+                  this.props.navigation.navigate('Pitch Constraints', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
                   })
