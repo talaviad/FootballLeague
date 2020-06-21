@@ -597,7 +597,7 @@ export default class InsertGame extends React.Component {
                     }
                     var arr = value.split(' ');
                     this.state.team2ScorrersDic[i].Number = arr[0].substring(1);
-                    this.state.team2ScorrersDic[i].Name = arr[1] + arr[2];
+                    this.state.team2ScorrersDic[i].Name = arr[1] + ' ' + arr[2];
                     this.state.team2ScorrersDic[i].Goals = 1;
                     break;
                   }
