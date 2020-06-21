@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ImageBackground,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -41,6 +42,8 @@ export default class ChangePassword extends React.Component {
   }
 
   onPressButton = () => {
+    Keyboard.dismiss();
+
     if (this.state.oldPassword.length < 6) {
       this.setState({IllegalOldPassword: true});
       return;
@@ -161,6 +164,7 @@ export default class ChangePassword extends React.Component {
             confirmText="Yes"
             confirmText="OK"
             confirmButtonColor="#8fbc8f"
+            alertContainerStyle={{marginTop: 60}}
             onConfirmPressed={() => {
               this.setState({confirmationAlert: false});
               this.props.navigation.navigate('Home');
@@ -182,6 +186,7 @@ export default class ChangePassword extends React.Component {
             confirmText="Yes"
             confirmText="OK"
             confirmButtonColor="#8fbc8f"
+            alertContainerStyle={{marginTop: 60}}
             onConfirmPressed={() => {
               this.setState({IllegalOldPassword: false});
             }}
@@ -202,6 +207,7 @@ export default class ChangePassword extends React.Component {
             confirmText="Yes"
             confirmText="OK"
             confirmButtonColor="#8fbc8f"
+            alertContainerStyle={{marginTop: 60}}
             onConfirmPressed={() => {
               this.setState({IllegalPassword: false});
             }}
@@ -214,6 +220,7 @@ export default class ChangePassword extends React.Component {
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
+            alertContainerStyle={{marginTop: 60}}
             confirmText="Yes"
             confirmText="OK"
             confirmButtonColor="#8fbc8f"

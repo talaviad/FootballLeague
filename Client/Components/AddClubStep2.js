@@ -300,7 +300,7 @@ export default class AddClubStep2 extends React.Component {
             </Text>
             <Text style={styles.recommendationText}>
               {
-                'Give the captain the username and the password\n and ask him to change the password'
+                'Give username and the password to the\ncaptain and ask him to change the password'
               }
             </Text>
           </View>
@@ -423,10 +423,11 @@ const styles = StyleSheet.create({
   passwordText: {
     //width: '80%',
     //paddingHorizontal: 16,
-    fontSize: 23,
+    fontSize: 21,
     //marginVertical: 10,
     marginBottom: 10,
     fontWeight: 'bold',
+    marginLeft: 5,
   },
 
   touchAble: {

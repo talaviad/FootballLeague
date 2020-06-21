@@ -215,7 +215,7 @@ export default class Clubs extends React.Component {
                 ? require('../Images/shoerMedume.png')
                 : require('../Images/image2.jpg')
             }
-            style={{width: '100%', height: '30%'}}
+            style={{width: '100%', height: '27.5%'}}
           />
           <View
             style={{

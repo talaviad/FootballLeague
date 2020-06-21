@@ -271,13 +271,11 @@ export default class Inbox extends React.Component {
       return (
         <ImageBackground
           source={require('../Images/wall1.png')}
+          imageStyle={{opacity: 0.7}}
           style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           {/* <View style={{ flex: 1, alignItems: 'center' }}> */}
           <Image
-            style={{
-              width: GLOBALS.windowWidthSize,
-              height: GLOBALS.windowHeightSize,
-            }}
+            style={{width: GLOBALS.windowWidthSize, height: '100%'}}
             source={require('../Images/noMessages.jpeg')}
           />
         </ImageBackground>
@@ -286,6 +284,7 @@ export default class Inbox extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
+        imageStyle={{opacity: 0.7}}
         style={{height: '100%', width: '100%'}}>
         <ScrollView style={{height: GLOBALS.windowHeightSize, width: '100%'}}>
           <View style={{height: GLOBALS.windowHeightSize * 0.05}} />

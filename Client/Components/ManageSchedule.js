@@ -1,3 +1,5 @@
+// The old good one ManageSchedule
+
 import React from 'react';
 import {
   StyleSheet,
@@ -1257,7 +1259,7 @@ export default class ManageSchedule extends React.Component {
         {this.createDeleteModal()}
         {/* {this.createPickRefereeModal()} */}
         {this.createAddModal()}
-        {this.createTeamsConstraintsView()}
+        {/* {this.createTeamsConstraintsView()} */}
       </View>,
     );
     for (let i = 0; i < week.length; i++) {
@@ -2138,12 +2140,7 @@ export default class ManageSchedule extends React.Component {
     let tableHeadLength = this.state.tableHead.length;
     for (let i = 0; i < tableHeadLength; i++) {
       tableHead.push(
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            height: GLOBALS.windowHeightSize * (0.7 / 9),
-          }}>
+        <View style={{flex: 1, flexDirection: 'column', height: '100%'}}>
           <Text
             style={{
               width: '100%',
@@ -2171,7 +2168,7 @@ export default class ManageSchedule extends React.Component {
       <View
         style={{
           flexDirection: 'row',
-          height: GLOBALS.windowHeightSize * (0.75 / 9),
+          height: GLOBALS.windowHeightSize * (0.7 / 9),
         }}>
         {tableHead}
       </View>
@@ -2180,7 +2177,10 @@ export default class ManageSchedule extends React.Component {
 
   createHourConstraintsButtons(hour, day) {
     let teamNum = this.state.currTeam ? this.state.currTeam.value : 1;
-    let canPlay = this.state.teamsConstraints[teamNum].constraints[hour][day];
+    let canPlay = this.state.teamsConstraints[teamNum].constraints[hour][
+      day - 1
+    ];
+    console.log('teamNum: ' + teamNum + ', hour: ' + hour + ', day: ' + day);
     return (
       <View style={styles.ButtonContainer}>
         <TouchableOpacity
@@ -2201,10 +2201,10 @@ export default class ManageSchedule extends React.Component {
   createTeamsConstraintsView() {
     if (!this.state.isConstraintsModalVisible) return null;
 
+    console.log('ooooo');
     const tableHead = this.createTableHead();
     const weeklyConstraints = [];
     for (let i = 0; i < this.state.numOfHours; i++) {
-      //console.log('this.state.hours[' + i + ']: ' + this.state.hours[i+1])
       weeklyConstraints.push(
         <View
           key={'week_hour_' + i}
@@ -2247,6 +2247,7 @@ export default class ManageSchedule extends React.Component {
     const teamsConstraints = this.state.teamsConstraints;
     for (let teamNum in teamsConstraints) {
       let teamName = this.state.teamsConstraints[teamNum].teamName;
+      console.log('teamName: ' + teamName + ', teamNum: ' + teamNum);
       teamOptions.push({
         label: teamName,
         value: teamNum,
@@ -2518,20 +2519,19 @@ export default class ManageSchedule extends React.Component {
 
   render() {
     // if (!this.state.finishedLoad)
-    //   return (
+    //     return (
     //     <ImageBackground
-    //       source={require('../Images/wall.jpg')}
-    //       style={[styles.image, {flex: 1}, {opacity: 1}]}
-    //       imageStyle={{opacity: 0.7}}>
-    //       <View style={{height: GLOBALS.windowHeightSize}} />
+    //         source={require('../Images/wall.jpg')}
+    //         style={[styles.image, {flex: 1}, {opacity: 1}]}>
+    //         <View style={{ height: GLOBALS.windowHeightSize }} />
     //     </ImageBackground>
-    //   );
+    //     )
     if (this.state.isScheduleSet === 'notSet') {
       return (
         <ImageBackground
           source={require('../Images/wall1.png')}
-          style={[styles.image, {flex: 1}, {opacity: 1}]}
-          imageStyle={{opacity: 0.7}}>
+          imageStyle={{opacity: 0.7}}
+          style={[styles.image, {flex: 1}, {opacity: 1}]}>
           <View
             contentContainerStyle={{
               alignItems: 'center',
@@ -2610,9 +2610,9 @@ export default class ManageSchedule extends React.Component {
     } else if (this.state.isScheduleSet === 'inProcess') {
       return (
         <ImageBackground
+          imageStyle={{opacity: 0.7}}
           source={require('../Images/wall1.png')}
-          style={[styles.image, {flex: 1}, {opacity: 1}]}
-          imageStyle={{opacity: 0.7}}>
+          style={[styles.image, {flex: 1}, {opacity: 1}]}>
           <View>
             <Text style={{color: 'white', fontSize: 25, fontFamily: 'sans'}}>
               Server is still scheduling...:
@@ -2634,8 +2634,8 @@ export default class ManageSchedule extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, {flex: 1}, {opacity: 1}]}
-        imageStyle={{opacity: 0.7}}>
+        imageStyle={{opacity: 0.7}}
+        style={[styles.image, {flex: 1}, {opacity: 1}]}>
         <View style={styles.container}>
           <View style={{height: GLOBALS.windowHeightSize * 0.05}} />
           <View

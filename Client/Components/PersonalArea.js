@@ -246,14 +246,14 @@ export default class PersonalArea extends React.Component {
                       color:
                         this.state.inbox.newMessages !== 0
                           ? '#BD1128'
-                          : '#AED6F1', //'#edf3f9', //
+                          : 'white', //'#edf3f9', //
                       fontFamily: 'sans-serif',
                       textAlign: 'center',
                     }}>
-                    Inbox -{' '}
+                    Inbox
                     {this.state.inbox.newMessages !== 0
-                      ? '' + this.state.inbox.newMessages + ' new messages'
-                      : 'no new messages'}
+                      ? ' - ' + this.state.inbox.newMessages + ' new messages'
+                      : ''}
                   </Text>
                 </View>
               </ImageBackground>

@@ -328,12 +328,12 @@ export default class LeagueSchedule extends React.Component {
 
   getWeeksTitles() {
     let weeksOptions = [];
-    let weeksPickers = [];
+    // let weeksPickers = [];
     for (let i = 0; i < this.state.schedule.length; i++) {
       let week = 'Week ' + (i + 1);
-      weeksPickers.push(
-        <Picker.Item key={'add_picker_week_' + i} label={week} value={week} />,
-      );
+      // weeksPickers.push(
+      //     <Picker.Item key={'add_picker_week_' + i} label={week} value={week} />
+      // )
       weeksOptions.push({
         label: week,
         value: i,
@@ -341,57 +341,60 @@ export default class LeagueSchedule extends React.Component {
       });
     }
     //alert('this.state.currWeek: ' + this.state.currWeek)
-    let selectedValue = '' + this.state.currWeek;
-    // let defaultWeek = {
-    //     value: 0,
-    //     label: 'Week ' + this.state.currWeek,
-    //     color: 'white'
-    // };
-    // let weekOptionValue = this.state.currOptionWeek? this.state.currOptionWeek : defaultWeek;
+    // let selectedValue = ''+this.state.currWeek;
+    let defaultWeek = {
+      value: 0,
+      label: 'Week ' + this.state.currWeek,
+      color: 'white',
+    };
+    let weekOptionValue = this.state.currOptionWeek
+      ? this.state.currOptionWeek
+      : defaultWeek;
     return (
-      <Picker
-        selectedValue={selectedValue}
-        style={{width: '60%'}}
-        itemStyle={{textAlign: 'center', fontWeight: 'bold'}}
-        onValueChange={(itemValue, itemIndex) =>
-          this.setState({currWeek: itemIndex + 1})
-        }>
-        {weeksPickers}
-      </Picker>
-      // <CustomPicker
-      //     value={weekOptionValue}
-      //     fieldTemplateProps={{
-      //     defaultText: 'Select Week',
-      //     textStyle: {
-      //         color: 'white',
-      //         fontSize: 14,
-      //         fontFamily: 'sans',
-      //         // fontWeight: 'bold',
-      //         opacity: 3,
-      //         textAlign: 'center',
-      //         height: '100%',
-      //         textAlignVertical: 'center',
-      //     },
-      //     }}
-      //     style={{
-      //         width: '100%',
-      //         height: '100%',
-      //         backgroundColor: '#0c4271',
-      //         borderRadius: 7.5,
-      //         color: 'black',
-      //         fontSize: 15,
-      //         fontFamily: 'sans',
-      //         fontWeight: 'bold',
-      //         justifyContent: 'center'
-      //     }}
-      //     //fieldTemplate={this.renderField}
-      //     options={weeksOptions}
-      //     getLabel={item => item.label}
-      //     onValueChange={option => {
-      //         if (!option)
-      //             return
-      //         this.setState({ currOptionWeek: option, currWeek: option.value+1})
-      //     }}/>
+      // <Picker
+      //     selectedValue={8}
+      //     style={{ width: '60%' }}
+      //     itemStyle={{ textAlign: 'center', fontWeight: 'bold' }}
+      //     onValueChange={(itemValue, itemIndex) => this.setState({ currWeek: itemIndex+1 })}
+      // >
+      //     {weeksPickers}
+      // </Picker>
+      <CustomPicker
+        value={weekOptionValue}
+        fieldTemplateProps={{
+          defaultText: 'Select Week',
+          textStyle: {
+            color: 'black',
+            fontSize: 14,
+            fontFamily: 'sans',
+            // fontWeight: 'bold',
+            opacity: 3,
+            textAlign: 'center',
+            height: '100%',
+            textAlignVertical: 'center',
+            //backgroundColor: 'red',
+          },
+        }}
+        style={{
+          width: '100%',
+          height: '100%',
+          alignSelf: 'flex-end',
+          //backgroundColor: 'green', //'#0c4271',
+          borderRadius: 7.5,
+          color: 'black',
+          fontSize: 15,
+          fontFamily: 'sans',
+          fontWeight: 'bold',
+          justifyContent: 'center',
+        }}
+        fieldTemplate={this.renderField}
+        options={weeksOptions}
+        getLabel={item => item.label}
+        onValueChange={option => {
+          if (!option) return;
+          this.setState({currOptionWeek: option, currWeek: option.value + 1});
+        }}
+      />
     );
   }
 
@@ -411,7 +414,7 @@ export default class LeagueSchedule extends React.Component {
               style={{
                 height: '100%',
                 width: '100%',
-                color: 'white',
+                color: 'black',
                 fontSize: 18,
                 textAlign: 'center',
                 textAlignVertical: 'center',
@@ -424,23 +427,30 @@ export default class LeagueSchedule extends React.Component {
             <View
               style={{
                 height: '100%',
+                width: '100%',
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
+              <View style={{flex: 1}} />
               <Text
                 style={{
                   textAlignVertical: 'center',
                   textAlign: 'center',
                   height: '100%',
-                  flex: 3,
-                  color: '#FEFFFF',
+                  flex: 6,
+                  color: 'black',
                   fontFamily: 'sans',
-                  fontSize: 15,
+                  fontSize: 20,
                 }}>
                 {getLabel(selectedItem)}
               </Text>
-              <Icon name="chevron-down" size={30} style={{flex: 1}} />
+              <Icon
+                name="chevron-down"
+                size={30}
+                iconStyle={{textAlign: 'center'}}
+                style={{marginLeft: 0, flex: 1}}
+              />
             </View>
           )}
         </View>
@@ -453,8 +463,8 @@ export default class LeagueSchedule extends React.Component {
       return (
         <ImageBackground
           source={require('../Images/wall1.png')}
-          style={[styles.image, {flex: 1}, {opacity: 1}]}
-          imageStyle={{opacity: 0.7}}>
+          imageStyle={{opacity: 0.7}}
+          style={[styles.image, {flex: 1}, {opacity: 1}]}>
           <View style={{height: GLOBALS.windowHeightSize}} />
         </ImageBackground>
       );
@@ -475,8 +485,8 @@ export default class LeagueSchedule extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, {flex: 1}, {opacity: 1}]}
-        imageStyle={{opacity: 0.7}}>
+        imageStyle={{opacity: 0.7}}
+        style={[styles.image, {flex: 1}, {opacity: 1}]}>
         <ScrollView
           contentContainerStyle={{alignItems: 'center'}}
           style={styles.container}>
@@ -558,8 +568,8 @@ const styles = StyleSheet.create({
     height: GLOBALS.windowHeightSize * 0.1,
     //width: '100%',
     flex: 9,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
+    //alignItems: 'flex-end',
+    //justifyContent: 'center',
   },
   gameLineText: {
     color: '#000000',

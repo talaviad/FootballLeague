@@ -164,7 +164,7 @@ export default class PitchConstraints extends React.Component {
               true,
               'Your constraints have been set',
             );
-            this.props.navigation.navigate('Home');
+            //this.props.navigation.navigate('Home');
           } else {
             console.log('submitConstraints(): in fail scenario');
             this.setAlertsState('requestFailed', true, '' + resJson.error.msg);
@@ -487,7 +487,7 @@ var borderColor = 'black';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ECE7E4',
-    height: GLOBALS.windowHeightSize,
+    height: '100%',
     width: '100%',
     alignItems: 'center',
   },

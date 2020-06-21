@@ -42,9 +42,9 @@ export default class RefereeTools extends React.Component {
                 backgroundDarker="#b3cce7"
                 borderColor="#b3cce7"
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
                   style={{flex: 1}}>
@@ -89,9 +89,9 @@ export default class RefereeTools extends React.Component {
                 backgroundDarker="#b3cce7"
                 borderColor="#b3cce7"
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
                   style={{flex: 1}}>
@@ -134,9 +134,9 @@ export default class RefereeTools extends React.Component {
                 backgroundDarker="#b3cce7"
                 borderColor="#b3cce7"
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
                   style={{flex: 1}}>

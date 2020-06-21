@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Keyboard,
   ImageBackground,
   ActivityIndicator,
 } from 'react-native';
@@ -116,6 +117,7 @@ export default class Login extends React.Component {
   }
 
   async onButtonPress() {
+    Keyboard.dismiss();
     if (this.state.user === '' || this.state.password === '') {
       this.setAlertsState(
         'fieldsNotFull',

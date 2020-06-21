@@ -126,7 +126,7 @@ export default class AddReferee extends React.Component {
               </Text>
               <Text style={styles.recommendationText}>
                 {
-                  'Give the referee the username and the password\n and ask him to change the password'
+                  'Give the username and the password to the\nreferee and ask him to change the password'
                 }
               </Text>
             </View>
@@ -216,7 +216,8 @@ const styles = StyleSheet.create({
   passwordText: {
     //width: '80%',
     //paddingHorizontal: 16,
-    fontSize: 23,
+    fontSize: 21,
+    marginLeft: 5,
     //marginVertical: 10,
     marginBottom: 10,
     fontWeight: 'bold',

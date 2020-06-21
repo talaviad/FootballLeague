@@ -20,7 +20,7 @@ export default class FreePlayers extends React.Component {
     const {navigation} = this.props;
 
     this.state = {
-      tableHead: ['Full Name', 'Contact Details', ''],
+      tableHead: ['Full Name', 'Contact Information', ''],
       tableData: [],
       successAddingPlayer: false,
       isLoading: false,
@@ -118,6 +118,7 @@ export default class FreePlayers extends React.Component {
 
   render() {
     const state = this.state;
+
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
@@ -297,6 +298,7 @@ export default class FreePlayers extends React.Component {
           confirmButtonColor="#8fbc8f"
           onConfirmPressed={() => {
             this.setState({successAddingPlayer: false});
+            this.getFreePlayers();
           }}
         />
       </ImageBackground>

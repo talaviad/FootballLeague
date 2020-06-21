@@ -116,7 +116,7 @@ module.exports = class DataBase {
       result1 = await result1.toArray();
       for (var j = 0; j < result1[0].players.length; j++) {
         if (result1[0].players[j].jerseyNumber === combine_dict[i].Number) {
-          result1[0].players[j].goals = +1;
+          result1[0].players[j].goals = result1[0].players[j].goals + 1;
           break;
         }
       }
@@ -743,7 +743,7 @@ module.exports = class DataBase {
       result = this.client
         .db("FootballLeague")
         .collection("Clubs")
-        .update(
+        .updateMany(
           { $or: [{ clubName: selectedTeam1 }, { clubName: selectedTeam2 }] },
           {
             $push: {

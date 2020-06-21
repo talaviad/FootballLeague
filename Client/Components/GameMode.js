@@ -82,7 +82,7 @@ export default class GameMode extends React.Component {
   }
 
   start = () => {
-    this.pushResult();
+    //this.pushResult();
 
     if (!this.state.dateSelected) {
       alert('Please Select The Date');
@@ -550,9 +550,9 @@ export default class GameMode extends React.Component {
     const timer = now - start;
     return (
       <ImageBackground
-        source={require('../Images/c.jpg')}
+        source={require('../Images/c2.jpeg')}
         style={[styles.image /*, {opacity: 0.8}*/]}
-        imageStyle={{opacity: 0.7}}>
+        imageStyle={{opacity: 0.8}}>
         <View style={styles.container}>
           {this.state.firstStart && (
             <View style={styles.teamSelectorWrapper}>
