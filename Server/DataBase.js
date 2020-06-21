@@ -116,7 +116,7 @@ module.exports = class DataBase {
       result1 = await result1.toArray();
       for (var j = 0; j < result1[0].players.length; j++) {
         if (result1[0].players[j].jerseyNumber === combine_dict[i].Number) {
-          result1[0].players[j].goals = +1;
+          result1[0].players[j].goals = result1[0].players[j].goals + 1;
           break;
         }
       }
@@ -473,6 +473,51 @@ module.exports = class DataBase {
       return JSON.stringify({ success: false });
     }
   }
+
+  async getFreePlayers() {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("FreePlayers")
+        .find();
+      result = await result.toArray();
+      let results = result.map((player) => {
+        return [player.fullName, player.contactDetails, player.freeText];
+      });
+      let resultsToTheServer = {
+        success: true,
+        freePlayersArray: results,
+      };
+      return JSON.stringify(resultsToTheServer);
+    } catch {
+      console.log("in catch");
+      return JSON.stringify({ success: false });
+    }
+  }
+
+  async getLiveResult() {
+    try {
+      let result = await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .find();
+      result = await result.toArray();
+      if (result.length !== 0) {
+        return {
+          success: true,
+          team1: result[0].team1,
+          team2: result[0].team2,
+          scoreTeam1: result[0].scoreTeam1,
+          scoreTeam2: result[0].scoreTeam2,
+        };
+      } else {
+        return { success: false };
+      }
+    } catch {
+      console.log("in catch");
+      return { success: false };
+    }
+  }
   async getNumberOfWeeks() {
     try {
       let allCollections = [];
@@ -498,6 +543,127 @@ module.exports = class DataBase {
     }
   }
 
+  async insertLiveResult(selectedTeam1, selectedTeam2, scoreTeam1, scoreTeam2) {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .remove({});
+
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .insertOne({
+          team1: selectedTeam1,
+          team2: selectedTeam2,
+          scoreTeam1: scoreTeam1,
+          scoreTeam2: scoreTeam2,
+        });
+
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async removeLiveResult() {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .remove({});
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async removePlayer(clubName, playerJerseyNUmber) {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .update(
+          { clubName: clubName },
+          { $pull: { players: { jerseyNumber: playerJerseyNUmber } } }
+        );
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async addPlayer(clubName, jerseyToAdd, firstNameToAdd, lastNameToAdd) {
+    try {
+      await this.client
+        .db("FootballLeague")
+        .collection("Clubs")
+        .update(
+          { clubName: clubName },
+          {
+            $push: {
+              players: {
+                $each: [
+                  {
+                    jerseyNumber: jerseyToAdd,
+                    firstName: firstNameToAdd,
+                    lastName: lastNameToAdd,
+                    goals: 0,
+                  },
+                ],
+              },
+            },
+          }
+        );
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
+  async addFreePlayer(fullName, contactDetails, freeText) {
+    try {
+      await this.client.db("FootballLeague").collection("FreePlayers").insert({
+        fullName: fullName,
+        contactDetails: contactDetails,
+        freeText: freeText,
+      });
+      return { success: true };
+    } catch (err) {
+      let error = {
+        success: false,
+        error: {
+          msg: err,
+        },
+      };
+      return error;
+    }
+  }
+
   async insertResult(
     selectedTeam1,
     selectedTeam2,
@@ -509,6 +675,12 @@ module.exports = class DataBase {
   ) {
     let winner = 0;
     try {
+      //remove the live result
+      await this.client
+        .db("FootballLeague")
+        .collection("LiveResults")
+        .remove({});
+
       //let arr_data = data.split(",");
       //console.log(arr_data);
       if (parseInt(scoreTeam1) > parseInt(scoreTeam2)) {
@@ -571,7 +743,7 @@ module.exports = class DataBase {
       result = this.client
         .db("FootballLeague")
         .collection("Clubs")
-        .update(
+        .updateMany(
           { $or: [{ clubName: selectedTeam1 }, { clubName: selectedTeam2 }] },
           {
             $push: {
@@ -883,6 +1055,7 @@ module.exports = class DataBase {
     let teamsNumbers = result[0].teamsNumbers;
     let refereesSchedule = result[0].refereesSchedule;
     let teamsConstraints = result[0].teamsConstraints;
+    let weekDates = result[0].weekDates;
 
     console.log("In Database.js - getLeagueSchedule() - returning.....");
     return {
@@ -891,12 +1064,19 @@ module.exports = class DataBase {
       teamsNumbers: teamsNumbers,
       refereesSchedule: refereesSchedule,
       teamsConstraints: teamsConstraints,
+      weekDates: weekDates,
     };
   }
 
   async getConstraints(user, collection) {
     let result = await this.getUser(user);
     if (result.success) {
+      result = await this.client
+        .db("FootballLeague")
+        .collection("Schedule")
+        .find({});
+      result = await result.toArray();
+      let canSubmit = result.length === 0;
       result = await this.client
         .db("FootballLeague")
         .collection(collection)
@@ -912,6 +1092,7 @@ module.exports = class DataBase {
           success: true,
           weeklyConstraints: result[0].weeklyConstraints,
           specificConstraints: result[0].specificConstraints,
+          canSubmit: canSubmit,
         };
       } else {
         console.log("that user(" + user + ") is not set with constraints");
@@ -958,6 +1139,7 @@ module.exports = class DataBase {
         teamsNumbers: result[0].teamsNumbers,
         teamsConstraints: result[0].teamsConstraints,
         refereesConstraints: refereesConstraints,
+        weekDates: result[0].weekDates,
       };
     } else {
       result = await this.getTeamsConstraints();
@@ -980,7 +1162,7 @@ module.exports = class DataBase {
 
   async deleteGameFromReferee(changeDetails) {
     console.log("In Database.js - deleteGameFromReferee()");
-    let referee = changeDetails.referee;
+    let referee = changeDetails.exReferee;
     let matchId = changeDetails.matchId;
     let result = await this.client
       .db("FootballLeague")
@@ -1046,7 +1228,8 @@ module.exports = class DataBase {
     gamesIdsToUsers,
     changeDetails,
     refereesConstraints,
-    refereesSchedule
+    refereesSchedule,
+    weekDates
   ) {
     let result = await this.client
       .db("FootballLeague")
@@ -1072,9 +1255,12 @@ module.exports = class DataBase {
             gamesIdsToUsers: result[0].gamesIdsToUsers,
             refereesConstraints: refereesConstraints,
             refereesSchedule: refereesSchedule,
+            weekDates: weekDates,
           }
         );
-
+      if (changeDetails.change === "SetWeekDate") {
+        return { success: true };
+      }
       let userA = gamesIdsToUsers[changeDetails.matchId][0].user;
       let teamA = gamesIdsToUsers[changeDetails.matchId][0].teamName;
       let userB = gamesIdsToUsers[changeDetails.matchId][1].user;
@@ -1172,8 +1358,12 @@ module.exports = class DataBase {
         // Not implemented yet
       }
 
-      if (changeDetails.referee !== undefined)
+      // Removing the exReferee and let him know
+      if (changeDetails.eXeferee)
         await this.deleteGameFromReferee(changeDetails);
+
+      // Adding the new referee and let him know
+      if (changeDetails.newReferee) await this.addGameToReferee(changeDetails);
 
       result = this.client
         .db("FootballLeague")
@@ -1202,10 +1392,15 @@ module.exports = class DataBase {
       }
 
       console.log("Inserting new schedule");
-      console.log(
-        "JSON.parse(JSON.stringify(schedule)): " +
-          JSON.parse(JSON.stringify(schedule))
-      );
+      let weekDates = [];
+      for (let weekNum = 0; weekNum < schedule.length; weekNum++) {
+        weekDates.push({
+          dateIsSet: false,
+          date: null,
+        });
+      }
+      console.log("weekDates: " + weekDates);
+
       result = await this.client
         .db("FootballLeague")
         .collection("Schedule")
@@ -1217,6 +1412,7 @@ module.exports = class DataBase {
           teamsConstraints: teamsConstraints,
           gamesIdsToUsers: gamesIdsToUsers,
           refereesConstraints: refereesConstraints,
+          weekDates: weekDates,
         });
 
       // Updating all the users about the schedule
@@ -1248,6 +1444,7 @@ module.exports = class DataBase {
         gamesToBeCompleted: gamesToBeCompleted,
         teamsConstraints: teamsConstraints,
         refereesConstraints: refereesConstraints,
+        weekDates: weekDates,
       };
     }
   }
@@ -1291,7 +1488,7 @@ module.exports = class DataBase {
 
   async addGameToReferee(changeDetails) {
     console.log("In Database.js - addGameToReferee()");
-    let referee = changeDetails.referee;
+    let referee = changeDetails.newReferee;
     let matchId = changeDetails.matchId;
     let result = await this.client
       .db("FootballLeague")

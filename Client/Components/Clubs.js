@@ -22,13 +22,13 @@ export default class Clubs extends React.Component {
     const {navigation} = this.props;
 
     this.state = {
-      selectedClub: 'clubExample', //this.props.navigation.getParam('tableData')[0]
+      selectedClub: this.props.navigation.getParam('tableData')[0].clubName,
       clubsArrDict: this.props.navigation.getParam('tableData'),
       currentClubDict: null,
       index: 0,
       routes: [
         {key: 'squad', title: 'Squad'},
-        {key: 'teamResults', title: 'Team Results'},
+        {key: 'teamResults', title: 'Results'},
         {key: 'playersStats', title: 'Players Stats'},
       ],
     };
@@ -47,12 +47,12 @@ export default class Clubs extends React.Component {
             containerStyle={{backgroundColor: ''}} //this line is important, canceling the deafult color
             // key={i}
             leftIcon={
-              <Text style={{fontSize: 20, fontFamily: 'serif'}}>
-                {'#' + l.jerseyNumber}
+              <Text style={{fontSize: 19, fontFamily: 'serif'}}>
+                {l.jerseyNumber}
               </Text>
             }
             title={
-              <Text style={{fontSize: 19, fontFamily: 'sans-serif-condensed'}}>
+              <Text style={{fontSize: 18, fontFamily: 'sans-serif-condensed'}}>
                 {l.firstName + ' ' + l.lastName}
               </Text>
             }
@@ -206,11 +206,16 @@ export default class Clubs extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, {flex: 1}, {opacity: 0.8}]}>
+        style={[styles.image, {flex: 1}]}
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.body}>
           <Image
-            source={require('../Images/image2.jpg')}
-            style={{width: '100%', height: '25%'}}
+            source={
+              this.state.selectedClub === 'Shoer Medume'
+                ? require('../Images/shoerMedume.png')
+                : require('../Images/image2.jpg')
+            }
+            style={{width: '100%', height: '27.5%'}}
           />
           <View
             style={{
@@ -230,7 +235,6 @@ export default class Clubs extends React.Component {
                   fontSize: 30,
                   paddingLeft: 5,
                   marginLeft: -5,
-                  color: 'red',
                 }}
                 backdropStyle={{borderWidth: 3}}
                 value={this.state.selectedClub}
@@ -249,7 +253,7 @@ export default class Clubs extends React.Component {
               style={{
                 marginTop: 18,
                 marginRight: 15,
-                color: state.currentClubDict.color,
+                color: this.state.currentClubDict.color,
               }}
             />
           </View>
@@ -372,7 +376,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
   },
   tabItem: {
-    borderRadius: 5,
     backgroundColor: '#ECECEC', //color of the tabs
     flex: 1,
     alignItems: 'center',

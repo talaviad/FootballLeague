@@ -12,8 +12,17 @@ var possibleRequests = [
   "gameResults",
   "scorerTable",
   "clubs",
+  "setLiveResult",
+  "removeLiveResult",
+  "removePlayer",
+  "addPlayer",
+  "addFreePlayer",
+
+  "getLiveResult",
   "insertGameResult",
   "TeamsNames",
+  "FreePlayers",
+
   "NumberOfWeeks",
   "Result",
   "MonthlyGames",
@@ -31,6 +40,8 @@ var possibleRequests = [
   "AddGame",
   "DeleteGame",
   "ChangeGame",
+  "SetWeekDate",
+
   "GetManagerSchedule",
   "GetInbox",
   "UpdateInbox",
@@ -49,6 +60,8 @@ var needAuthorization = {
   AddGame: { permissions: [permission.MANAGER] },
   DeleteGame: { permissions: [permission.MANAGER] },
   ChangeGame: { permissions: [permission.MANAGER] },
+  SetWeekDate: { permissions: [permission.MANAGER] },
+
   GetManagerSchedule: { permissions: [permission.MANAGER] },
   GetInbox: {
     permissions: [permission.MANAGER, permission.REFEREE, permission.CAPTAIN],
@@ -59,7 +72,6 @@ var needAuthorization = {
   AddNewClub: { permissions: [permission.MANAGER] },
   AddReferee: { permissions: [permission.MANAGER] },
   RefereesSchedule: { permissions: [permission.MANAGER] },
-  GetLeagueSchedule: { permissions: [permission.REFEREE, permission.CAPTAIN] },
 };
 
 module.exports = function (req, res, next) {

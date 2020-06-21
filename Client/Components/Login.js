@@ -7,20 +7,80 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Keyboard,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
     this.state = {
+      isLoading: false,
       user: '',
       password: '',
+      alerts: {
+        fieldsNotFull: {
+          toShow: false,
+          msg: '',
+        },
+        requestFailed: {
+          toShow: false,
+          msg: '',
+        },
+        serverError: {
+          toShow: false,
+          msg: '',
+        },
+      },
     };
     this.load = this.load.bind(this);
     this.onButtonPress = this.onButtonPress.bind(this);
+    this.createAllAlerts = this.createAllAlerts.bind(this);
+    this.setAlertsState = this.setAlertsState.bind(this);
+    this.addAlertToarray = this.addAlertToarray.bind(this);
+  }
+
+  createAllAlerts() {
+    const alerts = [];
+    this.addAlertToarray(alerts, 'fieldsNotFull', 'Error');
+    this.addAlertToarray(alerts, 'requestFailed', 'Error');
+    this.addAlertToarray(alerts, 'serverError', 'Error');
+    return alerts;
+  }
+
+  setAlertsState(field, toShow, msg) {
+    this.setState(prevState => {
+      let alerts = Object.assign({}, prevState.alerts);
+      alerts[field] = {toShow: toShow, msg: msg};
+      return {alerts};
+    });
+  }
+
+  addAlertToarray(alerts, field, title) {
+    alerts.push(
+      <AwesomeAlert
+        show={this.state.alerts[field].toShow}
+        showProgress={false}
+        title={title}
+        message={this.state.alerts[field].msg}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Yes"
+        confirmText="ok"
+        confirmButtonColor="#8fbc8f"
+        onConfirmPressed={() => {
+          this.setAlertsState(field, false, '');
+        }}
+      />,
+    );
+
+    return alerts;
   }
 
   async componentDidMount() {
@@ -57,10 +117,18 @@ export default class Login extends React.Component {
   }
 
   async onButtonPress() {
+    Keyboard.dismiss();
     if (this.state.user === '' || this.state.password === '') {
-      alert('you did not fill all the fields');
+      this.setAlertsState(
+        'fieldsNotFull',
+        true,
+        'You did not fill all the fields',
+      );
+      //alert('you did not fill all the fields');
       return;
     }
+    this.setState({isLoading: true});
+
     let response = fetch(
       'http://' +
         this.props.navigation.getParam('IP') +
@@ -81,6 +149,8 @@ export default class Login extends React.Component {
     )
       .then(response => response.json())
       .then(async resJson => {
+        this.setState({isLoading: false});
+
         if (resJson.success) {
           console.log('resJson.jwt: ' + resJson.jwt);
           await AsyncStorage.setItem('role', resJson.role);
@@ -89,36 +159,57 @@ export default class Login extends React.Component {
 
           this.props.navigation.navigate('Home');
         } else {
-          alert(resJson.error.msg);
+          this.setAlertsState('requestFailed', true, '' + resJson.error.msg);
         }
       })
-      .catch(err => alert(err));
+      .catch(err => {
+        this.setState({isLoading: false});
+        this.setAlertsState('serverError', true, '' + err);
+      });
   }
   render() {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <TextInput
             style={styles.inputBox}
-            placeholder="Enter a username"
+            placeholder="Username"
             placeholderTextColor="#F8F9F9"
             underlineColorAndroid="#2C3E50"
             onChangeText={user => this.setState({user})}
           />
           <TextInput
             style={styles.inputBox}
-            placeholder="Enter a password"
+            placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor="#F8F9F9"
             underlineColorAndroid="#2C3E50"
             onChangeText={password => this.setState({password})}
           />
-          <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
+          <AwesomeButtonCartman
+            onPress={() => this.onButtonPress()}
+            type="anchor"
+            stretch={true}
+            textSize={18}
+            backgroundColor="#123c69"
+            style={{width: '50%'}}
+            borderWidth={0.5}
+            borderRadius={10}
+            raiseLevel={4}>
+            Login
+          </AwesomeButtonCartman>
+          {this.createAllAlerts()}
+          {/* <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
             <Text style={styles.buttonText}>login</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+        </View>
+        <View style={styles.loadingStyle}>
+          {this.state.isLoading && (
+            <ActivityIndicator color={'#fff'} size={80} />
+          )}
         </View>
       </ImageBackground>
     );
@@ -150,5 +241,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#AED6F1',
     textAlign: 'center',
+  },
+  loadingStyle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -1,8 +1,16 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView, ImageBackground} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  ImageBackground,
+  Text,
+} from 'react-native';
 import {Table, Row} from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Picker} from '@react-native-community/picker';
+import {CustomPicker} from 'react-native-custom-picker';
+
 import GLOBALS from '../Globals';
 
 export default class GamesResults extends React.Component {
@@ -12,7 +20,7 @@ export default class GamesResults extends React.Component {
 
     var TodayDate = new Date();
     var month = GLOBALS.monthList[TodayDate.getMonth()];
-    month = 'June'; //delete this line!
+    month = 'January'; //delete this line!
     this.fetchData(month);
     this.state = {
       tableHead: ['Team1', 'Result', 'Team2', 'Date'],
@@ -86,21 +94,17 @@ export default class GamesResults extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <View
             style={{
               borderColor: 'black',
-              // backgroundColor: '#86B3D1',
               borderWidth: 0.8,
-              // flex: 1,
             }}>
-            <Picker
+            {/* <Picker
               style={{
                 marginLeft: '40%',
-                textAlign: 'left',
               }}
-              mode="dropdown"
               selectedValue={this.state.selectedMonth}
               onValueChange={(itemValue, itemIndex) => {
                 this.state.firstTableData = [];
@@ -124,11 +128,45 @@ export default class GamesResults extends React.Component {
                 this.fetchData(itemValue);
               }}>
               {this.getMonthListInItems()}
-            </Picker>
+            </Picker> */}
+            <CustomPicker
+              style={{
+                textAlign: 'center',
+                fontSize: 30,
+                paddingLeft: 5,
+                marginLeft: -5,
+              }}
+              backdropStyle={{borderWidth: 3}}
+              value={this.state.selectedMonth}
+              options={GLOBALS.monthList}
+              fieldTemplate={this.renderField}
+              optionTemplate={this.renderOption}
+              onValueChange={(itemValue, itemIndex) => {
+                this.state.firstTableData = [];
+                this.state.secondTableData = [];
+                this.state.thirdTableData = [];
+                this.state.fourthTableData = [];
+                this.state.firstScorersDictList = []; //each item is an array(of size 2) that includes the string of the scorrers
+                this.state.secondScorersDictList = [];
+                this.state.thirdScorersDictList = [];
+                this.state.fourthScorersDictList = [];
+                this.state.firstTableColorRows = []; //includes all the indexes of the games that their button is pressed
+                this.state.secondTableColorRows = [];
+                this.state.thirdTableColorRows = [];
+                this.state.fourthTableColorRows = [];
+                this.state.firstMaxScorrersOfMatch = []; //each item is the maximum scorers of a match(just for the height of the cell of the scorers)
+                this.state.secondMaxScorrersOfMatch = [];
+                this.state.thirdMaxScorrersOfMatch = [];
+                this.state.fourthMaxScorrersOfMatch = [];
+                this.setState({selectedMonth: itemValue});
+                this.state.isLoading = true;
+                this.fetchData(itemValue);
+              }}
+            />
           </View>
           <ScrollView>
             <View style={{paddingTop: 20}}>
-              <Table borderStyle={{borderWidth: 0.5}}>
+              <Table>
                 <Row
                   data={[['1-7 In ' + this.state.selectedMonth]]}
                   style={styles.headDate}
@@ -160,14 +198,15 @@ export default class GamesResults extends React.Component {
                         )}
                         style={styles.row}
                         textStyle={styles.textLines}
-                        flexArr={[60, 30, 60, 40, 22]}
+                        flexArr={[30, 30, 30, 30, 15]}
                       />,
                       this.state.firstTableColorRows.includes(index) ? (
                         <Row
+                          borderStyle={{borderWidth: 0.5}}
                           style={[
                             styles.row,
                             {
-                              // backgroundColor: '#B4DFE5',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
@@ -188,7 +227,7 @@ export default class GamesResults extends React.Component {
             </View>
 
             <View style={{paddingTop: 20}}>
-              <Table borderStyle={{borderWidth: 0.5}}>
+              <Table>
                 <Row
                   data={[['8-14 In ' + this.state.selectedMonth]]}
                   style={styles.headDate}
@@ -221,18 +260,19 @@ export default class GamesResults extends React.Component {
                         )}
                         style={styles.row}
                         textStyle={styles.textLines}
-                        flexArr={[60, 30, 60, 40, 22]}
+                        flexArr={[30, 30, 30, 30, 15]}
                       />,
                       this.state.secondTableColorRows.includes(index) ? (
                         <Row
+                          borderStyle={{borderWidth: 0.5}}
                           style={[
                             styles.row,
                             {
-                              // backgroundColor: '#B4DFE5',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
-                                12 * this.state.secondMaxScorrersOfMatch[index],
+                                14 * this.state.secondMaxScorrersOfMatch[index],
                             },
                           ]}
                           flexArr={[50, 50]}
@@ -248,7 +288,7 @@ export default class GamesResults extends React.Component {
               </Table>
             </View>
             <View style={{paddingTop: 20}}>
-              <Table borderStyle={{borderWidth: 0.5}}>
+              <Table>
                 <Row
                   data={[['15-21 In ' + this.state.selectedMonth]]}
                   style={styles.headDate}
@@ -281,14 +321,15 @@ export default class GamesResults extends React.Component {
                         )}
                         style={styles.row}
                         textStyle={styles.textLines}
-                        flexArr={[60, 30, 60, 40, 22]}
+                        flexArr={[30, 30, 30, 30, 15]}
                       />,
                       this.state.thirdTableColorRows.includes(index) ? (
                         <Row
+                          borderStyle={{borderWidth: 0.5}}
                           style={[
                             styles.row,
                             {
-                              // backgroundColor: '#B4DFE5',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
@@ -308,7 +349,7 @@ export default class GamesResults extends React.Component {
               </Table>
             </View>
             <View style={{paddingTop: 20}}>
-              <Table borderStyle={{borderWidth: 0.5}}>
+              <Table>
                 <Row
                   data={[['22-31 In ' + this.state.selectedMonth]]}
                   style={styles.headDate}
@@ -341,14 +382,15 @@ export default class GamesResults extends React.Component {
                         )}
                         style={styles.row}
                         textStyle={styles.textLines}
-                        flexArr={[60, 30, 60, 40, 22]}
+                        flexArr={[30, 30, 30, 30, 15]}
                       />,
                       this.state.fourthTableColorRows.includes(index) ? (
                         <Row
+                          borderStyle={{borderWidth: 0.5}}
                           style={[
                             styles.row,
                             {
-                              // backgroundColor: '#B4DFE5',
+                              backgroundColor: '#5596d8',
                               alignSelf: 'flex-start',
                               height:
                                 40 +
@@ -374,11 +416,12 @@ export default class GamesResults extends React.Component {
   }
 
   createButton = (index, arr) => (
-    <Icon.Button
+    <Icon
       name={arr.includes(index) ? 'angle-up' : 'angle-down'}
-      backgroundColor="" //this line is important, it's canceling the deafult color
+      backgroundColor="#336da8" //this line is important, it's canceling the deafult color
       color={'black'}
-      size={22}
+      style={{marginLeft: '7.5%'}}
+      size={20}
       onPress={() => {
         if (arr.includes(index)) {
           var position = arr.indexOf(index);
@@ -467,12 +510,83 @@ export default class GamesResults extends React.Component {
       );
     }
   };
+
+  //part of the picker, the views of the selected field.
+  renderField(settings) {
+    const {selectedItem, defaultText, getLabel, clear} = settings;
+    return (
+      <View style={styles.container2}>
+        <View>
+          {!selectedItem && (
+            <Text style={[styles.text2, {color: 'black'}]}>{defaultText}</Text>
+          )}
+          {selectedItem && (
+            <View style={styles.innerContainer}>
+              <Text
+                style={[
+                  styles.text2,
+                  {
+                    color: 'black',
+                    fontFamily: 'sans-serif-medium',
+                  },
+                ]}>
+                {getLabel(selectedItem)}
+              </Text>
+              <Icon
+                name="chevron-down"
+                size={20}
+                style={{marginLeft: 10, marginTop: 13}}
+              />
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  }
+  //part of the picker, the views of the options
+  renderOption(settings) {
+    const {item, getLabel} = settings;
+    return (
+      <View style={styles.optionContainer}>
+        <View style={styles.innerContainer}>
+          <View style={[styles.box, {backgroundColor: item.color}]} />
+          <Text
+            style={{
+              fontFamily: 'sans-serif-condensed',
+              fontSize: 17,
+              color: item.color,
+              alignSelf: 'flex-start',
+            }}>
+            {getLabel(item)}
+          </Text>
+        </View>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     // backgroundColor: '#DEF2F1',
+  },
+  container2: {
+    borderColor: 'grey',
+    padding: 5,
+    alignItems: 'center',
+  },
+  optionContainer: {
+    padding: 10,
+    borderBottomColor: 'grey',
+  },
+  innerContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  box: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
   picker: {
     height: '10%',
@@ -481,12 +595,13 @@ const styles = StyleSheet.create({
   },
   head: {
     height: 28,
-    // backgroundColor: '#29648A',
     borderWidth: 1,
   },
   headDate: {
-    height: 18,
+    height: 24,
     backgroundColor: '#123C69',
+    borderRadius: 5,
+    borderWidth: 0,
   },
   wrapper: {
     flexDirection: 'row',
@@ -511,7 +626,7 @@ const styles = StyleSheet.create({
   },
   textLinesScorers: {
     textAlign: 'center',
-    fontFamily: 'sans-serif-medium',
+    fontFamily: 'sans-serif-condensed',
     fontSize: 16,
     color: 'black',
     // fontWeight: 'bold',
@@ -521,8 +636,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Times',
     // color: '#AED6F1',
   },
+  text2: {
+    color: 'black',
+    fontSize: 24,
+    textAlign: 'center',
+    paddingTop: 8,
+    fontFamily: 'sans-serif-condensed',
+  },
   row: {
     height: 55,
+    borderBottomWidth: 0.5,
+    borderTopWidth: 0.5,
+    //paddingHorizontal: 5,
   },
 
   picker: {

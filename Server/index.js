@@ -37,6 +37,10 @@ app.get("/", function (req, res) {
     database
       .getManagerSchedule()
       .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
+  } else if (data === "getLiveResult") {
+    database
+      .getLiveResult()
+      .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
   } else if (data === "StartScheduling") {
     console.log('taking get action, case "StartScheduling"....');
     schedule
@@ -81,6 +85,10 @@ app.get("/", function (req, res) {
     database.getTeamsNames().then((DBResponse) => {
       res.send(DBResponse);
     });
+  } else if (data === "FreePlayers") {
+    database.getFreePlayers().then((DBResponse) => {
+      res.send(DBResponse);
+    });
   } else if (data === "NumberOfWeeks") {
     database.getNumberOfWeeks().then((DBResponse) => {
       res.send(DBResponse);
@@ -101,7 +109,10 @@ handleLoginRequest = async (user, pass) => {
   let DBresponse = await database.getUser(user);
   if (DBresponse.success) {
     try {
+      console.time("T1");
       let passwordAreMatch = await bcrypt.compare(pass, DBresponse.password);
+      console.timeEnd("T1");
+
       if (passwordAreMatch) {
         let randNumForSignature = Math.floor(Math.random() * 100);
         let resultsToTheServer = {
@@ -390,6 +401,53 @@ app.post("/", function (req, res) {
           res.send(DBResponse);
         });
       break;
+    case "setLiveResult":
+      database
+        .insertLiveResult(
+          req.body.selectedTeam1,
+          req.body.selectedTeam2,
+          req.body.scoreTeam1,
+          req.body.scoreTeam2
+        )
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+    case "removeLiveResult":
+      database.removeLiveResult().then((DBResponse) => {
+        res.send(DBResponse);
+      });
+      break;
+    case "removePlayer":
+      database
+        .removePlayer(req.body.clubName, req.body.playerJerseyNumber)
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+    case "addPlayer":
+      database
+        .addPlayer(
+          req.body.clubName,
+          req.body.jerseyToAdd,
+          req.body.firstNameToAdd,
+          req.body.lastNameToAdd
+        )
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
+    case "addFreePlayer":
+      database
+        .addFreePlayer(
+          req.body.fullName,
+          req.body.contactDetails,
+          req.body.freeText
+        )
+        .then((DBResponse) => {
+          res.send(DBResponse);
+        });
+      break;
     case "SubmitConstraints":
       console.log('taking post action, case "SubmitConstraints"....');
       database
@@ -409,6 +467,8 @@ app.post("/", function (req, res) {
         .insertOrUpdatePitchConstraints(req.body.pitchConstraints)
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
       break;
+    case "SetWeekDate":
+
     case "AddGame":
     case "DeleteGame":
     case "ChangeGame":
@@ -421,7 +481,8 @@ app.post("/", function (req, res) {
           null,
           req.body.changeDetails,
           req.body.refereesConstraints,
-          req.body.refereesSchedule
+          req.body.refereesSchedule,
+          req.body.weekDates
         )
         .then((DBResponse) => res.send(JSON.stringify(DBResponse)));
       break;

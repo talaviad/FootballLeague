@@ -21,7 +21,7 @@ export default class ScorerTable extends React.Component {
     });
 
     this.state = {
-      tableHead: ['Name', 'Jersey Number', 'Team', 'Goals'],
+      tableHead: ['Name', 'Jersey Number', 'Club', 'Goals'],
       tableData: sortedTableData,
       search: '',
       found: false,
@@ -41,16 +41,16 @@ export default class ScorerTable extends React.Component {
     this.setState({found: false, foundList: []});
     if (search.length === 0) return;
 
-    var reg1 = new RegExp('^' + search + '$');
-    var reg2 = new RegExp('^' + search + ',');
-    var reg3 = new RegExp(',' + search + ',');
-    var reg4 = new RegExp(search + '$');
+    var reg1 = new RegExp('^' + search.toLowerCase() + '$');
+    var reg2 = new RegExp('^' + search.toLowerCase() + ',');
+    var reg3 = new RegExp(',' + search.toLowerCase() + ',');
+    var reg4 = new RegExp(search.toLowerCase() + '$');
     for (var i = 0; i < this.state.tableData.length; i++) {
       if (
-        reg1.test(this.state.tableData[i][0]) ||
-        reg2.test(this.state.tableData[i][0]) |
-          reg3.test(this.state.tableData[i][0]) ||
-        reg4.test(this.state.tableData[i][0])
+        reg1.test(this.state.tableData[i][0].toLowerCase()) ||
+        reg2.test(this.state.tableData[i][0].toLowerCase()) |
+          reg3.test(this.state.tableData[i][0].toLowerCase()) ||
+        reg4.test(this.state.tableData[i][0].toLowerCase())
       ) {
         this.state.foundList.push(this.state.tableData[i]);
         this.setState({foundList: this.state.foundList});
@@ -64,21 +64,21 @@ export default class ScorerTable extends React.Component {
     return (
       <ImageBackground
         source={require('../Images/wall1.png')}
-        style={[styles.image, styles.container, {opacity: 0.8}]}>
+        style={[styles.image, styles.container]}
+        imageStyle={{opacity: 0.7}}>
+        <SearchBar
+          placeholder="Search by player name"
+          onChangeText={this.updateSearch}
+          value={this.state.search}
+        />
+        <Row
+          data={state.tableHead}
+          flexArr={[40, 20, 40, 20]}
+          style={styles.head}
+          textStyle={styles.textHead}
+        />
         <ScrollView style={styles.container}>
-          <SearchBar
-            placeholder="Player Name"
-            onChangeText={this.updateSearch}
-            value={this.state.search}
-          />
-
           <Table style={{flex: 1}}>
-            <Row
-              data={state.tableHead}
-              flexArr={[40, 20, 40, 20]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
             <TableWrapper style={styles.wrapper}>
               <Rows
                 data={this.state.found ? this.state.foundList : state.tableData}
@@ -100,8 +100,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#DEF2F1',
   },
   head: {
-    flex: 1,
-    height: '2%',
+    height: 36,
     backgroundColor: '#123c69',
   },
   wrapper: {

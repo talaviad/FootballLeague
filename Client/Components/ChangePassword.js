@@ -7,19 +7,23 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ImageBackground,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class ChangePassword extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
     this.state = {
-      username: 'g',
+      username: '',
       oldPassword: '',
       newPassword: '',
       newPasswordVerified: '',
+      confirmationAlert: false,
+      IllegalOldPassword: false,
       IllegalPassword: false,
       differentPasswords: false,
       isLoading: false,
@@ -38,6 +42,13 @@ export default class ChangePassword extends React.Component {
   }
 
   onPressButton = () => {
+    Keyboard.dismiss();
+
+    if (this.state.oldPassword.length < 6) {
+      this.setState({IllegalOldPassword: true});
+      return;
+    }
+
     if (this.state.newPassword.length < 6) {
       this.setState({IllegalPassword: true});
       return;
@@ -76,8 +87,7 @@ export default class ChangePassword extends React.Component {
       .then(async resJson => {
         if (resJson.success) {
           this.setState({isLoading: false});
-          alert('you password has been changed');
-          this.props.navigation.navigate('Home');
+          this.setState({confirmationAlert: true});
         } else {
           this.setState({isLoading: false});
           alert(resJson.error.msg);
@@ -93,7 +103,7 @@ export default class ChangePassword extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           <TextInput
             style={styles.inputBox}
@@ -120,7 +130,7 @@ export default class ChangePassword extends React.Component {
           />
           <TextInput
             style={styles.inputBox}
-            placeholder="New Password Verified"
+            placeholder="Confirm New Password"
             secureTextEntry={true}
             placeholderTextColor="#F8F9F9"
             underlineColorAndroid="#2C3E50"
@@ -129,26 +139,75 @@ export default class ChangePassword extends React.Component {
             }
           />
 
-          <TouchableOpacity
-            style={styles.touchAble}
-            onPress={this.onPressButton}>
-            <Text style={styles.buttonText}>Change Password</Text>
-          </TouchableOpacity>
+          <AwesomeButtonCartman
+            onPress={this.onPressButton}
+            type="anchor"
+            stretch={true}
+            textSize={18}
+            backgroundColor="#123c69"
+            style={{width: '50%'}}
+            borderWidth={0.5}
+            borderRadius={10}
+            raiseLevel={4}>
+            Change Password
+          </AwesomeButtonCartman>
+
+          <AwesomeAlert
+            show={this.state.confirmationAlert}
+            showProgress={false}
+            title="Confirmation"
+            message={'The password has been changed'}
+            messageStyle={{textAlign: 'center'}}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="OK"
+            confirmButtonColor="#8fbc8f"
+            alertContainerStyle={{marginTop: 60}}
+            onConfirmPressed={() => {
+              this.setState({confirmationAlert: false});
+              this.props.navigation.navigate('Home');
+            }}
+          />
+          <AwesomeAlert
+            show={this.state.IllegalOldPassword}
+            showProgress={false}
+            title="Error"
+            message={
+              'Illegal password' +
+              '\n' +
+              'Passwords must be at least 6 characters long'
+            }
+            messageStyle={{textAlign: 'center'}}
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Yes"
+            confirmText="OK"
+            confirmButtonColor="#8fbc8f"
+            alertContainerStyle={{marginTop: 60}}
+            onConfirmPressed={() => {
+              this.setState({IllegalOldPassword: false});
+            }}
+          />
           <AwesomeAlert
             show={this.state.IllegalPassword}
             showProgress={false}
             title="Error"
             message={
-              '\t\t\t\t\t\t\t\t\tIllegal password' +
+              'Illegal password' +
               '\n' +
-              '- Should be minimum 6 characters'
+              'Passwords must be at least 6 characters long'
             }
+            messageStyle={{textAlign: 'center'}}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
             confirmText="Yes"
-            confirmText="ok"
+            confirmText="OK"
             confirmButtonColor="#8fbc8f"
+            alertContainerStyle={{marginTop: 60}}
             onConfirmPressed={() => {
               this.setState({IllegalPassword: false});
             }}
@@ -157,12 +216,13 @@ export default class ChangePassword extends React.Component {
             show={this.state.differentPasswords}
             showProgress={false}
             title="Error"
-            message={'\t\t\tThe new passwords are differents'}
+            message={'Password and confirm password does not match'}
             closeOnTouchOutside={true}
             closeOnHardwareBackPress={false}
             showConfirmButton={true}
+            alertContainerStyle={{marginTop: 60}}
             confirmText="Yes"
-            confirmText="ok"
+            confirmText="OK"
             confirmButtonColor="#8fbc8f"
             onConfirmPressed={() => {
               this.setState({differentPasswords: false});
@@ -223,12 +283,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     backgroundColor: '#2C3E50',
     borderRadius: 25,
-    paddingVertical: 5,
+    paddingVertical: 12.5,
+    paddingHorizontal: 25,
   },
   buttonText: {
     fontSize: 20,
     fontWeight: '500',
-    color: '#AED6F1',
     textAlign: 'center',
   },
   loadingStyle: {

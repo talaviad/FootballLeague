@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class AddReferee extends React.Component {
   constructor(props) {
@@ -92,7 +93,7 @@ export default class AddReferee extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.85}}>
+        imageStyle={{opacity: 0.7}}>
         <View style={styles.container}>
           {/* <Image
             source={require('../Images/z.jpg')}
@@ -125,17 +126,30 @@ export default class AddReferee extends React.Component {
               </Text>
               <Text style={styles.recommendationText}>
                 {
-                  'Give the referee the username and the password\n and ask him to change the password'
+                  'Give the username and the password to the\nreferee and ask him to change the password'
                 }
               </Text>
             </View>
           )}
           {this.state.password === '' && (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={this.createUser}>
-              <Text style={styles.buttonText}>Create User</Text>
-            </TouchableOpacity>
+            <AwesomeButtonCartman
+              onPress={this.createUser}
+              type="anchor"
+              stretch={true}
+              textSize={18}
+              backgroundColor="#123c69"
+              style={{width: '50%', marginTop: '10%'}}
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}
+              paddingHorizontal={5}>
+              Add Referee
+            </AwesomeButtonCartman>
+            // <TouchableOpacity
+            //   style={styles.touchAble}
+            //   onPress={this.createUser}>
+            //   <Text style={styles.buttonText}>Create User</Text>
+            // </TouchableOpacity>
           )}
           <AwesomeAlert
             show={this.state.IllegalUserName}
@@ -192,7 +206,7 @@ const styles = StyleSheet.create({
   },
   recommendationText: {
     fontStyle: 'italic',
-    marginTop: '5%',
+    marginTop: '1%',
     width: '80%',
     paddingHorizontal: 16,
     fontSize: 18,
@@ -202,7 +216,8 @@ const styles = StyleSheet.create({
   passwordText: {
     //width: '80%',
     //paddingHorizontal: 16,
-    fontSize: 23,
+    fontSize: 21,
+    marginLeft: 5,
     //marginVertical: 10,
     marginBottom: 10,
     fontWeight: 'bold',
@@ -215,6 +230,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3E50',
     borderRadius: 25,
     paddingVertical: 5,
+    width: '50%',
   },
   buttonText: {
     fontSize: 20,

@@ -14,6 +14,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import {Picker} from '@react-native-community/picker';
 import {CustomPicker} from 'react-native-custom-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/blue';
 
 export default class AddClubStep2 extends React.Component {
   constructor(props) {
@@ -219,7 +220,7 @@ export default class AddClubStep2 extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.85}}>
+        imageStyle={{opacity: 0.7}}>
         {/* <View style={styles.container}> */}
         <ScrollView style={styles.container}>
           {/* <View
@@ -299,7 +300,7 @@ export default class AddClubStep2 extends React.Component {
             </Text>
             <Text style={styles.recommendationText}>
               {
-                'Give the captain the username and the password\n and ask him to change the password'
+                'Give username and the password to the\ncaptain and ask him to change the password'
               }
             </Text>
           </View>
@@ -311,14 +312,41 @@ export default class AddClubStep2 extends React.Component {
               alignItems: 'center',
               justifyContent: 'space-around',
             }}>
-            <TouchableOpacity style={styles.touchAble} onPress={this.goBack}>
+            <AwesomeButtonCartman
+              onPress={this.goBack}
+              type="anchor"
+              stretch={true}
+              textSize={18}
+              backgroundColor="#123c69"
+              style={{width: '40%', marginTop: '10%', alignSelf: 'center'}}
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}>
+              Back
+            </AwesomeButtonCartman>
+
+            {/* <TouchableOpacity style={styles.touchAble} onPress={this.goBack}>
               <Text style={styles.buttonText}>Back</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </TouchableOpacity> */}
+
+            <AwesomeButtonCartman
+              onPress={this.onPressButton}
+              type="anchor"
+              stretch={true}
+              textSize={18}
+              backgroundColor="#123c69"
+              style={{width: '40%', marginTop: '10%', alignSelf: 'center'}}
+              borderWidth={0.5}
+              borderRadius={10}
+              raiseLevel={4}>
+              Add Club
+            </AwesomeButtonCartman>
+
+            {/* <TouchableOpacity
               style={styles.touchAble}
               onPress={this.onPressButton}>
               <Text style={styles.buttonText}>Add Club</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         )}
         <AwesomeAlert
@@ -395,17 +423,18 @@ const styles = StyleSheet.create({
   passwordText: {
     //width: '80%',
     //paddingHorizontal: 16,
-    fontSize: 23,
+    fontSize: 21,
     //marginVertical: 10,
     marginBottom: 10,
     fontWeight: 'bold',
+    marginLeft: 5,
   },
 
   touchAble: {
     marginTop: '10%',
     // marginHorizontal: 40,
     paddingHorizontal: '10%',
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#123c69',
     borderRadius: 25,
     paddingVertical: 5,
   },
@@ -417,7 +446,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: '500',
-    color: '#AED6F1',
+    color: 'white',
     textAlign: 'center',
   },
   loadingStyle: {

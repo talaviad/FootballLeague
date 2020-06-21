@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
-
+import BlinkView from 'react-native-blink-view';
 import {
   Colors,
   DebugInstructions,
@@ -51,7 +51,7 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
     const {navigation} = this.props;
-
+    //alert(Dimensions.get('window').height/7);
     this.state = {
       isLoggedIn: false,
       role: null,
@@ -59,10 +59,12 @@ export default class Home extends React.Component {
       username: null,
       teamsNames: [],
       isLoading: false,
+      liveResult: null,
     };
     this.handleSendRequestToServer = this.handleSendRequestToServer.bind(this);
     this.load = this.load.bind(this);
     this.getTeamsNames();
+    this.checkLiveResult();
   }
 
   handleSendRequestToServer = async param => {
@@ -137,7 +139,44 @@ export default class Home extends React.Component {
     }
   }
 
+  async checkLiveResult() {
+    let response;
+    try {
+      response = await fetch(
+        'http://' + IP + ':' + PORT + '/?data=getLiveResult',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Football-Request': 'getLiveResult',
+          },
+        },
+      );
+      const json = await response.json();
+      if (json.success) {
+        this.setState({
+          liveResult: {
+            team1: json.team1,
+            team2: json.team2,
+            scoreTeam1: json.scoreTeam1,
+            scoreTeam2: json.scoreTeam2,
+          },
+        });
+      } else {
+        this.setState({liveResult: null});
+      }
+    } catch (err) {
+      this.setState({liveResult: null});
+      console.error(err);
+    }
+  }
+
   componentDidMount() {
+    //For live games
+    this.timer = setInterval(() => {
+      this.checkLiveResult();
+    }, 10000);
+
     this.load();
     this.focusListener = this.props.navigation.addListener(
       'didFocus',
@@ -216,27 +255,15 @@ export default class Home extends React.Component {
                 teamsNames: this.state.teamsNames,
               });
             }}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            backgroundColor="#3f7ec1"
-            backgroundActive="#b3cce7"
             backgroundDarker="#b3cce7"
-            backgroundDarker="#b3cce7"
-            backgroundPlaceholder="#b3cce7"
             borderColor="#b3cce7"
-            type="primary"
-            textColor="#FFF"
-            textSize={18}
-            height={80}
             raiseLevel={4}
-            height={100}
-            width={100}
-            borderRadius={50}>
+            height={Dimensions.get('window').height / 7}
+            width={Dimensions.get('window').height / 7}
+            borderRadius={Dimensions.get('window').height / 14}>
             <ImageBackground
               source={require('../Images/star.png')}
-              style={{height: 100, width: 100}}>
+              style={{flex: 1}}>
               <View
                 style={{
                   flex: 1,
@@ -248,8 +275,6 @@ export default class Home extends React.Component {
                   style={{
                     width: 200,
                     height: 200,
-                    alignItems: 'center',
-                    justifyContent: 'center',
                   }}
                 />
               </View>
@@ -257,12 +282,12 @@ export default class Home extends React.Component {
           </AwesomeButtonCartman>
           <Text
             style={{
-              fontSize: 20,
-              color: '#edf3f9',
+              fontSize: 18,
+              color: 'white',
               fontFamily: 'sans-serif-medium',
               textAlign: 'center',
             }}>
-            Referee Tools
+            {'Referee\nTools'}
           </Text>
         </View>
       );
@@ -276,27 +301,15 @@ export default class Home extends React.Component {
                 PORT: PORT,
               });
             }}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            backgroundColor="#3f7ec1"
-            backgroundActive="#b3cce7"
             backgroundDarker="#b3cce7"
-            backgroundDarker="#b3cce7"
-            backgroundPlaceholder="#b3cce7"
             borderColor="#b3cce7"
-            type="primary"
-            textColor="#FFF"
-            textSize={18}
-            height={80}
             raiseLevel={4}
-            height={100}
-            width={100}
-            borderRadius={50}>
+            height={Dimensions.get('window').height / 7}
+            width={Dimensions.get('window').height / 7}
+            borderRadius={Dimensions.get('window').height / 14}>
             <ImageBackground
               source={require('../Images/star.png')}
-              style={{height: 100, width: 100}}>
+              style={{flex: 1}}>
               <View
                 style={{
                   flex: 1,
@@ -308,8 +321,6 @@ export default class Home extends React.Component {
                   style={{
                     width: 140,
                     height: 140,
-                    alignItems: 'center',
-                    justifyContent: 'center',
                   }}
                 />
               </View>
@@ -317,12 +328,12 @@ export default class Home extends React.Component {
           </AwesomeButtonCartman>
           <Text
             style={{
-              fontSize: 20,
-              color: '#edf3f9',
+              fontSize: 18,
+              color: 'white',
               fontFamily: 'sans-serif-medium',
               textAlign: 'center',
             }}>
-            Captain Tools
+            {'Captain\nTools'}
           </Text>
         </View>
       );
@@ -335,29 +346,18 @@ export default class Home extends React.Component {
               this.props.navigation.navigate('Manager Tools', {
                 IP: IP,
                 PORT: PORT,
+                teamsNames: this.state.teamsNames,
               });
             }}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            backgroundColor="#3f7ec1"
-            backgroundActive="#b3cce7"
             backgroundDarker="#b3cce7"
-            backgroundDarker="#b3cce7"
-            backgroundPlaceholder="#b3cce7"
             borderColor="#b3cce7"
-            type="primary"
-            textColor="#FFF"
-            textSize={18}
-            height={80}
             raiseLevel={4}
-            height={100}
-            width={100}
-            borderRadius={50}>
+            height={Dimensions.get('window').height / 7}
+            width={Dimensions.get('window').height / 7}
+            borderRadius={Dimensions.get('window').height / 14}>
             <ImageBackground
               source={require('../Images/star.png')}
-              style={{height: 100, width: 100}}>
+              style={{flex: 1}}>
               <View
                 style={{
                   flex: 1,
@@ -369,8 +369,6 @@ export default class Home extends React.Component {
                   style={{
                     width: 100,
                     height: 100,
-                    alignItems: 'center',
-                    justifyContent: 'center',
                   }}
                 />
               </View>
@@ -378,12 +376,12 @@ export default class Home extends React.Component {
           </AwesomeButtonCartman>
           <Text
             style={{
-              fontSize: 20,
-              color: '#edf3f9',
+              fontSize: 18,
+              color: 'white',
               fontFamily: 'sans-serif-medium',
               textAlign: 'center',
             }}>
-            Manager Tools
+            {'Manager\nTools'}
           </Text>
         </View>
       );
@@ -395,60 +393,35 @@ export default class Home extends React.Component {
       <ImageBackground
         source={require('../Images/wall.jpg')}
         style={[styles.image, {flex: 1}, {opacity: 1}]}>
-        <View style={{marginTop: 5, flex: 1}}>
-          {/* <ScrollView style={styles.body}> */}
-          {/* <View style={styles.sectionTwoBtnContainer}>
-            {!this.state.isLoggedIn ? (
-              <TouchableOpacity
-                style={styles.divided}
-                onPress={() =>
-                  this.props.navigation.navigate('Register', {
-                    IP: IP,
-                    PORT: PORT,
-                  })
-                }>
-                <Text style={styles.buttonText}>Register</Text>
-              </TouchableOpacity>
-            ) : null}
-            <TouchableOpacity
-              style={styles.divided}
-              onPress={() =>
-                this.props.navigation.navigate('Login', {IP: IP, PORT: PORT})
-              }>
-              <Text style={styles.buttonText}>
-                {this.state.isLoggedIn ? 'Logout' : 'Login'}
+        <View style={{flex: 1}}>
+          {this.state.liveResult !== null && (
+            <View style={styles.liveResult}>
+              <View>
+                <BlinkView blinking={true} delay={750}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      marginLeft: '10%',
+                      width: 20,
+                      height: 20,
+                      backgroundColor: 'red',
+                    }}
+                  />
+                </BlinkView>
+                <Text style={styles.liveResultText2}>LIVE</Text>
+              </View>
+
+              <Text style={styles.liveResultText}>
+                {this.state.liveResult.team1 +
+                  ' - ' +
+                  this.state.liveResult.team2 +
+                  '  ' +
+                  this.state.liveResult.scoreTeam1 +
+                  '-' +
+                  this.state.liveResult.scoreTeam2}
               </Text>
-            </TouchableOpacity>
-          </View> */}
-          {/* {this.state.isLoggedIn ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('Inbox', {
-                  inbox: this.state.inbox,
-                  IP: IP,
-                  PORT: PORT,
-                })
-              }>
-              {console.log(
-                'this.state.inbox.messages.length: ' +
-                  this.state.inbox.messages.length,
-              )}
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '500',
-                  color:
-                    this.state.inbox.newMessages !== 0 ? '#BD1128' : '#AED6F1',
-                  textAlign: 'center',
-                }}>
-                Inbox -{' '}
-                {this.state.inbox.newMessages !== 0
-                  ? '' + this.state.inbox.newMessages + ' new messages'
-                  : 'no new messages'}
-              </Text>
-            </TouchableOpacity>
-          ) : null} */}
+            </View>
+          )}
           <View style={styles.rowOfTwoButton}>
             <View>
               <AwesomeButtonCartman
@@ -465,27 +438,15 @@ export default class Home extends React.Component {
                           PORT: PORT,
                         })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -495,10 +456,8 @@ export default class Home extends React.Component {
                     <Image
                       source={require('../Images/user3.png')}
                       style={{
-                        width: 110,
-                        height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        width: 100,
+                        height: 100,
                       }}
                     />
                   </View>
@@ -506,12 +465,12 @@ export default class Home extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                {this.state.isLoggedIn ? 'Personl Area' : 'Login'}
+                {this.state.isLoggedIn ? 'Personal\nArea' : 'Login'}
               </Text>
             </View>
             {this.displayButtonByUser()}
@@ -520,27 +479,15 @@ export default class Home extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() => this.handleSendRequestToServer('leagueTable')}
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -550,10 +497,8 @@ export default class Home extends React.Component {
                     <Image
                       source={require('../Images/excel.png')}
                       style={{
-                        width: 70,
-                        height: 70,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        width: 60,
+                        height: 60,
                       }}
                     />
                   </View>
@@ -561,8 +506,8 @@ export default class Home extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -577,26 +522,15 @@ export default class Home extends React.Component {
                     PORT: PORT,
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -606,10 +540,9 @@ export default class Home extends React.Component {
                     <Image
                       source={require('../Images/result3.png')}
                       style={{
-                        width: 120,
+                        width: 110,
                         height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        marginTop: '10%',
                       }}
                     />
                   </View>
@@ -617,8 +550,8 @@ export default class Home extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -632,27 +565,15 @@ export default class Home extends React.Component {
                 onPress={() => {
                   this.handleSendRequestToServer('scorerTable');
                 }}
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -664,8 +585,6 @@ export default class Home extends React.Component {
                       style={{
                         width: 120,
                         height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     />
                   </View>
@@ -673,12 +592,12 @@ export default class Home extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
-                Scorer Table
+                {'Scorer\nTable'}
               </Text>
             </View>
             <View>
@@ -686,27 +605,15 @@ export default class Home extends React.Component {
                 onPress={() => {
                   this.handleSendRequestToServer('clubs');
                 }}
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -718,8 +625,6 @@ export default class Home extends React.Component {
                       style={{
                         width: 120,
                         height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     />
                   </View>
@@ -727,8 +632,8 @@ export default class Home extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -736,20 +641,97 @@ export default class Home extends React.Component {
               </Text>
             </View>
           </View>
-          <View style={styles.rowOfTwoButton} />
-          {this.state.isLoggedIn && this.state.role === 'manager' ? (
-            <TouchableOpacity
-              style={styles.touchAble}
-              onPress={() =>
-                this.props.navigation.navigate('ManageSchedule', {
-                  IP: IP,
-                  PORT: PORT,
-                })
-              }>
-              <Text style={styles.buttonText}>Manage Schedule</Text>
-            </TouchableOpacity>
-          ) : null}
-
+          <View style={styles.rowOfTwoButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() => {
+                  this.props.navigation.navigate('Free Players', {
+                    IP: IP,
+                    PORT: PORT,
+                  });
+                }}
+                backgroundDarker="#b3cce7"
+                borderColor="#b3cce7"
+                raiseLevel={4}
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{flex: 1}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/bench.png')}
+                      style={{
+                        width: 80,
+                        height: 80,
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                {'Free\nPlayers'}
+              </Text>
+            </View>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() =>
+                  this.props.navigation.navigate('League Schedule', {
+                    IP: IP,
+                    PORT: PORT,
+                    teamList: this.state.teamsNames,
+                  })
+                }
+                backgroundDarker="#b3cce7"
+                borderColor="#b3cce7"
+                raiseLevel={4}
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{flex: 1}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/schedule3.png')}
+                      style={{
+                        width: 125,
+                        height: 125,
+                        marginRight: '8%',
+                        marginTop: '7%',
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Schedule
+              </Text>
+            </View>
+          </View>
           <View style={styles.loadingStyle}>
             {this.state.isLoading && (
               <ActivityIndicator color={'#fff'} size={80} />
@@ -775,7 +757,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   rowOfTwoButton: {
-    paddingVertical: '5%',
+    paddingTop: '3%',
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
@@ -857,5 +839,27 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  liveResult: {
+    borderWidth: 1,
+    backgroundColor: '#295786',
+    // position: 'absolute',
+    // top: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: '3%',
+    height: '8%',
+    width: '100%',
+  },
+  liveResultText: {
+    fontSize: 16,
+    fontFamily: 'sans-serif-medium',
+  },
+  liveResultText2: {
+    // marginLeft: '2.5%',
+    fontSize: 16,
+    fontFamily: 'sans-serif-medium',
+    fontWeight: 'bold',
+    color: 'white',
   },
 });

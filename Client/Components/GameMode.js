@@ -3,12 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   TouchableOpacity,
-  TextInput,
-  Picker,
-  Platform,
-  Button,
   ActivityIndicator,
   ImageBackground,
 } from 'react-native';
@@ -16,12 +11,11 @@ import moment from 'moment';
 import TeamSelector from './TeamSelector';
 
 import Counter from 'react-native-counters';
-import DialogInput from 'react-native-dialog-input';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import DatePicker from 'react-native-datepicker'; // tal's old state
-import Select2 from 'react-native-select-two';
+import DatePicker from 'react-native-datepicker';
 import DialogAndroid from 'react-native-dialogs';
 import AwesomeButtonCartman from 'react-native-really-awesome-button/src/themes/cartman';
+import PushNotification from 'react-native-push-notification';
 
 function Timer({interval, style}) {
   const pad = n => (n < 10 ? '0' + n : n);
@@ -30,10 +24,7 @@ function Timer({interval, style}) {
   return (
     <View style={styles.timerContainer}>
       <Text style={style}>{pad(duration.minutes())}:</Text>
-      <Text style={style}>
-        {pad(duration.seconds())}
-        {':'}
-      </Text>
+      <Text style={style}>{pad(duration.seconds())}:</Text>
       <Text style={style}>{pad(centiseconds)}</Text>
     </View>
   );
@@ -59,6 +50,8 @@ function ButtonsRow({children}) {
 export default class GameMode extends React.Component {
   constructor(props) {
     super(props);
+
+    //this.initPushNotification();
     this.state = {
       team1: null,
       team2: null,
@@ -79,14 +72,18 @@ export default class GameMode extends React.Component {
       isLoading: false,
       playersTeam1: [],
       playersTeam2: [],
+      loadEnd: false,
     };
     const {navigation} = this.props;
   }
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.removeLiveResultFromDB();
   }
 
   start = () => {
+    //this.pushResult();
+
     if (!this.state.dateSelected) {
       alert('Please Select The Date');
     } else if (!this.state.teamsSelected) {
@@ -137,6 +134,7 @@ export default class GameMode extends React.Component {
       isDialogVisible2: false,
       date: '',
     });
+    this.removeLiveResultFromDB();
   };
   resume = () => {
     const now = new Date().getTime();
@@ -374,6 +372,31 @@ export default class GameMode extends React.Component {
     }
   };
 
+  // pushResult = () => {
+  //   PushNotification.localNotification({
+  //     title: 'My Notification Title', // (optional)
+  //     message: 'My Notification Message', // (required)
+  //   });
+  // };
+
+  // initPushNotification = () => {
+  //   PushNotification.configure({
+  //     onRegister: function(token) {
+  //       console.log('TOKEN:', token);
+  //     },
+  //     onNotification: function(notification) {
+  //       console.log('NOTIFICATION:', notification);
+  //     },
+  //     permissions: {
+  //       alert: true,
+  //       badge: true,
+  //       sound: true,
+  //     },
+  //     popInitialNotification: true,
+  //     requestPermissions: true,
+  //   });
+  // };
+
   cancelAlert = () => {
     this.setState({
       submitConfirmationAlert: false,
@@ -476,7 +499,7 @@ export default class GameMode extends React.Component {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Football-Request': 'liveResult',
+          'Football-Request': 'setLiveResult',
         },
         body: JSON.stringify({
           selectedTeam1: this.state.team1,
@@ -495,14 +518,39 @@ export default class GameMode extends React.Component {
       })
       .catch(err => alert(err));
   }
+
+  async removeLiveResultFromDB() {
+    let response = fetch(
+      'http://' +
+        this.props.navigation.getParam('IP') +
+        ':' +
+        this.props.navigation.getParam('PORT') +
+        '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Football-Request': 'removeLiveResult',
+        },
+      },
+    )
+      .then(response => response.json())
+      .then(async resJson => {
+        if (resJson.success) {
+        } else {
+          alert(resJson.error.msg);
+        }
+      })
+      .catch(err => alert(err));
+  }
+
   render() {
     const {submitConfirmationAlert} = this.state;
     const {now, start, laps} = this.state;
     const timer = now - start;
-
     return (
       <ImageBackground
-        source={require('../Images/c.jpg')}
+        source={require('../Images/c2.jpeg')}
         style={[styles.image /*, {opacity: 0.8}*/]}
         imageStyle={{opacity: 0.8}}>
         <View style={styles.container}>
@@ -614,171 +662,120 @@ export default class GameMode extends React.Component {
                   onPress={this.stop}
                 />
               </ButtonsRow>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{flex: 1, paddingLeft: 0}}>
-                  <Text style={{fontSize: 24, fontFamily: 'sans-serif-medium'}}>
-                    {this.state.team1}
-                  </Text>
-                  <Counter
-                    countTextStyle={{
-                      color: 'black',
-                      fontSize: 24,
-                      fontFamily: 'sans-serif-medium',
-                    }}
-                    buttonTextStyle={{
-                      color: 'black',
-                      fontSize: 24,
-                      fontFamily: 'sans-serif-medium',
-                      borderColor: 'black',
-                    }}
-                    buttonStyle={{
-                      color: 'black',
-                      borderColor: 'black',
-                      borderWidth: 1.5,
-                    }}
-                    onChange={() => {
-                      this.team1GoalChanged();
-                    }}
-                    start={this.state.team1Goals}
-                    someProp={this.state.team1Goals}
-                  />
-                </View>
-                <View style={{flex: 1, paddingLeft: 70}}>
-                  <Text style={{fontSize: 24, fontFamily: 'sans-serif-medium'}}>
-                    {this.state.team2}
-                  </Text>
-                  <Counter
-                    countTextStyle={{
-                      color: 'black',
-                      fontSize: 24,
-                      fontFamily: 'sans-serif-medium',
-                    }}
-                    buttonTextStyle={{
-                      color: 'black',
-                      fontSize: 24,
-                      fontFamily: 'sans-serif-medium',
-                      borderColor: 'black',
-                    }}
-                    buttonStyle={{
-                      color: 'black',
-                      borderWidth: 1.5,
-                      borderColor: 'black',
-                    }}
-                    onChange={() => {
-                      // this.setState({team2Goals: number});
-                      this.team2GoalChanged();
-                    }}
-                    start={this.state.team2Goals}
-                    someProp={this.state.team2Goals}
-                  />
-                </View>
-              </View>
             </View>
           )}
           {laps.length > 0 && start === 0 && (
-            <View style={{alignItems: 'flex-start'}}>
-              <ButtonsRow>
-                <RoundButton
-                  title="Reset"
-                  color="#FFFFFF"
-                  background="#3D3D3D"
-                  onPress={this.reset}
-                />
-                <RoundButton
-                  title="Continue"
-                  color="#50D167"
-                  background="#1B361F"
-                  onPress={this.resume}
-                />
-              </ButtonsRow>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                {/* <View style={{flex: 1, paddingLeft: 0}}>
-                <Text style={{fontSize: 24}}>{this.state.team1}</Text>
+            <ButtonsRow style={{justifyContent: 'space-between'}}>
+              <RoundButton
+                title="Reset"
+                color="#FFFFFF"
+                background="#3D3D3D"
+                onPress={this.reset}
+              />
+              <RoundButton
+                title="Continue"
+                color="#50D167"
+                background="#1B361F"
+                onPress={this.resume}
+              />
+            </ButtonsRow>
+          )}
+          {((laps.length > 0 && start === 0) || start > 0) && (
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '100%',
+              }}>
+              <View style={{width: '50%'}}>
+                <Text
+                  style={{
+                    fontSize: 24,
+                    fontFamily: 'sans-serif-medium',
+                  }}>
+                  {this.state.team1}
+                </Text>
                 <Counter
+                  countTextStyle={{
+                    color: 'black',
+                    fontSize: 24,
+                    fontFamily: 'sans-serif-medium',
+                  }}
+                  buttonTextStyle={{
+                    color: 'black',
+                    fontSize: 24,
+                    fontFamily: 'sans-serif-medium',
+                    borderColor: 'black',
+                  }}
+                  buttonStyle={{
+                    color: 'black',
+                    borderColor: 'black',
+                    borderWidth: 1.5,
+                  }}
                   onChange={() => {
-                    this.setState({team1Goals: number});
                     this.team1GoalChanged();
                   }}
                   start={this.state.team1Goals}
                   someProp={this.state.team1Goals}
                 />
               </View>
-              <View style={{flex: 1, paddingLeft: 70}}>
-                <Text style={{fontSize: 24}}>{this.state.team2}</Text>
+              <View style={{width: '50%', alignItems: 'center'}}>
+                <Text style={{fontSize: 24, fontFamily: 'sans-serif-medium'}}>
+                  {this.state.team2}
+                </Text>
                 <Counter
+                  minus={''}
+                  countTextStyle={{
+                    color: 'black',
+                    fontSize: 24,
+                    fontFamily: 'sans-serif-medium',
+                  }}
+                  buttonTextStyle={{
+                    color: 'black',
+                    fontSize: 24,
+                    fontFamily: 'sans-serif-medium',
+                    borderColor: 'black',
+                  }}
+                  buttonStyle={{
+                    color: 'black',
+                    borderWidth: 1.5,
+                    borderColor: 'black',
+                  }}
                   onChange={() => {
-                    this.setState({team2Goals: number});
+                    // this.setState({team2Goals: number});
                     this.team2GoalChanged();
                   }}
                   start={this.state.team2Goals}
+                  someProp={this.state.team2Goals}
                 />
-              </View> */}
               </View>
+            </View>
+          )}
+          {laps.length > 0 && start === 0 && (
+            <View style={{alignItems: 'flex-start'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              />
               {!this.state.submitConfirmationAlert && (
                 <AwesomeButtonCartman
+                  style={{marginTop: '20%'}}
                   onPress={() => this.pressSubmitButton()}
-                  backgroundDarker="#687864"
+                  backgroundDarker="#565150"
                   type="primary"
                   textColor="#FFF"
+                  backgroundColor="#435041"
+                  raiseLevel={4}
                   textSize={18}
-                  backgroundColor="#844D36"
-                  raiseLevel={7}>
+                  borderColor="black"
+                  textFontFamily="sans-serif-condensed"
+                  textColor="#d7d7d6">
                   Finish Game And Submit Result
                 </AwesomeButtonCartman>
               )}
             </View>
           )}
-          {/* <View style={styles.dialogBox}>
-          <DialogInput
-            isDialogVisible={
-              this.state.isDialogVisible1 || this.state.isDialogVisible2
-            }
-            title={'Scorrer Details'}
-            message={"Enter the shirt's number and the scorrer name"}
-            hintInput={'10 Alon'}
-            submitInput={inputText => {
-              this.sendDialogInput(inputText, this.state.isDialogVisible1);
-            }}
-            closeDialog={() => {
-              if (this.state.isDialogVisible1) {
-                this.setState({team1Goals: this.state.team1Goals - 1});
-                this.setState({isDialogVisible1: false});
-              } else {
-                this.setState({team2Goals: this.state.team2Goals - 1});
-                this.setState({isDialogVisible2: false});
-              }
-            }}
-          />
-        </View> */}
-          {/* {(this.state.isDialogVisible1 || this.state.isDialogVisible2) && (
-          <Select2
-            isSelectSingle
-            style={{borderRadius: 10}}
-            colorTheme={'blue'}
-            popupTitle="Select Player"
-            title="Select Player"
-            data={
-              this.state.isDialogVisible1
-                ? this.state.playersTeam1
-                : this.satate.playersTeam2
-            }
-            onSelect={data => {
-              this.setState({data});
-              this.props.onSelect(this.teamsData[data - 1].name);
-            }}
-            onRemoveItem={data => {
-              this.setState({data});
-            }}
-          />
-        )} */}
           <View style={styles.loadingStyle}>
             {this.state.isLoading && (
               <ActivityIndicator color={'#fff'} size={80} />

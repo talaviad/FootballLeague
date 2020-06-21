@@ -34,15 +34,15 @@ export default class LeagueTable extends React.Component {
       <ImageBackground
         source={require('../Images/wall1.png')}
         style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
-        imageStyle={{opacity: 0.8}}>
+        imageStyle={{opacity: 0.7}}>
+        <Row
+          data={state.tableHead}
+          flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
+          style={styles.head}
+          textStyle={styles.textHead}
+        />
         <ScrollView style={styles.container}>
           <Table>
-            <Row
-              data={state.tableHead}
-              flexArr={[80, 30, 30, 30, 30, 30, 30, 30, 30]}
-              style={styles.head}
-              textStyle={styles.textHead}
-            />
             <TableWrapper style={styles.wrapper}>
               <Rows
                 data={state.tableData}
@@ -54,18 +54,32 @@ export default class LeagueTable extends React.Component {
           </Table>
           <View style={styles.decleration}>
             <View style={styles.declerationLine}>
-              <Text style={{alignSelf: 'flex-start'}}>MP - Matches Played</Text>
-              <Text style={{alignSelf: 'flex-start'}}>W - Won</Text>
-              <Text style={{alignSelf: 'flex-start'}}>D - Draw</Text>
-              <Text style={{alignSelf: 'flex-start'}}>L - Loss</Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>MP</Text> - Matches Played
+              </Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>W</Text> - Won
+              </Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>D</Text> - Draw
+              </Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>L</Text> - Loss
+              </Text>
             </View>
             <View style={styles.declerationLine}>
-              <Text style={{alignSelf: 'flex-start'}}>GS - Goals Scored</Text>
-              <Text style={{alignSelf: 'flex-start'}}>GA - Goals Against</Text>
               <Text style={{alignSelf: 'flex-start'}}>
-                GD - Goal Difference
+                <Text style={{fontWeight: 'bold'}}>GS</Text> - Goals Scored
               </Text>
-              <Text style={{alignSelf: 'flex-start'}}>Pts - points</Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>GA</Text> - Goals Against
+              </Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>GD</Text> - Goal Difference
+              </Text>
+              <Text style={{alignSelf: 'flex-start'}}>
+                <Text style={{fontWeight: 'bold'}}>Pts</Text> - Points
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -107,13 +121,17 @@ const styles = StyleSheet.create({
     // fontFamily: 'Times',
     // color: '#2C3E50',
     textAlign: 'center',
-    fontFamily: 'sans-serif-medium',
+    fontFamily: 'sans-serif-condensed',
     fontSize: 16,
     color: 'black',
   },
   decleration: {
     borderWidth: 1,
-    marginTop: 20,
+    marginVertical: 15,
+    marginHorizontal: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+
     flexDirection: 'row',
     justifyContent: 'space-around',
   },

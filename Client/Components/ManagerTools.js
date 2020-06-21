@@ -33,32 +33,20 @@ export default class ManagerTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('ManageSchedule', {
+                  this.props.navigation.navigate('Manage Schedule', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -70,8 +58,6 @@ export default class ManagerTools extends React.Component {
                       style={{
                         width: 100,
                         height: 100,
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     />
                   </View>
@@ -79,8 +65,8 @@ export default class ManagerTools extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -95,27 +81,15 @@ export default class ManagerTools extends React.Component {
                     PORT: this.props.navigation.getParam('PORT'),
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -127,8 +101,7 @@ export default class ManagerTools extends React.Component {
                       style={{
                         width: 140,
                         height: 140,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        marginRight: '2.5%',
                       }}
                     />
                   </View>
@@ -136,8 +109,8 @@ export default class ManagerTools extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -154,27 +127,15 @@ export default class ManagerTools extends React.Component {
                     PORT: this.props.navigation.getParam('PORT'),
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -188,8 +149,6 @@ export default class ManagerTools extends React.Component {
                         height: 230,
                         marginRight: '5%',
                         marginTop: '5%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     />
                   </View>
@@ -197,8 +156,8 @@ export default class ManagerTools extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
@@ -208,32 +167,20 @@ export default class ManagerTools extends React.Component {
             <View>
               <AwesomeButtonCartman
                 onPress={() =>
-                  this.props.navigation.navigate('PitchConstraints', {
+                  this.props.navigation.navigate('Pitch Constraints', {
                     IP: this.props.navigation.getParam('IP'),
                     PORT: this.props.navigation.getParam('PORT'),
                   })
                 }
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                backgroundColor="#3f7ec1"
-                backgroundActive="#b3cce7"
                 backgroundDarker="#b3cce7"
-                backgroundDarker="#b3cce7"
-                backgroundPlaceholder="#b3cce7"
                 borderColor="#b3cce7"
-                type="primary"
-                textColor="#FFF"
-                textSize={18}
-                height={80}
                 raiseLevel={4}
-                height={100}
-                width={100}
-                borderRadius={50}>
+                height={Dimensions.get('window').height / 7}
+                width={Dimensions.get('window').height / 7}
+                borderRadius={Dimensions.get('window').height / 14}>
                 <ImageBackground
                   source={require('../Images/star.png')}
-                  style={{height: 100, width: 100}}>
+                  style={{flex: 1}}>
                   <View
                     style={{
                       flex: 1,
@@ -241,12 +188,11 @@ export default class ManagerTools extends React.Component {
                       alignItems: 'center',
                     }}>
                     <Image
-                      /*source={require('../Images/club.png')}*/
+                      source={require('../Images/field2.png')}
                       style={{
-                        width: 120,
-                        height: 110,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        width: 70,
+                        height: 70,
+                        marginLeft: '12%',
                       }}
                     />
                   </View>
@@ -254,12 +200,58 @@ export default class ManagerTools extends React.Component {
               </AwesomeButtonCartman>
               <Text
                 style={{
-                  fontSize: 20,
-                  color: '#edf3f9',
+                  fontSize: 18,
+                  color: 'white',
                   fontFamily: 'sans-serif-medium',
                   textAlign: 'center',
                 }}>
                 {'Set Pitch\nConstraints'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.rowOfOneButton}>
+            <View>
+              <AwesomeButtonCartman
+                onPress={() =>
+                  this.props.navigation.navigate('Edit Club', {
+                    IP: this.props.navigation.getParam('IP'),
+                    PORT: this.props.navigation.getParam('PORT'),
+                    teamList: this.props.navigation.getParam('teamsNames'),
+                  })
+                }
+                backgroundDarker="#b3cce7"
+                borderColor="#b3cce7"
+                raiseLevel={4}
+                height={100}
+                width={100}
+                borderRadius={50}>
+                <ImageBackground
+                  source={require('../Images/star.png')}
+                  style={{flex: 1}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../Images/edit.png')}
+                      style={{
+                        width: 110,
+                        height: 110,
+                      }}
+                    />
+                  </View>
+                </ImageBackground>
+              </AwesomeButtonCartman>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  fontFamily: 'sans-serif-medium',
+                  textAlign: 'center',
+                }}>
+                Edit Club
               </Text>
             </View>
           </View>
@@ -280,6 +272,12 @@ const styles = StyleSheet.create({
     paddingVertical: '5%',
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  rowOfOneButton: {
+    paddingVertical: '5%',
+    flexDirection: 'row',
+    marginLeft: '12.5%',
+    //justifyContent: '',
   },
   image: {
     flex: 1,
